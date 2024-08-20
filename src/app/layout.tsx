@@ -10,22 +10,22 @@ import { Suspense } from "react";
 const pretendard = localFont({
   src: [
     {
-      path: "../../fonts/PretendardVariable.woff2",
+      path: "../fonts/PretendardVariable.woff2",
       weight: "400",
       style: "normal",
     },
     {
-      path: "../../fonts/PretendardVariable.woff2",
+      path: "../fonts/PretendardVariable.woff2",
       weight: "500",
       style: "normal",
     },
     {
-      path: "../../fonts/PretendardVariable.woff2",
+      path: "../fonts/PretendardVariable.woff2",
       weight: "600",
       style: "normal",
     },
     {
-      path: "../../fonts/PretendardVariable.woff2",
+      path: "../fonts/PretendardVariable.woff2",
       weight: "700",
       style: "normal",
     },
