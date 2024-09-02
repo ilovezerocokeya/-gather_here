@@ -1,6 +1,6 @@
 ## 💻 @gather_here
 
-<img src="https://github.com/user-attachments/assets/c229353f-3ae5-4338-a96a-2c2e0527d9b5" alt="Group 4" width="800px" />
+<img src="https://github.com/user-attachments/assets/4d63e8b7-789a-4512-8b70-78a2ad71565f" alt="gather_here 대표이미지" width="800px" />
 
 ## 📖 소개 및 개요
 - 프로젝트 기간 : 2023.7.16 ~ 8.20
@@ -15,15 +15,24 @@
 - 사용자들은 자신에게 맞는 프로젝트와 스터디를 오픈 채팅이나 기재된 연락처를 통해 소통하며 진행할 수 있습니다.
 - IT 행사 관련 정보는 캘린더를 통해 한눈에 확인할 수 있습니다.
 
+**🏆 우수상 수상 - [내일배움캠프] (2023)** <br />
+
+<img src="https://github.com/user-attachments/assets/db3839e3-019b-4010-8901-ac503f7bce19" alt="Group 4" width="600px" />
+
+<br> 
+
+## ✨ @gather_here 구경하기 
+
 <details>
 <summary>목차</summary>
    
 - [팀 소개](#teamintro)
 - [아키텍쳐](#architecture)
+- [ERD](#erd)
 - [주요 기술](#skill)
 - [기술적 의사결정](#technical)
 - [프로젝트 구조](#structure)
-- [UI](#UI)
+- [UI](#ui)
 - [트러블슈팅](#troubleshooting)
 
 </details>
@@ -38,12 +47,16 @@
 | :---: | :---: | :---: | :---: | :---:  | :---: |
 | <img src="https://github.com/user-attachments/assets/8720fef6-8ab1-4350-b9a4-068548e70e1e" width="200">| <img src="https://github.com/user-attachments/assets/b5f761ab-9343-4726-9a70-32e0745567dc" width="200"> | <img src="https://github.com/user-attachments/assets/5a108b91-7992-428e-a8a9-ceb78284685f" width="200"> | <img src="https://github.com/user-attachments/assets/819e65bc-ca66-4dcd-870d-80b6a4c3dbb2" width="200"> | <img src="https://github.com/user-attachments/assets/b0aaa5a1-4e9c-4a6e-8ccb-615b22e6fbd1" width="200"> | <img src="https://github.com/user-attachments/assets/f394d0c9-314a-441e-8683-7f35e12f49f2" width="200"> |
 | ![Team%20Leader](https://img.shields.io/badge/-Team%20leader-yellow)  ![FrontEnd](https://img.shields.io/badge/FrontEnd-3f97fb)| ![Deputy%20Leader](https://img.shields.io/badge/-Deputy%20Leader-green) ![FrontEnd](https://img.shields.io/badge/FrontEnd-3f97fb) | ![Development%20Leader](https://img.shields.io/badge/-Development%20leader-orange)  ![FrontEnd](https://img.shields.io/badge/FrontEnd-3f97fb) | ![WorkManagement](https://img.shields.io/badge/-Work%20Management%20leader-f67280) ![FrontEnd](https://img.shields.io/badge/FrontEnd-3f97fb) | ![Communication%20Leader](https://img.shields.io/badge/-Comunication%20Leader-mint) ![FrontEnd](https://img.shields.io/badge/FrontEnd-3f97fb) | ![Design%20Leader](https://img.shields.io/badge/-Design%20leader-purple) ![Designer](https://img.shields.io/badge/Designer-004088)|
+| 오픈채팅 <br> 캘린더<br>(행사 일정) <br> IT 행사 <br> 검색기능  | 글작성 페이지 <br> 디테일 페이지 <br> 북마크 | 메인 페이지 <br> 슬라이드 <br> 디자인 QA <br>적용 | 소셜 로그인 <br> 로그인 설문폼  | 마이페이지 <br> 반응형 해더 <br> 공통 컴포넌트 <br> 디자인관련 <br> 소통 | 웹 디자인 <br> 모바일 디자인 <br> 컴포넌트 <br> 로고 제작 |
 | github:<br> [kubap](https://github.com/kybaq)| github:<br> [Eunyoung](https://github.com/Eunyoung-Jo) | github:<br> [Hareum](https://github.com/LeeHareum) | github:<br> [SungJoon](https://github.com/ilovezerocokeya)| github:<br> [Boa](https://github.com/leeboa2005) | blog:<br> [Junghyun](https://velog.io/@yardvvorker/posts) |    
 
 ## <h3 id="architecture">2. 🏗 아키텍쳐</h3>
 <img src="https://github.com/user-attachments/assets/5ffed050-2b2f-4de8-b97b-6be1b11aec33" alt="image" width="800px" />
 
-## <h3 id="skill">3.🍀주요 기술</h3>
+##  <h3 id="erd">3. 📚 ERD</h3>
+<img src="https://github.com/user-attachments/assets/c7ad5635-ac70-4640-a573-07952af9faab" alt="image" width="1000px" />
+
+## <h3 id="skill">4.🍀주요 기술</h3>
 
 <details>
   <summary>로그인</summary>
@@ -122,7 +135,7 @@
      - 내 관심글 확인 : 내가 북마크한 게시글을 스터디/ 프로젝트 / IT 행사 별로 한눈에 볼 수 있습니다. 
 </details>
 
-## <h3 id="technical">4.🧩 기술적 의사결정</h3>
+## <h3 id="technical">5.🧩 기술적 의사결정</h3>
 
 ### 프레임워크
 <div>
@@ -203,7 +216,7 @@
 </div>
 
 
-## <h3 id="structure">5.📦프로젝트 구조</h3>
+## <h3 id="structure">6.📦프로젝트 구조</h3>
 
 ``` plaintext 
 ├─ public
@@ -280,7 +293,7 @@
 │  └─ tsconfig.json
 
 ```
-## <h3 id="ui"> 6. 🎨 UI </h3>
+## <h3 id="ui"> 7. 🎨 UI </h3>
 
 #### 시작하기, 메인페이지 게시물 리스트 
 
@@ -295,7 +308,7 @@
 <img src="https://github.com/user-attachments/assets/f45c4fb7-1333-4d0c-be3d-1d3d2c2c0131" alt="프로젝트 결과 4" width="800px" />
 
 
-## <span id="troubleshooting"> 7.🔨 트러블 슈팅</span>
+## <span id="troubleshooting"> 8.🔨 트러블 슈팅</span>
 
 ### react-select로 다중 선택을 구현하며 server와 client의 id가 다른 이슈
 
@@ -328,7 +341,7 @@ signupForm을 어떤 방식으로 탈출하더라도 메인페이지의 모든 �
 
 #### 이슈 발생
 - 페이지 배포 후 콘솔 창에서 다음과 같은 오류가 계속해서 발생함.
-<img src="https://github.com/user-attachments/assets/0303026c-c905-44a5-b9b4-a95d5c689ace" alt="image" width="600px" />
+<img src="https://github.com/user-attachments/assets/0303026c-c905-44a5-b9b4-a95d5c689ace" alt="image" width="400px" />
 
 #### 해결책 
 - 서버 컴포넌트에서 Date.now()를 사용하던 부분이 있었는데, 클라이언트가 페이지를 렌더링할 때 서버에서 전달된 HTML의 값과 브라우저에서 렌더링 시점의 값이 달라 오류가 발생했습니다.
