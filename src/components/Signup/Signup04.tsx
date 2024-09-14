@@ -3,11 +3,11 @@
 import React from "react";
 import { useRouter } from "next/navigation";
 import { useModal } from "@/provider/ContextProvider";
-import useSignupStore from "@/store/useSignupStore";
+import { useUser } from "@/provider/UserContextProvider";
 
 const Signup04: React.FC = () => {
   const router = useRouter();
-  const { nickname } = useSignupStore();
+  const { nickname } = useUser();
   const { closeModal } = useModal();
 
   const handleExplore = () => {

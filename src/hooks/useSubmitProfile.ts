@@ -1,12 +1,23 @@
 import { useState, useEffect } from "react";
 import { createClient } from "@/utils/supabase/client";
-import useSignupStore from "@/store/useSignupStore";
 import { FormValues } from "@/components/Signup/Signup03";
+import { useUser } from "@/provider/UserContextProvider";
 
 const supabase = createClient();
 
 const useSubmitProfile = (setUserData: (data: any) => void) => {
-  const { nextStep, setNickname, setBlog, setUser, setProfileImageUrl, user, job_title, experience, profile_image_url } = useSignupStore();
+  const {
+    nextStep,
+    setNickname,
+    setBlog,
+    setUser,
+    setProfileImageUrl,
+    user,
+    job_title,
+    experience,
+    profile_image_url,
+  } = useUser();
+
   const [blogError, setBlogError] = useState<string | null>(null);
   const [blogSuccess, setBlogSuccess] = useState<string | null>(null);
 

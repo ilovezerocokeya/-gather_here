@@ -1,18 +1,19 @@
 "use client";
 
-import useSignupStore from "@/store/useSignupStore";
 import React, { useState } from "react";
 import ExperienceLevelButton from "./components/ExperienceLevelButton";
+import { useUser } from "@/provider/UserContextProvider";
+
 
 const experienceLevels = ["1년 미만", "1년", "2년", "3년", "4년", "5년", "6년", "7년", "8년 이상"];
 
 const Signup02: React.FC = () => {
-  const { nextStep, prevStep, setExperience } = useSignupStore();
+  const { nextStep, prevStep, updateField } = useUser(); 
   const [selectedExperience, setSelectedExperience] = useState<string>("");
 
   const handleExperienceSelection = (experience: string) => {
     setSelectedExperience(experience);
-    setExperience(experience);
+    updateField("experience", experience);
     nextStep();
   };
 

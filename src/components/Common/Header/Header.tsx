@@ -7,14 +7,12 @@ import Image from "next/image";
 import LoginForm from "@/components/Login/LoginForm";
 import { useUser } from "@/provider/UserContextProvider";
 import { createClient } from "@/utils/supabase/client";
-import useSignupStore from "@/store/useSignupStore";
 import useSearch from "@/hooks/useSearch";
 
 const supabase = createClient();
 
 const Header: React.FC = () => {
-  const { user, userData, fetchUserData, initializationUser } = useUser();
-  const { resetAuthUser } = useSignupStore();
+  const { user, userData, fetchUserData, initializationUser, resetAuthUser } = useUser();
   const router = useRouter();
   const [isSearchOpen, setIsSearchOpen] = useState(false);
   const [isModalOpen, setIsModalOpen] = useState(false);
@@ -33,6 +31,7 @@ const Header: React.FC = () => {
     initializationUser();
     router.push("/");
   };
+
 
   const toggleSearch = () => {
     setIsSearchOpen(!isSearchOpen);

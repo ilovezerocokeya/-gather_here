@@ -1,5 +1,5 @@
 "use client";
-import useSignupStore from "@/store/useSignupStore";
+
 import React, { useEffect, useRef } from "react";
 import { useForm } from "react-hook-form";
 import NicknameInput from "@/components/Signup/components/NicknameInput";
@@ -7,6 +7,8 @@ import BlogInput from "@/components/Signup/components/BlogInput";
 import useCheckNickname from "@/hooks/useCheckNickname";
 import useSubmitProfile from "@/hooks/useSubmitProfile";
 import AlertModal from "./components/AlertModal";
+import { useUser } from "@/provider/UserContextProvider";
+
 
 export interface FormValues {
   nickname: string;
@@ -18,7 +20,7 @@ interface Signup03Type {
 }
 
 const Signup03: React.FC<Signup03Type> = ({ setUserData }) => {
-  const { prevStep } = useSignupStore();
+  const { prevStep } = useUser();
   const {
     register,
     handleSubmit,
