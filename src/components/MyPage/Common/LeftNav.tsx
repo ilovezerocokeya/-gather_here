@@ -48,14 +48,21 @@ const LeftNav: React.FC = () => {
       if (user) {
         const { data, error } = await supabase.from("Users").select("*").eq("user_id", user.id).limit(1).single();
         if (data) {
-          setUserData(data);
+          const updatedUserData = {
+            nickname: data.nickname ?? "", 
+            job_title: data.job_title ?? "",
+            experience: data.experience ?? "",
+            profile_image_url: data.profile_image_url ?? "",
+            blog: data.blog ?? ""
+          };
+          setUserData(updatedUserData);
         } else {
           console.error("Users 테이블 데이터 에러:", error);
         }
       }
     };
     getUserData();
-  }, [user, setUserData]);
+  }, [user]); 
 
   return (
     <aside className="sticky top-0 p-6 s:p-0 w-[250px] max-h-[235px] flex flex-col items-start gap-3 rounded-[20px] bg-fillStrong text-fontWhite shadow-sm s:hidden">

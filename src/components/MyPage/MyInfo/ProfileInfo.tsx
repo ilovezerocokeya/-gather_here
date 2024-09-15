@@ -22,6 +22,7 @@ const ProfileInfo: React.FC = () => {
   const [isCancelModalOpen, setIsCancelModalOpen] = useState(false);
   const [toastState, setToastState] = useState({ state: "", message: "" });
 
+  // userData 변경 시 상태 초기화
   useEffect(() => {
     if (userData) {
       setNickname(userData.nickname ?? "");
@@ -31,9 +32,10 @@ const ProfileInfo: React.FC = () => {
     }
   }, [userData]);
 
+  // 닉네임 유효성 검사
   useEffect(() => {
     const checkNicknameValidity = async () => {
-      if (!nickname || nickname === userData?.nickname) {
+      if (!nickname || nickname === userData?.nickname || !user?.id) {
         setNicknameError("");
         return;
       }
@@ -52,7 +54,7 @@ const ProfileInfo: React.FC = () => {
         .from("Users")
         .select("nickname")
         .eq("nickname", nickname)
-        .neq("user_id", user?.id);
+        .neq("user_id", user?.id); // user_id가 유효할 때만 체크
 
       if (error) {
         setNicknameError("닉네임 중복 검사에 실패했습니다.");
@@ -72,6 +74,7 @@ const ProfileInfo: React.FC = () => {
     }
   }, [nickname, supabase, user?.id, userData?.nickname]);
 
+  // 블로그 URL 유효성 검사
   useEffect(() => {
     if (blog && blog.trim() !== "") {
       const validateUrl = (url: string) => {
@@ -96,6 +99,7 @@ const ProfileInfo: React.FC = () => {
     }
   }, [blog]);
 
+  // 폼 유효성 검사
   const validateForm = () => {
     let valid = true;
 
@@ -118,6 +122,7 @@ const ProfileInfo: React.FC = () => {
     return valid;
   };
 
+  // 정보 업데이트
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     if (!user?.id || !validateForm()) {
@@ -127,7 +132,7 @@ const ProfileInfo: React.FC = () => {
     const { error } = await supabase
       .from("Users")
       .update({ nickname, blog, job_title: job, experience })
-      .eq("user_id", user.id);
+      .eq("user_id", user.id); // user_id로 업데이트
 
     if (error) {
       setToastState({ state: "error", message: "업데이트에 실패했습니다." });
@@ -137,10 +142,12 @@ const ProfileInfo: React.FC = () => {
     }
   };
 
+  // 정보 리셋 처리
   const handleReset = () => {
     setIsCancelModalOpen(true);
   };
 
+  // 취소 모달 처리
   const handleConfirmLeave = () => {
     setIsCancelModalOpen(false);
     if (userData) {
@@ -173,6 +180,7 @@ const ProfileInfo: React.FC = () => {
     </div>
   );
 
+  // 프로필 데이터가 없는 경우 스켈레톤 컴포넌트 렌더링
   if (!user) {
     return <MypageProfileInfo />;
   }

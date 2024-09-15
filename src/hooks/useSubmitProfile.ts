@@ -1,7 +1,7 @@
 import { useState, useEffect } from "react";
 import { createClient } from "@/utils/supabase/client";
 import { FormValues } from "@/components/Signup/Signup03";
-import { useUser } from "@/provider/UserContextProvider";
+import { useUser } from "@/provider/UserContextProvider"; 
 
 const supabase = createClient();
 
@@ -15,9 +15,9 @@ const useSubmitProfile = (setUserData: (data: any) => void) => {
     user,
     job_title,
     experience,
-    profile_image_url,
+    profile_image_url
   } = useUser();
-
+  
   const [blogError, setBlogError] = useState<string | null>(null);
   const [blogSuccess, setBlogSuccess] = useState<string | null>(null);
 

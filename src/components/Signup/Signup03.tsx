@@ -9,7 +9,6 @@ import useSubmitProfile from "@/hooks/useSubmitProfile";
 import AlertModal from "./components/AlertModal";
 import { useUser } from "@/provider/UserContextProvider";
 
-
 export interface FormValues {
   nickname: string;
   blog?: string;

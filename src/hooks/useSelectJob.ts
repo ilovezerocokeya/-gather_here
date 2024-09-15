@@ -1,7 +1,7 @@
 import { useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { useModal } from '@/provider/ContextProvider';
-import { useUser } from "@/provider/UserContextProvider";
+import { useUser } from '@/provider/UserContextProvider';
 
 const useSelectJob = () => {
   const { nextStep, setJob } = useUser();
@@ -32,4 +32,3 @@ const useSelectJob = () => {
 };
 
 export default useSelectJob;
-;
