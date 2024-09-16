@@ -100,6 +100,15 @@ const Header: React.FC = () => {
             className="hidden s:block"
           />
         </Link>
+        <Link href="/gatherHub" className="ml-4">
+           <Image
+            src="/assets/header/logo.svg"
+            alt="@gather_hub 로고"
+            width={182}
+            height={25}
+            className="s:block"
+          />
+        </Link>
         <Suspense>
           <nav className="flex items-center gap-2">
             {/* 검색 폼 */}
