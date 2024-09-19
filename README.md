@@ -3,7 +3,7 @@
 <img src="https://github.com/user-attachments/assets/4d63e8b7-789a-4512-8b70-78a2ad71565f" alt="gather_here 대표이미지" width="800px" />
 
 ## 📖 소개 및 개요
-- 프로젝트 기간 : 2023.7.16 ~ 8.20
+- 프로젝트 기간 : 2024.7.16 ~ 2024.8.20
 - 배포 URL : [🔗 @gather_here](https://www.gatherhere.dev/all))
 
 #### <img src="https://github.com/user-attachments/assets/42e201d2-f6e9-4269-bd09-37108d5f649e" alt="frontend" style="width: 16px; vertical-align: middle; margin-right: 5px;"/> 서비스 소개 <img src="https://github.com/user-attachments/assets/855c502b-ea52-4f41-b94a-3d1763eee7b9" alt="frontend" style="width: 16px; vertical-align: middle; margin-right: 5px;"/> 
@@ -15,7 +15,7 @@
 - 사용자들은 자신에게 맞는 프로젝트와 스터디를 오픈 채팅이나 기재된 연락처를 통해 소통하며 진행할 수 있습니다.
 - IT 행사 관련 정보는 캘린더를 통해 한눈에 확인할 수 있습니다.
 
-**🏆 우수상 수상 - [내일배움캠프] (2023)** <br />
+**🏆 우수상 수상 - [내일배움캠프 React 5기] (2024)** <br />
 
 <img src="https://github.com/user-attachments/assets/db3839e3-019b-4010-8901-ac503f7bce19" alt="Group 4" width="600px" />
 
