@@ -36,7 +36,7 @@ const pretendard = localFont({
 
 export const metadata: Metadata = {
   title: "@gather_here",
-  description: "스터디나 사이드 프로젝트 팀원을 오픈 채팅으로 빠르고 쉽게 찾을 수 있는 gather_here.",
+  description: "스터디나 사이드 프로젝트 팀원을 빠르고 쉽게 찾을 수 있는 gather_here.",
   keywords: "개발, 스터디, 사이드, 프로젝트, 디자인, 기획, 취업",
   authors: [
     { name: "김영범" },
@@ -51,7 +51,7 @@ export const metadata: Metadata = {
   },
   openGraph: {
     title: "@gather_here",
-    description: "스터디나 사이드 프로젝트 팀원을 오픈 채팅으로 빠르고 쉽게 찾을 수 있는 gather_here.",
+    description: "스터디나 사이드 프로젝트 팀원을 빠르고 쉽게 찾을 수 있는 gather_here.",
     url: "https://gather-here-cyan.vercel.app",
     type: "website",
     images: [

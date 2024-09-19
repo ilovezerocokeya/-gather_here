@@ -11,7 +11,6 @@ import "react-quill/dist/quill.core.css";
 import LikeButton from "@/components/MainDetail/LikeButton";
 import ShareButton from "@/components/MainDetail/ShareButton";
 import CommonModal from "@/components/Common/Modal/CommonModal";
-import { notFound } from "next/navigation";
 
 const supabase = createClient();
 
