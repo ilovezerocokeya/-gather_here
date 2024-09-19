@@ -187,9 +187,9 @@ body {
   padding: 1rem 0;
 }
 
-.page-disabled {
-  pointer-events: none;
-  user-select: none;
+.page-disabled .modal-content {
+  pointer-events: auto;
+  user-select: auto;
 }
 
 .modal-content {

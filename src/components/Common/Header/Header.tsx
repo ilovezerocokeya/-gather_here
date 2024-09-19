@@ -54,6 +54,23 @@ const Header: React.FC = () => {
     setIsModalOpen(false);
   };
 
+  // 모달이 열렸을 때 Esc 키로 모달 닫기
+  useEffect(() => {
+    if (isModalOpen) {
+      const handleEsc = (event: KeyboardEvent) => {
+        if (event.key === "Escape") {
+          handleCloseLoginModal(); // Esc 키를 누르면 모달을 닫음
+        }
+      };
+
+      window.addEventListener("keydown", handleEsc);
+
+      return () => {
+        window.removeEventListener("keydown", handleEsc);
+      };
+    }
+  }, [isModalOpen]); // 모달이 열릴 때만 이벤트 리스너 추가
+
   // 사용자 데이터 가져오기
   useEffect(() => {
     if (user) {
@@ -81,34 +98,37 @@ const Header: React.FC = () => {
 
   return (
     <header className="bg-background shadow-md relative text-fontWhite">
-      <div className="w-full mx-auto max-w-container-l m:max-w-container-m s:max-w-container-s flex justify-between items-center py-[14px] s:py-2">
-        <Link href="/">
+      <div className="w-full mx-auto max-w-container-l m:max-w-container-m s:max-w-container-s s:flex-row flex justify-between items-center py-[14px] s:py-2">
+      <div className="flex items-center s:space-x-4 space-x-12">
+        <Link href="/" className="flex items-center">
           <Image
-            src="/assets/header/logo.svg"
-            alt="@gather_here 로고"
-            priority
-            width={182}
-            height={25}
-            className="s:hidden"
+          src="/logos/gatherhere.svg"
+          alt="@gather_here 로고"
+          priority
+          width={100}
+          height={50}
+          className="s:hidden"
           />
           <Image
             src="/assets/header/mobile_logo.svg"
             alt="@gather_here 로고"
             priority
             width={20}
-            height={24}
+            height={25}
             className="hidden s:block"
           />
         </Link>
-        <Link href="/gatherHub" className="ml-4">
-           <Image
-            src="/assets/header/logo.svg"
-            alt="@gather_hub 로고"
-            width={182}
-            height={25}
-            className="s:block"
-          />
-        </Link>
+          <Link href="/gatherHub">
+            <Image
+              src="/logos/hub2.png"
+              alt="@gather_hub 로고"
+              priority
+              width={120}  
+              height={50}  
+              className="s:w-[90px] s:h-[25px]" 
+            />
+          </Link>
+      </div>
         <Suspense>
           <nav className="flex items-center gap-2">
             {/* 검색 폼 */}
@@ -208,7 +228,7 @@ const Header: React.FC = () => {
       {isModalOpen && (
         <>
           <div className="fixed inset-0 bg-black opacity-80 z-40" onClick={handleCloseLoginModal}></div>
-          <div className="fixed top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 bg-background rounded-[20px] p-4 z-50">
+          <div className="fixed top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 bg-background rounded-[20px] p-4 z-50" onClick={(e) => e.stopPropagation()} >
             <button
               onClick={handleCloseLoginModal}
               className="ml-auto mt-1 mr-1 block text-right p-1 text-3xl text-[fontWhite] hover:text-[#777]"

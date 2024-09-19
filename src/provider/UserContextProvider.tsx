@@ -3,6 +3,7 @@ import { createClient } from "@/utils/supabase/client";
 import { User } from "@supabase/supabase-js";
 
 // 사용자 인증 상태 인터페이스
+// 로그인한 사용자의 정보를 포함하고 있으며, 인증 상태와 관련된 함수를 제공합니다.
 interface AuthState {
   user: User | null; // 현재 로그인한 사용자
   isAuthenticated: boolean; // 사용자의 인증 여부
@@ -10,18 +11,24 @@ interface AuthState {
   resetAuthUser: () => void; // 사용자 인증 정보를 초기화하는 함수
 }
 
+// 사용자의 프로필과 관련된 데이터를 관리하는 인터페이스입니다.
+// 사용자의 직업 정보, 포트폴리오, 자기소개 등 멤버 카드와 관련된 세부 정보를 포함합니다.
 interface UserData {
   nickname: string;
   job_title: string;
   experience: string;
-  description: string; //자기소개
+  description: string; // 자기소개
   profile_image_url: string;
-  blog: string;
+  blog: string; // 대표 포트폴리오
   hubCard?: boolean;
-  background_image_url?: string; //포트폴리오이미지 없는 사람들도 있을 수 있어서 범용성 있게 네이밍함
+  background_image_url?: string; // 포트폴리오 이미지
+  answer1?: string
+  answer2?: string
+  answer3?: string
 }
 
-// 회원가입 상태 인터페이스
+// 회원가입 상태를 관리하는 인터페이스입니다.
+// 회원가입 프로세스의 단계별 상태를 포함하고 있으며, 관련된 필드를 업데이트하거나 초기화하는 함수를 제공합니다.
 interface SignupState {
   step: number;
   job_title: string;
@@ -39,8 +46,8 @@ interface SignupState {
   setNickname: (nickname: string) => void;
 }
 
-// 전체 상태 인터페이스 (AuthState + SignupState + UserData)
-// 전체 상태 인터페이스 (AuthState + SignupState + UserData)
+// 전체 상태를 관리하는 인터페이스입니다.
+// AuthState, SignupState, UserData를 상속받아 사용자 인증, 회원가입 상태, 사용자 데이터를 모두 포함합니다.
 interface StoreState extends AuthState, SignupState {
   userData: UserData | null; // 사용자 관련 데이터
   setUserData: (data: UserData | null) => void; // 사용자 데이터를 설정하는 함수
@@ -50,6 +57,9 @@ interface StoreState extends AuthState, SignupState {
   description?: string;  // description 추가
   background_image_url?: string;  // background_image_url 추가
   hubCard?: boolean;  // hubCard 추가
+  likedMembers: { [key: string]: boolean }; // 특정 유저에 대한 좋아요 상태를 저장하는 객체
+  toggleLike: (nickname: string) => void; // 좋아요 상태를 변경하는 함수, nickname을 인자로 받아 상태를 변경함
+  updateUserAnswers: (answers: { answer1?: string; answer2?: string; answer3?: string }) => Promise<void>; // 사용자 답변을 업데이트하는 비동기 함수
 }
 
 // UserContext 생성 (기본값은 undefined로 설정)
@@ -68,6 +78,39 @@ export const UserProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
 
   //로딩 상태
   const [loading, setLoading] = useState<boolean>(false);
+
+   // 유저 답변을 업데이트하는 함수
+   const updateUserAnswers = async (answers: Partial<UserData>) => {
+    if (!user) return;
+    try {
+      const { error } = await supabase
+        .from('Users')
+        .update(answers)
+        .eq('user_id', user.id);
+  
+      if (error) {
+        console.error('Error updating answers:', error.message);
+      } else {
+        setUserData((prev) => {
+          if (prev) {
+            return { ...prev, ...answers };
+          }
+          return prev;
+        });
+      }
+    } catch (error) {
+      console.error('Error updating answers:', error);
+    }
+  };
+
+  // 좋아요 상태
+  const [likedMembers, setLikedMembers] = useState<{ [key: string]: boolean }>({}); 
+  const toggleLike = (nickname: string) => {
+    setLikedMembers((prevLikedMembers) => ({
+      ...prevLikedMembers,
+      [nickname]: !prevLikedMembers[nickname], // 좋아요 상태 반전
+    }));
+  };
 
   // 회원가입 상태
   const [step, setStep] = useState<number>(1);
@@ -112,7 +155,7 @@ export const UserProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
   try {
     const { data, error } = await supabase
       .from('Users')
-      .select('nickname, job_title, experience, profile_image_url, blog, hubCard, description, background_image_url')
+      .select('nickname, job_title, experience, profile_image_url, blog, hubCard, description, background_image_url, answer1, answer2, answer3')
       .eq("user_id", user.id)
       .single();
 
@@ -219,7 +262,10 @@ const contextValue: StoreState = {
   setProfileImageUrl,
   setBlog,
   setNickname,
-  loading, 
+  loading,
+  likedMembers,
+  toggleLike,
+  updateUserAnswers, 
 };
 
   return <UserContext.Provider value={contextValue}>{children}</UserContext.Provider>;
