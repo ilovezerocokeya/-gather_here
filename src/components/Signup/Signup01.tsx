@@ -45,7 +45,7 @@ const Signup01: React.FC = () => {
   };
 
   return (
-    <div className="flex justify-center items-center min-h-screen bg-black bg-opacity-50" style={{ transform: '-70px' }}>
+    <div className="flex justify-center items-center min-h-screen bg-black bg-opacity-50" style={{ marginTop: '-30px' }}>
       <div className="s:w-[370px] s:h-[580px] w-[430px] h-[610px] relative bg-background rounded-[20px] p-4 select-none border border-background shadow-lg">
         <SkipButton onSkip={handleSkipWithConfirmation} />
         <div className="absolute left-1/2 transform -translate-x-1/2 top-4 flex space-x-2">

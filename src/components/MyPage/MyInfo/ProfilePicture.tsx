@@ -62,7 +62,14 @@ const ProfilePicture: React.FC = () => {
 
         setProfileImage(profileImageUrl);
         setProfileAlt(altText);
-        setUserData({ ...userData, profile_image_url: profileImageUrl });
+        setUserData({
+          ...userData,
+          profile_image_url: profileImageUrl,
+          nickname: userData?.nickname ?? "",
+          job_title: userData?.job_title ?? "",
+          experience: userData?.experience ?? "",
+          blog: userData?.blog ?? ""
+        });
         setToastState({ state: "success", message: "업데이트 완료되었습니다" });
       } else {
         throw new Error("프로필 이미지 URL을 얻지 못했습니다.");
@@ -240,3 +247,4 @@ const ProfilePicture: React.FC = () => {
 };
 
 export default ProfilePicture;
+
