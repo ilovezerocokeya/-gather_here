@@ -1,4 +1,3 @@
-/* 전체 캘린더 영역에 대한 설정 */
 .fc {
   background-color: #141415;
   color: #f7f7f7;
@@ -7,23 +6,19 @@
   height: 345px;
 }
 
-/* M */
 @media only screen and (max-width: 1068px) {
   .fc {
     margin: 4px;
   }
 }
 
-/* S */
 @media only screen and (max-width: 768px) {
   .fc {
-    /* width: 287px; */
     width: 100%;
     margin: 0;
   }
 }
 
-/* 헤더 영역에 대한 설정 */
 .fc h2.fc-toolbar-title {
   font-size: 20px;
 }
@@ -51,7 +46,6 @@
   padding: 3px;
 }
 
-/* 아이콘 hover 시 primary color */
 .fc .fc-header-toolbar button:hover {
   background-color: #c3e88d;
 }
@@ -60,7 +54,6 @@
   color: #919191;
 }
 
-/* Grid View 에 대한 설정 */
 .fc table.fc-scrollgrid,
 .fc td,
 .fc th {
@@ -97,21 +90,19 @@
   background-color: transparent;
 }
 
-/* 추가: 날짜 숫자가 중앙에 위치하도록 설정 */
 .fc-daygrid-day-top {
   display: flex;
   justify-content: center;
   align-items: center;
-  height: 90%; /* 날짜 셀의 높이를 채우도록 설정 */
+  height: 90%;
 }
 
 .fc .fc-daygrid-day-number {
   display: inline-block;
-  width: 90%; /* 숫자가 중앙에 위치하도록 설정 */
+  width: 90%;
   text-align: center;
 }
 
-/* Popover 창에 대한 설정 */
 .fc .fc-popover.fc-more-popover.fc-day {
   background-color: #141415;
 }
@@ -141,7 +132,6 @@
   color: #f7f7f7;
 }
 
-/* list View 에 대한 설정 */
 .fc .fc-list-event-dot {
   border-color: #b0db43 !important;
   margin-top: 3px !important;
@@ -161,15 +151,14 @@
 .fc .fc-scroller,
 .fc .fc-scroller.fc-scroller-liquid {
   overflow-y: scroll;
-  -ms-overflow-style: none; /* 인터넷 익스플로러 */
-  scrollbar-width: none; /* 파이어폭스 */
+  -ms-overflow-style: none;
+  scrollbar-width: none;
 }
 
 .fc .fc-scroller::state(webkit-scrollbar) .fc .fc-scroller.fc-scroller-liquid::state(webkit-scrollbar) {
   display: none;
 }
 
-/* 커스텀 캘린더 설정 */
 .custom_calender .fc .fc-daygrid-body-unbalanced .fc-daygrid-day-events {
   background-color: transparent;
   position: absolute;

@@ -27,7 +27,6 @@ const InterestsTap: React.FC = () => {
         try {
           const likedPosts = await fetchLikedPosts(user.id);
 
-          // 선택된 탭에 따라 포스트 필터링
           const filteredPosts = likedPosts.filter((post: PostWithUser | ITEvent) => {
             if (selectedTab === "전체") return true;
             if (selectedTab === "IT 행사" && "event_id" in post) return true;
@@ -56,7 +55,6 @@ const InterestsTap: React.FC = () => {
     setCurrentPage(page);
   };
 
-  // 북마크 취소 시 해당 포스트를 리스트에서 제거
   const handleRemoveBookmark = (postId: string | number) => {
     setPosts((prevPosts) =>
       prevPosts.filter((post) => (post as PostWithUser).post_id !== postId && (post as ITEvent).event_id !== postId),

@@ -13,7 +13,7 @@ interface FormMultiSelectProps {
   value: Option[];
   onChange: (selectedOptions: Option[]) => void;
   className?: string;
-  placeholder?: string; // placeholder prop 추가
+  placeholder?: string;
 }
 
 const customStyles = {

@@ -24,34 +24,28 @@ const PrCard: React.FC = () => {
   const slideSets = [
     [
       {
-        // href: "https://nbcamp.spartacodingclub.kr/job-support",
         src: jey,
-        alt: "유저 소개 카드",
+        alt: "은영님의 PR 카드",
       },
       {
-        // href: "https://nbcamp.spartacodingclub.kr/job-support",
         src: jjh,
-        alt: "패스트캠퍼스",
+        alt: "정현님의 PR 카드",
       },
       {
-        // href: "https://nbcamp.spartacodingclub.kr/",
         src: ksj,
-        alt: "내일배움스파르타 부트캠프",
+        alt: "성준님의 PR 카드",
       },
       {
-        // href: "https://nbcamp.spartacodingclub.kr/",
         src: kyb,
-        alt: "내일배움스파르타 부트캠프",
+        alt: "영범님의 PR 카드",
       },
       {
-        // href: "https://hanghae99.spartacodingclub.kr/reboot",
         src: lba,
-        alt: "항해99",
+        alt: "보아님의 PR 카드",
       },
       {
-        // href: "https://hanghae99.spartacodingclub.kr/99club-codingtest",
         src: lhr,
-        alt: "항해99 스터디",
+        alt: "하름님의 PR 카드",
       },
     ],
   ];

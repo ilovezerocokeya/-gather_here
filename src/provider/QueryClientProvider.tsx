@@ -1,5 +1,3 @@
-// client provider for tanstack-query
-
 "use client";
 
 import { QueryClient, QueryClientProvider as QueryProvider } from "@tanstack/react-query";

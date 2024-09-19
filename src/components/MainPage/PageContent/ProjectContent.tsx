@@ -33,7 +33,7 @@ const ProjectContent: React.FC<ProjectContentProps> = () => {
   useEffect(() => {
     const loadCarouselData = async () => {
       setIsLoadingCarousel(true);
-      const carouselData = await fetchPostsWithDeadLine(15, "프로젝트"); // D-일수이내
+      const carouselData = await fetchPostsWithDeadLine(15, "프로젝트");
       setCarouselPosts(carouselData);
       setIsLoadingCarousel(false);
     };

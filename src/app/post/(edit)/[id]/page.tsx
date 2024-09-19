@@ -311,7 +311,7 @@ const PostEditPage = () => {
           </div>
         </div>
         <div className="bg-fillStrong p-5 space-y-4">
-          <hr className="border-fillNeutral mt-0 mb-0" /> {/* 여백을 없애기 위해 mt-0, mb-0 적용 */}
+          <hr className="border-fillNeutral mt-0 mb-0" />
           <h2 className="text-lg text-labelNeutral font-semibold mb-2">모집 정보</h2>
           <div className="grid grid-cols-2 s:grid-cols-1 gap-4">
             <div className="space-y-2">

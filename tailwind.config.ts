@@ -21,7 +21,6 @@ const config: Config = {
         "container-m": "744px",
         "container-s": "335px",
       },
-      // ex) className : text-title
       fontSize: {
         title: ["28px", "1.2"],
         subtitle: ["20px", "1.2"],
@@ -29,16 +28,12 @@ const config: Config = {
         baseS: ["14px", "1.6"],
         baseXs: ["12px", "1.6"],
       },
-      // ex) className : font-title
       fontWeight: {
         title: "700",
         subtitle: "600",
         baseBold: "500",
         base: "400",
       },
-      /* ex) 배경 색상 변경 className : bg-primary
-         ex) 텍스트 색상 변경 className : text-fillNormal
-      */
       colors: {
         background: "#212121",
         primary: "#C3E88D",

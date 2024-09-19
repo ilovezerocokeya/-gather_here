@@ -17,7 +17,6 @@ const Carousel: React.FC<CarouselProps> = ({ posts }) => {
   const today = new Date();
   today.setHours(0, 0, 0, 0);
 
-  // D--과거 게시물 필터링
   const filteredPosts = posts.filter((post) => {
     const deadlineDate = new Date(post.deadline);
     deadlineDate.setHours(0, 0, 0, 0);

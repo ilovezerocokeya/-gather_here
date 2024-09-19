@@ -17,10 +17,10 @@ const detectMobileDevice = () => {
   const width = 1068;
 
   return window.innerWidth < width;
-}; // UserAgent 이용해야할지 ?
+};
 
 const Calender: NextPage = () => {
-  const calenderRef = useRef<FullCalendar | null>(null); // 캘린더 객체 내부의 메서드를 사용하기 위해 정의함, | null 인 이유는 렌더링 이전에는 null 인 상태기 때문에 안정성을 위해 추가.
+  const calenderRef = useRef<FullCalendar | null>(null);
   const [isGrid, setIsGrid] = useState(true);
   const [isMobileDevice, setIsMobileDevice] = useState(false);
 
@@ -32,10 +32,8 @@ const Calender: NextPage = () => {
 
     handleResize();
 
-    // resize 이벤트 리스너 추가
     window.addEventListener("resize", handleResize);
 
-    // 컴포넌트 언마운트 시 이벤트 리스너 제거
     return () => {
       window.removeEventListener("resize", handleResize);
     };
@@ -49,7 +47,7 @@ const Calender: NextPage = () => {
         throw new Error(`Network response was not ok: ${response.statusText}`);
       }
 
-      const { data } = await response.json(); // 캘린더에 표기하기 위해 가져온 행사 일정의 날짜 형식을 바꿔줘야 할 수도 있음. start, end => yyyy-mm-dd 로만 바꾸면 될 듯
+      const { data } = await response.json();
 
       const events = data.map((event: Tables<"IT_Events">) => ({
         title: event.title,
@@ -96,8 +94,7 @@ const Calender: NextPage = () => {
         HOT한 IT 행사 놓치지 마세요
       </h4>
       <FullCalendar
-        // 공통 옵션
-        aspectRatio={0.678} // 큰 값으로 설정하면 더 작게 보임
+        aspectRatio={0.678}
         customButtons={{
           viewChanger: {
             click() {
@@ -128,7 +125,6 @@ const Calender: NextPage = () => {
         titleFormat={(date) => {
           return date.date.year + ". " + String(date.date.month + 1).padStart(2, "0") + ".";
         }}
-        // Grid View 옵션
         dayMaxEventRows={0}
         dayCellContent={(cellContent) => {
           return cellContent.dayNumberText.replace("일", "");
@@ -144,11 +140,9 @@ const Calender: NextPage = () => {
             calenderRef.current?.getApi().changeView("dayGridMonth");
           }
         }}
-        // List View 옵션
         allDayText=""
         displayEventTime={false}
         eventDisplay="list-item"
-        // 장소 정보 표시
         eventContent={(arg) => {
           const title = document.createElement("div");
           title.classList.add("fc-event-title");

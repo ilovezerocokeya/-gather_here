@@ -1,12 +1,13 @@
 "use client";
-import useSignupStore from "@/store/useSignupStore";
-import React, { useEffect } from "react";
+
+import React, { useEffect, useRef } from "react";
 import { useForm } from "react-hook-form";
 import NicknameInput from "@/components/Signup/components/NicknameInput";
 import BlogInput from "@/components/Signup/components/BlogInput";
 import useCheckNickname from "@/hooks/useCheckNickname";
 import useSubmitProfile from "@/hooks/useSubmitProfile";
 import AlertModal from "./components/AlertModal";
+import { useUser } from "@/provider/UserContextProvider";
 
 export interface FormValues {
   nickname: string;
@@ -18,7 +19,7 @@ interface Signup03Type {
 }
 
 const Signup03: React.FC<Signup03Type> = ({ setUserData }) => {
-  const { prevStep } = useSignupStore();
+  const { prevStep } = useUser();
   const {
     register,
     handleSubmit,
@@ -27,6 +28,7 @@ const Signup03: React.FC<Signup03Type> = ({ setUserData }) => {
     setError,
   } = useForm<FormValues>();
   const watchNickname = watch("nickname");
+  const formRef = useRef<HTMLFormElement>(null);
   const nicknameAvailable = useCheckNickname(watchNickname);
   const { onSubmit, blogError, blogSuccess, setBlogError, setBlogSuccess, validateUrl } = useSubmitProfile(setUserData);
 
@@ -65,56 +67,59 @@ const Signup03: React.FC<Signup03Type> = ({ setUserData }) => {
   }, []);
 
   return (
-    <div className="s:w-[370px] s:h-[590px] xs:h-[630px] w-[430px] h-[630px] relative bg-background rounded-[20px] p-4 select-none">
-      {prevStep && (
-        <button onClick={prevStep} className="absolute left-9 top-10 text-[c4c4c4]">
-          &larr;
-        </button>
-      )}
-      <div className="absolute left-1/2 transform -translate-x-1/2 top-4 flex space-x-2">
-        <div className="w-[136px] s:h-18 h-20 justify-start items-center gap-2 inline-flex">
-          <div className="w-10 h-10 p-2.5 rounded-[11px] border border-[#28282a] flex-col justify-center items-center gap-2.5 inline-flex">
-            <div className="self-stretch text-center text-[#5e5e5e] text-sm font-medium leading-[21px]">1</div>
-          </div>
-          <div className="w-10 h-10 p-2.5 rounded-[11px] border border-[#28282a] flex-col justify-center items-center gap-2.5 inline-flex">
-            <div className="self-stretch text-center text-[#5e5e5e] text-sm font-medium leading-[21px]">2</div>
-          </div>
-          <div className="w-10 h-10 p-2.5 rounded-[11px] border border-[#c3e88d] flex-col justify-center items-center gap-2.5 inline-flex">
-            <div className="self-stretch text-center text-[#c3e88d] text-sm font-medium leading-[21px]">3</div>
-          </div>
-        </div>
-      </div>
-
-      <div className="text-center text-2xl font-medium text-[#ffffff] leading-9 mt-20">거의 다 왔어요!</div>
-      <div className="text-center text-[#9a9a9a] s:mt-1 mt-3">
-        자신을 나타낼 수 있는 포트폴리오 링크를 알려주시면 <br className="s:hidden" /> 함께 할 동료를 만나는 데 큰
-        도움이 될거예요.
-      </div>
-
-      <form onSubmit={handleSubmit(handleFormSubmit)} className="overflow-y-auto h-[calc(100%-200px)]">
-        <NicknameInput register={register} errors={errors} nicknameAvailable={nicknameAvailable} watch={watch} />
-        <BlogInput
-          register={register}
-          watch={watch}
-          blogError={blogError}
-          blogSuccess={blogSuccess}
-          setBlogError={setBlogError}
-          setBlogSuccess={setBlogSuccess}
-          validateUrl={validateUrl}
-        />
-        <div className="s:bottom-8 bottom-9 w-full px-4 mt-9 flex justify-center items-center">
-          <button
-            type="submit"
-            className={`s:w-[300px] w-[350px] h-[45px] py-3 flex justify-center items-center rounded-md transition-transform transform hover:scale-105 active:scale-95 active:bg-gray-800 active:text-gray-200 ${
-              watchNickname && watchNickname.trim() !== ""
-                ? "bg-[#C3E88D] text-[#343437] hover:bg-[#C3E88D] hover:text-[#343437]"
-                : "bg-[#343437] text-[#FFFFFF]"
-            }`}
-          >
-            프로필 저장하기
+    <div className="flex justify-center items-center min-h-screen bg-black bg-opacity-50" style={{ marginTop: '-30px' }}>
+      <div className="s:w-[370px] s:h-[590px] xs:h-[630px] w-[430px] h-[630px] relative bg-background rounded-[20px] p-4 select-none border border-background shadow-lg">
+        {prevStep && (
+          <button onClick={prevStep} className="absolute left-9 top-10 text-[c4c4c4]">
+            &larr;
           </button>
+        )}
+        <div className="absolute left-1/2 transform -translate-x-1/2 top-4 flex space-x-2">
+          <div className="w-[136px] s:h-18 h-20 justify-start items-center gap-2 inline-flex">
+            <div className="w-10 h-10 p-2.5 rounded-[11px] border border-[#28282a] flex-col justify-center items-center gap-2.5 inline-flex">
+              <div className="self-stretch text-center text-[#5e5e5e] text-sm font-medium leading-[21px]">1</div>
+            </div>
+            <div className="w-10 h-10 p-2.5 rounded-[11px] border border-[#28282a] flex-col justify-center items-center gap-2.5 inline-flex">
+              <div className="self-stretch text-center text-[#5e5e5e] text-sm font-medium leading-[21px]">2</div>
+            </div>
+            <div className="w-10 h-10 p-2.5 rounded-[11px] border border-[#c3e88d] flex-col justify-center items-center gap-2.5 inline-flex">
+              <div className="self-stretch text-center text-[#c3e88d] text-sm font-medium leading-[21px]">3</div>
+            </div>
+          </div>
         </div>
-      </form>
+  
+        <div className="text-center text-2xl font-medium text-[#ffffff] leading-9 mt-20">
+          거의 다 왔어요!
+        </div>
+        <div className="text-center text-[#9a9a9a] s:mt-1 mt-3">
+          자신을 나타낼 수 있는 포트폴리오 링크를 알려주시면 <br className="s:hidden" /> 함께 할 동료를 만나는 데 큰 도움이 될거예요.
+        </div>
+  
+        <form ref={formRef} onSubmit={handleSubmit(handleFormSubmit)} className="max-h-[380px] overflow-y-auto mt-6">
+          <NicknameInput register={register} errors={errors} nicknameAvailable={nicknameAvailable} watch={watch} />
+          <BlogInput
+            register={register}
+            watch={watch}
+            blogError={blogError}
+            blogSuccess={blogSuccess}
+            setBlogError={setBlogError}
+            setBlogSuccess={setBlogSuccess}
+            validateUrl={validateUrl}
+          />
+          <div className="flex justify-center items-center mt-6">
+            <button
+              type="submit"
+              className={`s:w-[300px] w-[350px] h-[45px] py-3 flex justify-center items-center rounded-md transition-transform transform hover:scale-105 active:scale-95 active:bg-gray-800 active:text-gray-200 ${
+                watchNickname && watchNickname.trim() !== ""
+                  ? "bg-[#C3E88D] text-[#343437] hover:bg-[#C3E88D] hover:text-[#343437]"
+                  : "bg-[#343437] text-[#FFFFFF]"
+              }`}
+            >
+              프로필 저장하기
+            </button>
+          </div>
+        </form>
+      </div>
     </div>
   );
 };

@@ -29,11 +29,10 @@
 }
 
 @media (max-width: 768px) {
-  /* s 이하 */
   .swiper-button-next,
   .swiper-button-prev {
-    opacity: 1 !important; /* s 및 xs 크기에서 항상 보이도록 */
-    pointer-events: auto !important; /* 클릭 가능하도록 */
+    opacity: 1 !important;
+    pointer-events: auto !important;
   }
 
   .swiper-button-prev:after,
@@ -47,40 +46,38 @@
   }
 
   .swiper {
-    height: 185px; /* s 이하일 때 페이지네이션 높이 */
+    height: 185px;
   }
 }
 
 @media (max-width: 420px) {
-  /* xs 크기 */
   .swiper-button-next,
   .swiper-button-prev {
-    opacity: 1 !important; /* xs 크기에서 항상 보이도록 */
-    pointer-events: auto !important; /* 클릭 가능하도록 */
+    opacity: 1 !important;
+    pointer-events: auto !important;
   }
 }
 
 @media (min-width: 1069px) {
-  /* m 크기 이상 */
   .swiper-button-next,
   .swiper-button-prev {
-    opacity: 0; /* 기본 상태에서는 보이지 않음 */
-    pointer-events: none; /* 클릭 불가능 */
+    opacity: 0;
+    pointer-events: none;
   }
 
   .relative:hover .swiper-button-next:not(.swiper-button-disabled),
   .relative:hover .swiper-button-prev:not(.swiper-button-disabled) {
-    opacity: 1; /* 호버 시에만 보이도록 */
-    pointer-events: auto; /* 클릭 가능하도록 */
+    opacity: 1;
+    pointer-events: auto;
   }
 }
 
 @media (min-width: 640px) {
   .swiper {
-    height: 280px; /* 페이지네이션 높이 */
+    height: 280px;
   }
 
   .post-card .p-5 {
-    height: 256px; /* 기본 카드 높이 */
+    height: 256px;
   }
 }

@@ -16,7 +16,6 @@ const Chat = () => {
     chatContentDivRef,
     formRef,
     handleSubmit,
-    // handleEnterKeyUp,
     handleEnterKeyDown,
     handleDelete,
   } = useChat();
@@ -121,7 +120,7 @@ const Chat = () => {
           ) : (
             <div
               id="input"
-              className="self-stretch h-[145px] w-full p-5 bg-fillStrongborder-l border-r border-b border-fillNormal flex-col justify-center items-center flex cursor-pointer"
+              className="self-stretch h-[145px] w-full p-5 bg-fillStrong border-l border-r border-b border-fillNormal rounded-b-[20px] flex-col justify-center items-center flex cursor-pointer"
               onClick={() => setIsModalOpen(true)}
             >
               <div className="w-full h-full p-3 bg-fillNeutral rounded-lg self-stretch justify-between items-start inline-flex">

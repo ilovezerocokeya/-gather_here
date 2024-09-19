@@ -33,7 +33,7 @@ const StudiesContent: React.FC<StudiesContentProps> = () => {
   useEffect(() => {
     const loadCarouselData = async () => {
       setIsLoadingCarousel(true);
-      const carouselData = await fetchPostsWithDeadLine(15, "스터디"); // D-일수이내
+      const carouselData = await fetchPostsWithDeadLine(15, "스터디");
       setCarouselPosts(carouselData);
       setIsLoadingCarousel(false);
     };

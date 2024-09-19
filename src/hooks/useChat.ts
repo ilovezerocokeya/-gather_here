@@ -135,7 +135,6 @@ const useChat = () => {
     chatContentDivRef,
     formRef,
     handleSubmit,
-    // handleEnterKeyUp,
     handleEnterKeyDown,
     handleDelete,
   };

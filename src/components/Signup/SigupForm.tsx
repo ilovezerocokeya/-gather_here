@@ -5,12 +5,10 @@ import Signup01 from "./Signup01";
 import Signup02 from "./Signup02";
 import Signup03 from "./Signup03";
 import Signup04 from "./Signup04";
-import useSignupStore from "@/store/useSignupStore";
 import { useUser } from "@/provider/UserContextProvider";
 
 const SignupForm: React.FC = () => {
-  const { setUserData } = useUser();
-  const { step } = useSignupStore();
+  const { setUserData, step } = useUser();
 
   switch (step) {
     case 1:

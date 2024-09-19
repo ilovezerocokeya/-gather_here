@@ -24,7 +24,7 @@ const EventsContent: NextPage = () => {
   const [isMobile, setIsMobile] = useState(false);
 
   const [selectedCategory, setSelectedCategory] = useState<string>("");
-  const [days, setDays] = useState<number>(30); // D-일수이내
+  const [days, setDays] = useState<number>(30);
 
   useEffect(() => {
     const loadCarouselData = async () => {
@@ -68,9 +68,8 @@ const EventsContent: NextPage = () => {
   };
 
   const handleEventFilterChange = useCallback(async (category: string) => {
-    setSelectedCategory(category); // Set the selected category
+    setSelectedCategory(category);
 
-    // Reset pagination and posts
     setPage(1);
     setHasMore(true);
 

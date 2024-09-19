@@ -31,7 +31,6 @@ const ItEventCardLong: NextPage<EventsCardProps> = ({ post }) => {
     };
   }, []);
 
-  // dayjs 로케일을 한국어로 설정
   dayjs.locale("ko");
 
   return (

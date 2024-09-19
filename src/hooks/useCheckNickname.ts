@@ -8,9 +8,15 @@ const useCheckNickname = (nickname: string) => {
 
   useEffect(() => {
     const checkNicknameAvailability = async () => {
-      const specialCharPattern = /[^a-zA-Z0-9가-힣_]/; // 허용된 문자: 영문자, 숫자, 한글, 밑줄(_)
+      const specialCharPattern = /[^a-zA-Z0-9가-힣_]/;
 
-      if (!nickname || typeof nickname !== 'string' || nickname.length < 2 || nickname.length > 11 || specialCharPattern.test(nickname)) {
+      if (
+        !nickname ||
+        typeof nickname !== "string" ||
+        nickname.length < 2 ||
+        nickname.length > 11 ||
+        specialCharPattern.test(nickname)
+      ) {
         setNicknameAvailable(null);
         return;
       }

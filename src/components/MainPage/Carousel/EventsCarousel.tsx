@@ -17,7 +17,6 @@ const Carousel: React.FC<CarouselProps> = ({ posts }) => {
   const today = new Date();
   today.setHours(0, 0, 0, 0);
 
-  // 과거 이벤트 필터링
   const filteredPosts = posts.filter((post) => {
     const eventDate = new Date(post.date_done);
     eventDate.setHours(0, 0, 0, 0);

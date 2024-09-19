@@ -2,7 +2,6 @@
 @tailwind components;
 @tailwind utilities;
 
-/* common */
 body {
   font-weight: 400;
   line-height: 1.5;
@@ -11,7 +10,6 @@ body {
   font-color: #f7f7f7;
 }
 
-/* input styles  */
 @layer utilities {
   .shared-input {
     @apply bg-background text-fontWhite px-4 py-[10px] min-h-[45px] border border-transparent rounded-lg transition-all duration-200 ease-in-out focus:border-[#C3E88D] focus:ring-1 focus:ring-[#C3E88D] focus:outline-none;
@@ -29,12 +27,10 @@ body {
     @apply bg-fillLight text-fontWhite text-baseS px-4 py-[10px] h-[36px] rounded-lg border border-transparent transition-all duration-200 ease-in-out focus:border-[#C3E88D] focus:ring-1 focus:ring-[#C3E88D] focus:outline-none;
   }
 
-  /* input icon*/
   .date-input::-webkit-calendar-picker-indicator {
     filter: invert(56%) sepia(4%) saturate(4%) hue-rotate(175deg) brightness(94%) contrast(85%);
   }
 
-  /* select styles */
   .shared-select {
     @apply bg-background text-fontWhite px-4 py-[10px] min-h-[45px] border border-transparent rounded-lg transition-all duration-200 ease-in-out focus:border-[#C3E88D] focus:ring-1 focus:ring-[#C3E88D] focus:outline-none;
     appearance: none;
@@ -68,9 +64,8 @@ body {
     padding-right: 1.5rem;
   }
 }
-/* button styles  */
+
 @layer utilities {
-  /* button - green */
   .shared-button-green {
     @apply text-labelAlternative bg-primary px-4 py-[10px] min-h-[45px] flex items-center justify-center rounded-lg font-baseBold transition-colors duration-300 hover:bg-primaryStrong;
   }
@@ -79,7 +74,6 @@ body {
     @apply text-labelAlternative bg-primary px-3 py-2 h-[36px] text-baseS flex items-center justify-center rounded-lg font-baseBold transition-colors duration-300 hover:bg-primaryStrong;
   }
 
-  /* button - gray  */
   .shared-button-gray {
     @apply text-fontWhite bg-fillLight px-4 py-[10px] min-h-[45px] flex items-center justify-center rounded-lg font-baseBold transition-colors duration-300 hover:bg-fillNeutral;
   }
@@ -88,28 +82,23 @@ body {
     @apply text-primary text-baseS bg-fillNeutral px-3 py-2 h-[36px] flex items-center justify-center rounded-lg font-baseBold transition-colors duration-300 hover:bg-fillAssistive;
   }
 
-  /* button - black */
   .shared-button-black {
     @apply text-fontWhite bg-fillStrong px-4 py-[10px] min-h-[45px] flex items-center justify-center rounded-lg  font-baseBold transition-colors duration-300 hover:bg-black;
   }
 
-  /* button - white */
   .shared-button-white {
     @apply text-fillStrong bg-fontWhite px-4 py-[10px] min-h-[45px] flex items-center justify-center rounded-lg  font-baseBold transition-colors duration-300 hover:bg-white;
   }
 
-  /* button - outline */
   .shared-button-outline {
     @apply text-primary border-[1px] border-primary px-4 py-[10px] min-h-[45px] flex items-center justify-center rounded-lg  font-baseBold transition-colors duration-300 hover:bg-primary hover:text-labelAlternative;
   }
 
-  /* button - tab */
   .tab-button {
     @apply flex items-center justify-center px-3 py-2 text-baseS rounded-[12px] text-primary bg-fillNormal hover:bg-fillNormal transition-opacity;
     width: 60px;
   }
 
-  /* button - circle */
   .circle-button {
     @apply p-[10px] rounded-full flex items-center justify-center bg-primary text-labelAlternative hover:bg-primaryHeavy transition-colors duration-300;
   }
@@ -117,12 +106,10 @@ body {
     @apply p-[10px] rounded-full flex items-center justify-center bg-fillLight hover:bg-fillNeutral text-fontWhite transition-colors duration-300;
   }
 
-  /* button - square small */
   .square-button-small {
     @apply flex items-center justify-center w-[45px] h-[45px] rounded-lg bg-fillLight hover:bg-fillNeutral text-white;
   }
 
-  /* button - square */
   .square-button {
     @apply bg-fillLight text-labelNormal s:w-[101px] s:h-[101px] w-[111px] h-[111px] p-[10px] flex items-center justify-center rounded-lg font-baseBold transition-colors duration-300 m-1;
   }
@@ -165,23 +152,19 @@ body {
     @apply flex items-center justify-center w-[36px] h-[36px] rounded-lg bg-fillNeutral hover:bg-fillAssistive  text-white;
   }
 
-  /* button - google  */
   .shared-button-google {
     @apply text-labelAlternative bg-white min-w-[303px] px-4 py-[10px] flex items-center justify-center rounded-lg  font-baseBold transition-transform duration-300 hover:shadow-lg;
   }
 
-  /* button - kakao */
   .shared-button-kakao {
     @apply text-labelAlternative bg-[#FEE500] min-w-[303px] px-4 py-[10px] flex items-center justify-center rounded-lg  font-baseBold transition-transform duration-300 hover:shadow-lg;
   }
 
-  /* button - github */
   .shared-button-github {
     @apply text-fontWhite bg-[#24292F] min-w-[303px] px-4 py-[10px] flex items-center justify-center rounded-lg  font-baseBold transition-transform duration-300 hover:shadow-lg;
   }
 }
 
-/* label styles*/
 @layer utilities {
   .label {
     @apply flex flex-col items-center justify-center text-baseXs px-[12px] py-[5px] rounded-[20px] border transition-opacity;
@@ -204,7 +187,6 @@ body {
   padding: 1rem 0;
 }
 
-/* Disabled-Modal */
 .page-disabled {
   pointer-events: none;
   user-select: none;
@@ -259,39 +241,32 @@ body {
   color: #343437;
 }
 
-/* textarea */
 .ql-editor.ql-blank {
   height: 167px;
 }
 
-/* custom scrollbar */
 ::-webkit-scrollbar {
   width: 6px;
   height: 6px;
 }
 
-/* custom scrollbar thumb */
 ::-webkit-scrollbar-thumb {
   background-color: #d0d0d0;
 }
 
-/* custom scrollbar track */
 ::-webkit-scrollbar-track {
   background-color: transparent;
 }
 
-/* custom scrollbar (Firefox) */
 * {
   scrollbar-width: thin;
   scrollbar-color: rgba(208, 208, 208, 0.3) transparent;
 }
 
-/* Toastify */
 .Toastify__close-button {
   color: #f7f7f7 !important;
 }
 
-/* mypage tooltip style*/
 .custom-tooltip-top-6 {
   @apply bottom-full mb-2 left-1/2 transform -translate-x-1/2 bg-fillStrong text-fontWhite text-xs rounded py-1 px-2;
 }

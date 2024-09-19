@@ -34,7 +34,6 @@ const ItEventCardShort: NextPage<EventsCardProps> = ({ post, onRemoveBookmark })
     };
   }, []);
 
-  // dayjs 로케일을 한국어로 설정
   dayjs.locale("ko");
 
   return (
