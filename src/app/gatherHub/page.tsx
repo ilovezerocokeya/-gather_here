@@ -40,7 +40,6 @@ const GatherHubPage: React.FC = () => {
           toggleLike: toggleLike, // 좋아요 상태 변경 함수 전달
         }]
       : []),
-      // 멤버 추가
       {
         nickname: '전정현',
         jobTitle: 'Design',
@@ -54,8 +53,8 @@ const GatherHubPage: React.FC = () => {
         answer1: userData?.answer1 || '기본 답변 1',
         answer2: userData?.answer2 || '기본 답변 2',
         answer3: userData?.answer3 || '기본 답변 3',
-        liked: likedMembers['전정현'] || false, // 좋아요 상태 전달
-        toggleLike: toggleLike, // 좋아요 상태 변경 함수 전달
+        liked: likedMembers['전정현'] || false, 
+        toggleLike: toggleLike
       },
       {
         nickname: '김성준',
@@ -70,8 +69,8 @@ const GatherHubPage: React.FC = () => {
         answer1: userData?.answer1 || '기본 답변 1',
         answer2: userData?.answer2 || '기본 답변 2',
         answer3: userData?.answer3 || '기본 답변 3',
-        liked: likedMembers['김성준'] || false, // 좋아요 상태 전달
-        toggleLike: toggleLike, // 좋아요 상태 변경 함수 전달
+        liked: likedMembers['김성준'] || false,
+        toggleLike: toggleLike
       },
       {
         nickname: '김영범',
@@ -86,8 +85,8 @@ const GatherHubPage: React.FC = () => {
         answer1: userData?.answer1 || '기본 답변 1',
         answer2: userData?.answer2 || '기본 답변 2',
         answer3: userData?.answer3 || '기본 답변 3',
-        liked: likedMembers['김영범'] || false, // 좋아요 상태 전달
-        toggleLike: toggleLike, // 좋아요 상태 변경 함수 전달
+        liked: likedMembers['김영범'] || false, 
+        toggleLike: toggleLike
       },
       {
         nickname: '조은영',
@@ -102,8 +101,8 @@ const GatherHubPage: React.FC = () => {
         answer1: userData?.answer1 || '기본 답변 1',
         answer2: userData?.answer2 || '기본 답변 2',
         answer3: userData?.answer3 || '기본 답변 3',
-        liked: likedMembers['조은영'] || false, // 좋아요 상태 전달
-        toggleLike: toggleLike, // 좋아요 상태 변경 함수 전달
+        liked: likedMembers['조은영'] || false,
+        toggleLike: toggleLike
       },
       {
         nickname: '이하름',
@@ -118,8 +117,8 @@ const GatherHubPage: React.FC = () => {
         answer1: userData?.answer1 || '기본 답변 1',
         answer2: userData?.answer2 || '기본 답변 2',
         answer3: userData?.answer3 || '기본 답변 3',
-        liked: likedMembers['이하름'] || false, // 좋아요 상태 전달
-        toggleLike: toggleLike, // 좋아요 상태 변경 함수 전달
+        liked: likedMembers['이하름'] || false,
+        toggleLike: toggleLike
       },
       {
         nickname: '이보아',
@@ -134,13 +133,15 @@ const GatherHubPage: React.FC = () => {
         answer1: userData?.answer1 || '기본 답변 1',
         answer2: userData?.answer2 || '기본 답변 2',
         answer3: userData?.answer3 || '기본 답변 3',
-        liked: likedMembers['이보아'] || false, // 좋아요 상태 전달
-        toggleLike: toggleLike, // 좋아요 상태 변경 함수 전달
+        liked: likedMembers['이보아'] || false, 
+        toggleLike: toggleLike
       },
     ], [isHubRegistered, userData, likedMembers]);
 
+  // 'filteredJob' 상태에 따라 'allMembers' 배열에서 필터링된 멤버 목록을 반환하는 함수
   const [filteredJob, setFilteredJob] = useState<string>('all');
 
+  // 'filteredMembers'는 'filteredJob' 값에 따라 필터링된 멤버 목록을 반환
   const filteredMembers = useMemo(() => {
     return filteredJob === 'all'
       ? allMembers.filter((member) => member.nickname && member.jobTitle && member.profileImageUrl)

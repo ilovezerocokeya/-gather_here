@@ -265,14 +265,14 @@ useEffect(() => {
         <p className="text-primary text-lg">{jobTitle} | {experience}</p>
       </div>
 
-      {/* 북마크와 메시지 보내기 버튼 */}
+      {/* 좋아요와 메시지 보내기 버튼 */}
       <div className="flex justify-center space-x-4 mt-4">
         <button 
           onClick={() => toggleLike(nickname)}
           className="bg-gray-700 text-white p-6 py-2 rounded-lg hover:bg-gray-600 transition flex items-center space-x-2"
         >
-          <img src="/assets/bookmark-icon.svg" alt="북마크 아이콘" className="w-5 h-5" />
-          <span>북마크</span>
+          <img src="/assets/liked-icon.svg" alt="좋아요 아이콘" className="w-5 h-5" />
+          <span>좋아요</span>
         </button>
 
         <button 
@@ -291,8 +291,18 @@ useEffect(() => {
 
       {/* 소셜 링크 */}
       <div className="mt-4 flex justify-center space-x-4">
-        {notionLink && <a href={notionLink} target="_blank" className="text-green-500 hover:underline">Notion</a>}
-        {instagramLink && <a href={instagramLink} target="_blank" className="text-pink-500 hover:underline">Instagram</a>}
+        {notionLink && (
+        <a href={notionLink} target="_blank" className="flex items-center space-x-2 text-green-500 hover:underline">
+          <img src="/assets/notion-icon.svg" alt="Notion 아이콘" className="w-5 h-5" />
+            <span>Notion</span>
+        </a>
+      )}
+        {instagramLink && (
+        <a href={instagramLink} target="_blank" className="flex items-center space-x-2 text-pink-500 hover:underline">
+         <img src="/assets/instagram-icon.svg" alt="Instagram 아이콘" className="w-5 h-5" />
+          <span>Instagram</span>
+        </a>
+      )}
       </div>
 
       {/* 질문과 답변 섹션 */}
