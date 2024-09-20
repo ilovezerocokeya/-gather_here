@@ -187,9 +187,9 @@ body {
   padding: 1rem 0;
 }
 
-.page-disabled {
-  pointer-events: none;
-  user-select: none;
+.page-disabled .modal-content {
+  pointer-events: auto;
+  user-select: auto;
 }
 
 .modal-content {
@@ -220,6 +220,40 @@ body {
   padding: 20px;
   font-size: 16px;
   border-radius: 30px;
+}
+
+/* JobDirectory 관련 스타일 */
+.job-directory {
+  width: 200px;
+  background-color: #1e1e1e;
+  padding: 16px;
+  border-radius: 8px;
+  max-height: 500px;
+}
+
+.job-list {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+
+.job-item {
+  margin-bottom: 8px;
+  padding: 8px 0;
+  color: #6b6b6b;
+  cursor: pointer;
+  font-weight: 400;
+}
+
+.job-item:hover {
+  color: #c3e88d; /* 호버 시 텍스트 색상 */
+}
+
+.job-item.active {
+  color: #c3e88d; /* 선택된 항목의 텍스트 색상 */
+  font-weight: 500; /* 선택된 항목의 폰트 굵기 */
+  border-left: 3px solid #c3e88d; /* 선택된 항목의 좌측 강조선 */
+  padding-left: 12px;
 }
 
 @media (max-width: 768px) {
