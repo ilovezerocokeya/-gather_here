@@ -1,9 +1,15 @@
 "use client";
 import React, { useState, useEffect, useCallback, useMemo } from 'react';
+import dynamic from 'next/dynamic'; // 동적 컴포넌트 로딩
 import { useRouter } from 'next/navigation';
 import { useUser } from '@/provider/UserContextProvider';
-import LoginForm from '../Login/LoginForm';
 import { createPortal } from 'react-dom';
+
+// 동적 로딩 설정
+const LoginForm = dynamic(() => import('../Login/LoginForm'), {
+  ssr: false, // 서버 사이드 렌더링 비활성화
+  loading: () => <div>Loading...</div> // 로딩 중 표시
+});
 
 interface JobDirectoryProps {
   setFilteredJob: React.Dispatch<React.SetStateAction<string>>;
@@ -13,72 +19,55 @@ interface JobDirectoryProps {
 const JobDirectory: React.FC<JobDirectoryProps> = ({ setFilteredJob, className }) => {
   const [selectedJob, setSelectedJob] = useState<string>('all');
   const router = useRouter();
-  const { isAuthenticated, userData } = useUser(); // 유저 정보와 인증 상태를 가져옴
-  const [isHubRegistered, setIsHubRegistered] = useState(false); // Hub 등록 여부 상태
-  const [isModalOpen, setIsModalOpen] = useState(false); // 로그인 모달 상태
+  const { isAuthenticated, userData } = useUser();
+  
+  // Hub 등록 여부를 useMemo로 캐싱
+  const isHubRegistered = useMemo(() => userData?.hubCard || false, [userData]);
 
-  // 직업군 리스트는 불변 데이터이므로 useMemo로 캐싱
-  const jobCategories = useMemo(
-    () => [
-      { name: '전체 보기', value: 'all', hoverClass: 'hover:bg-primary hover:text-black text-black' },
-      { name: '프론트엔드', value: 'frontend', hoverClass: 'hover:bg-primaryStrong hover:text-black' },
-      { name: '백엔드', value: 'backend', hoverClass: 'hover:bg-accentOrange hover:text-black' },
-      { name: 'iOS', value: 'ios', hoverClass: 'hover:bg-accentMaya hover:text-black' },
-      { name: '안드로이드', value: 'android', hoverClass: 'hover:bg-accentPurple hover:text-black' },
-      { name: '데브옵스', value: 'devops', hoverClass: 'hover:bg-accentRed hover:text-black' },
-      { name: '디자인', value: 'design', hoverClass: 'hover:bg-accentMint hover:text-black' },
-      { name: 'PM', value: 'pm', hoverClass: 'hover:bg-accentColumbia hover:text-black' },
-      { name: '기획', value: 'planning', hoverClass: 'hover:bg-accentPink hover:text-black' },
-      { name: '마케팅', value: 'marketing', hoverClass: 'hover:bg-accentYellow hover:text-black' },
-    ],
-    []
-  );
+  // 직업군 리스트 캐싱
+  const jobCategories = useMemo(() => [
+    { name: '전체 보기', value: 'all', hoverClass: 'hover:bg-primary hover:text-black text-black' },
+    { name: '프론트엔드', value: 'frontend', hoverClass: 'hover:bg-primaryStrong hover:text-black' },
+    { name: '백엔드', value: 'backend', hoverClass: 'hover:bg-accentOrange hover:text-black' },
+    { name: 'iOS', value: 'ios', hoverClass: 'hover:bg-accentMaya hover:text-black' },
+    { name: '안드로이드', value: 'android', hoverClass: 'hover:bg-accentPurple hover:text-black' },
+    { name: '데브옵스', value: 'devops', hoverClass: 'hover:bg-accentRed hover:text-black' },
+    { name: '디자인', value: 'design', hoverClass: 'hover:bg-accentMint hover:text-black' },
+    { name: 'PM', value: 'pm', hoverClass: 'hover:bg-accentColumbia hover:text-black' },
+    { name: '기획', value: 'planning', hoverClass: 'hover:bg-accentPink hover:text-black' },
+    { name: '마케팅', value: 'marketing', hoverClass: 'hover:bg-accentYellow hover:text-black' }
+  ], []);
 
+  // 로컬 스토리지 접근 최적화
+  const storedJob = useMemo(() => localStorage.getItem('selectedJob') || 'all', []);
+  
+  // 로컬 스토리지에서 직업군 상태 불러오기
   useEffect(() => {
-    // 유저의 Hub 등록 여부 확인
-    if (userData && userData.hubCard) {
-      setIsHubRegistered(true); // 유저가 이미 Hub에 카드를 등록한 경우
-    }
-  }, [userData]);
+    setSelectedJob(storedJob);
+    setFilteredJob(storedJob);
+  }, [storedJob, setFilteredJob]);
 
-  // handleSelectJob은 useCallback으로 최적화하여 불필요한 함수 생성 방지
-  const handleSelectJob = useCallback(
-    (jobValue: string) => {
-      setSelectedJob(jobValue);
-      setFilteredJob(jobValue);
-      localStorage.setItem('selectedJob', jobValue); // 선택한 직업군을 로컬 스토리지에 저장
-    },
-    [setFilteredJob]
-  );
-
-  // 컴포넌트가 마운트될 때 로컬 스토리지에서 필터 상태 불러오기
-  useEffect(() => {
-    const storedJob = localStorage.getItem('selectedJob');
-    if (storedJob) {
-      setSelectedJob(storedJob);
-      setFilteredJob(storedJob);
-    }
+  // 직업군 선택 핸들러
+  const handleSelectJob = useCallback((jobValue: string) => {
+    setSelectedJob(jobValue);
+    setFilteredJob(jobValue);
+    localStorage.setItem('selectedJob', jobValue);
   }, [setFilteredJob]);
 
+  // Hub 등록 카드 추가 버튼 핸들러
   const handleAddCard = useCallback(() => {
     if (!isAuthenticated) {
-      setIsModalOpen(true); // 로그인이 안 되어있으면 로그인 모달 열기
+      setIsModalOpen(true);
     } else {
-      // Hub 등록 여부에 따라 페이지 이동
       router.push(isHubRegistered ? '/mypage/' : '/mypage');
     }
   }, [isAuthenticated, isHubRegistered, router]);
+  
+  // 로그인 모달 상태 관리
+  const [isModalOpen, setIsModalOpen] = useState(false);
+  const handleCloseLoginModal = useCallback(() => setIsModalOpen(false), []);
 
-  // 로그인 모달 관련 로직
-  const handleOpenLoginModal = useCallback(() => {
-    setIsModalOpen(true);
-  }, []);
-
-  const handleCloseLoginModal = useCallback(() => {
-    setIsModalOpen(false);
-  }, []);
-
-  // 모달이 열렸을 때 Esc 키로 모달 닫기
+  // 모달이 열렸을 때 Esc 키로 닫기
   useEffect(() => {
     if (isModalOpen) {
       const handleEsc = (event: KeyboardEvent) => {
@@ -86,12 +75,8 @@ const JobDirectory: React.FC<JobDirectoryProps> = ({ setFilteredJob, className }
           handleCloseLoginModal();
         }
       };
-
       window.addEventListener('keydown', handleEsc);
-
-      return () => {
-        window.removeEventListener('keydown', handleEsc);
-      };
+      return () => window.removeEventListener('keydown', handleEsc);
     }
   }, [isModalOpen, handleCloseLoginModal]);
 

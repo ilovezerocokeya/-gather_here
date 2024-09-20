@@ -51,9 +51,9 @@ const MemberCard: React.FC<MemberCardProps> = ({
  // 소셜 링크를 useMemo로 최적화
  const socialLinks = useMemo(() => {
   return [
+    { name: '🔥', url: blog, color: 'text-blue-500 hover:text-blue-600' },
     { name: 'Notion', url: notionLink, icon: '/assets/notion-icon.svg', color: 'text-gray-300 hover:text-white' },
     { name: 'Instagram', url: instagramLink, icon: '/assets/instagram-icon.svg', color: 'text-pink-500 hover:text-pink-600' },
-    { name: 'Blog', url: blog, icon: '/assets/blog-icon.svg', color: 'text-blue-500 hover:text-blue-600' },
   ].filter(link => link.url);
 }, [notionLink, instagramLink, blog]);
 
@@ -211,7 +211,7 @@ useEffect(() => {
 
          {/* 포트폴리오 링크 */}
           <div className="flex justify-center p-5 space-x-6">
-             {socialLinks.slice(0, 2).map((link, index) => (
+            {socialLinks.slice(0, 3).map((link, index) => (
               <a 
                 key={index} 
                 href={link.url} 
@@ -221,10 +221,10 @@ useEffect(() => {
               <img src={link.icon} alt={link.name} className="w-5 h-5 mb-1" />
               <span className="text-xs">{link.name}</span>
               </a>
-        ))}
-      </div>
+            ))}
+        </div>
+       </div>
     </div>
-  </div>
 
   {/* 모달 창 */}
   {isModalOpen && (
@@ -291,18 +291,28 @@ useEffect(() => {
 
       {/* 소셜 링크 */}
       <div className="mt-4 flex justify-center space-x-4">
+    {/* Blog (대표 포트폴리오) 링크 */}
+        {blog && (
+          <a href={blog} target="_blank" className="flex items-center space-x-2 text-blue-500 hover:underline">
+            <span className="text-3xl">🔥</span>
+          </a>
+        )}
+        {/* Notion 링크 */}
         {notionLink && (
-        <a href={notionLink} target="_blank" className="flex items-center space-x-2 text-green-500 hover:underline">
-          <img src="/assets/notion-icon.svg" alt="Notion 아이콘" className="w-5 h-5" />
+          <a href={notionLink} target="_blank" className="flex items-center space-x-2 text-green-500 hover:underline">
+            <img src="/assets/notion-icon.svg" alt="Notion 아이콘" className="w-5 h-5" />
             <span>Notion</span>
-        </a>
-      )}
+          </a>
+        )}
+
+        {/* Instagram 링크 */}
         {instagramLink && (
-        <a href={instagramLink} target="_blank" className="flex items-center space-x-2 text-pink-500 hover:underline">
-         <img src="/assets/instagram-icon.svg" alt="Instagram 아이콘" className="w-5 h-5" />
-          <span>Instagram</span>
-        </a>
-      )}
+          <a href={instagramLink} target="_blank" className="flex items-center space-x-2 text-pink-500 hover:underline">
+            <img src="/assets/instagram-icon.svg" alt="Instagram 아이콘" className="w-5 h-5" />
+            <span>Instagram</span>
+          </a>
+        )}
+
       </div>
 
       {/* 질문과 답변 섹션 */}
