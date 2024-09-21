@@ -187,6 +187,7 @@ body {
   padding: 1rem 0;
 }
 
+
 .page-disabled .modal-content {
   pointer-events: auto;
   user-select: auto;

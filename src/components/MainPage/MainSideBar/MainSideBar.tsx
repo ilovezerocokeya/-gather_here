@@ -6,6 +6,7 @@ import { useEffect, useState } from "react";
 import Image from "next/image";
 import ChatModal from "./Chat/ChatModal";
 import PRCard from "./PrCard/PrCard";
+import Footer from "./Footer/Footer";
 
 const MainSideBar = () => {
   const [isModalOpen, setIsModalOpen] = useState(false);
@@ -55,6 +56,7 @@ const MainSideBar = () => {
         <div className="sticky top-4">
           <PRCard />
           <Calender />
+          <Footer />
         </div>
       </div>
       <ChatModal isOpen={isModalOpen} onRequestClose={closeModal}>
