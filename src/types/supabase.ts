@@ -248,9 +248,10 @@ export type Database = {
           first_link: string | null;
           second_link_type: string | null;
           second_link: string | null;
-          answer1?: string | null;
-          answer2?: string | null;
-          answer3?: string | null;
+          answer1: string | null;
+          answer2: string | null;
+          answer3: string | null;
+          description: string | null;
         };
         Insert: {
           blog?: string | null;
@@ -269,6 +270,7 @@ export type Database = {
           answer1?: string | null;
           answer2?: string | null;
           answer3?: string | null;
+          description?: string | null;
         };
         Update: {
           blog?: string | null;
@@ -287,6 +289,7 @@ export type Database = {
           answer1?: string | null;
           answer2?: string | null;
           answer3?: string | null;
+          description?: string | null;
         };
         Relationships: [
           {

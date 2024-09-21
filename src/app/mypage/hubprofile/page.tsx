@@ -2,91 +2,84 @@
 
 import { useState, useEffect } from "react";
 import { createClient } from "@/utils/supabase/client";
-import Toast from "@/components/Common/Toast/Toast";
 import { useUser } from "@/provider/UserContextProvider";
+import SelfIntroduction from "@/components/MyPage/HubInfo/Introductioin";
+import HubProfileForm from "@/components/MyPage/HubInfo/HubProfileInfo";
 import TeamworkQuestions from "@/components/MyPage/HubInfo/TeamQuestions";
+import Toast from "@/components/Common/Toast/Toast";
 
 const HubProfile: React.FC = () => {
   const supabase = createClient();
   const { user, fetchUserData } = useUser();
+
+  // 상태 정의
+  const [description, setDescription] = useState("");
   const [blog, setBlog] = useState("");
   const [firstLinkType, setFirstLinkType] = useState("");
   const [firstLink, setFirstLink] = useState("");
   const [secondLinkType, setSecondLinkType] = useState("");
   const [secondLink, setSecondLink] = useState("");
+  const [answer1, setAnswer1] = useState("");
+  const [answer2, setAnswer2] = useState("");
+  const [answer3, setAnswer3] = useState("");
   const [toastState, setToastState] = useState({ state: "", message: "" });
 
-  // 이미 저장된 사용자 데이터를 가져와 필드에 채우기
+  // 페이지가 로드될 때 데이터베이스에서 값을 가져오는 useEffect
   useEffect(() => {
     const fetchUserProfile = async () => {
-      if (user) {
-        const { data, error } = await supabase
-          .from("Users")
-          .select("blog, first_link_type, first_link, second_link_type, second_link")
-          .eq("user_id", user.id)
-          .single(); // 해당 사용자 데이터를 불러옴
+      if (!user) return;
 
-        if (data) {
-          setBlog(data.blog || "");
-          setFirstLinkType(data.first_link_type || "");
-          setFirstLink(data.first_link || "");
-          setSecondLinkType(data.second_link_type || "");
-          setSecondLink(data.second_link || "");
-        }
+      const { data, error } = await supabase
+        .from("Users")
+        .select(
+          "description, blog, first_link_type, first_link, second_link_type, second_link, answer1, answer2, answer3",
+        )
+        .eq("user_id", user.id)
+        .single(); // 사용자의 모든 데이터를 가져옴
 
-        if (error) {
-          console.error("사용자 데이터를 가져오지 못했습니다:", error);
-        }
+      if (data) {
+        // 각 필드에 저장된 값을 상태로 설정
+        setDescription(data.description || "");
+        setBlog(data.blog || "");
+        setFirstLinkType(data.first_link_type || "");
+        setFirstLink(data.first_link || "");
+        setSecondLinkType(data.second_link_type || "");
+        setSecondLink(data.second_link || "");
+        setAnswer1(data.answer1 || "");
+        setAnswer2(data.answer2 || "");
+        setAnswer3(data.answer3 || "");
+      }
+
+      if (error) {
+        console.error("사용자 데이터를 가져오지 못했습니다:", error);
       }
     };
 
     fetchUserProfile();
-  }, [user]); // user가 변경될 때마다 데이터를 가져옴
+  }, [user]);
 
-  const platforms = [
-    { value: "behance", label: "비핸스" },
-    { value: "github", label: "깃허브" },
-    { value: "instagram", label: "인스타그램" },
-    { value: "brunch", label: "브런치" },
-    { value: "linkedin", label: "링크드인" },
-    { value: "notion", label: "노션" },
-    { value: "pinterest", label: "핀터레스트" },
-    { value: "medium", label: "미디엄" },
-    { value: "tistory", label: "티스토리" },
-    { value: "facebook", label: "페이스북" },
-    { value: "youtube", label: "유튜브" },
-  ];
-
-  const validateUrl = (url: string) => {
-    try {
-      new URL(url);
-      return true;
-    } catch {
-      return false;
-    }
-  };
-
-  const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
-    e.preventDefault();
-
-    if (!validateUrl(blog) || (firstLink && !validateUrl(firstLink)) || (secondLink && !validateUrl(secondLink))) {
-      setToastState({ state: "error", message: "유효한 URL을 입력하세요." });
+  // 저장 버튼을 눌렀을 때 모든 데이터를 한 번에 저장하는 함수
+  const handleSave = async () => {
+    if (!blog) {
+      // 포트폴리오 링크가 비어 있을 때 토스트 메시지 출력
+      setToastState({ state: "error", message: "포트폴리오 링크를 작성해주세요!" });
       return;
     }
 
-    if (!user) {
-      setToastState({ state: "error", message: "사용자 정보가 없습니다." });
-      return;
-    }
+    if (!user) return;
 
     const { error } = await supabase
       .from("Users")
       .update({
-        blog: blog,
+        description,
+        blog,
         first_link_type: firstLinkType,
         first_link: firstLink,
         second_link_type: secondLinkType,
         second_link: secondLink,
+        answer1,
+        answer2,
+        answer3,
       })
       .eq("user_id", user.id);
 
@@ -94,105 +87,50 @@ const HubProfile: React.FC = () => {
       setToastState({ state: "error", message: "저장에 실패했습니다." });
     } else {
       setToastState({ state: "success", message: "저장되었습니다." });
-      fetchUserData();
+      fetchUserData(); // 업데이트 후 사용자 데이터 다시 불러오기
     }
   };
 
   return (
     <section>
-      <form className="space-y-6" onSubmit={handleSubmit}>
-        <fieldset className="p-6 s:p-0">
-          <h1 className="text-subtitle font-baseBold text-labelNeutral mb-5">허브 프로필</h1>
-          <div>
-            <label htmlFor="blog" className="block text-sm font-medium text-labelNormal mb-1">
-              포트폴리오 링크
-            </label>
-            <input
-              type="url"
-              id="blog"
-              name="blog"
-              value={blog}
-              onChange={(e) => setBlog(e.target.value)}
-              placeholder="포트폴리오 링크를 입력하세요."
-              className="w-full shared-input-gray-2 border-[1px] border-fillLight"
-            />
-          </div>
+      <SelfIntroduction description={description} setDescription={setDescription} />
+      <HubProfileForm
+        blog={blog}
+        setBlog={setBlog}
+        firstLinkType={firstLinkType}
+        setFirstLinkType={setFirstLinkType}
+        firstLink={firstLink}
+        setFirstLink={setFirstLink}
+        secondLinkType={secondLinkType}
+        setSecondLinkType={setSecondLinkType}
+        secondLink={secondLink}
+        setSecondLink={setSecondLink}
+      />
+      <TeamworkQuestions
+        answer1={answer1}
+        setAnswer1={setAnswer1}
+        answer2={answer2}
+        setAnswer2={setAnswer2}
+        answer3={answer3}
+        setAnswer3={setAnswer3}
+      />
 
-          <div>
-            <label htmlFor="firstLinkType" className="block text-sm font-medium text-labelNormal mb-1">
-              추가 링크 1
-            </label>
-            <div className="flex gap-2">
-              <select
-                id="firstLinkType"
-                name="firstLinkType"
-                value={firstLinkType}
-                onChange={(e) => setFirstLinkType(e.target.value)}
-                className="w-1/3 shared-select-gray-2 border-[1px] border-fillLight"
-              >
-                <option value="">링크 선택</option>
-                {platforms.map((platform) => (
-                  <option key={platform.value} value={platform.value}>
-                    {platform.label}
-                  </option>
-                ))}
-              </select>
-              <input
-                type="url"
-                id="firstLink"
-                name="firstLink"
-                value={firstLink}
-                onChange={(e) => setFirstLink(e.target.value)}
-                placeholder="링크를 입력하세요."
-                className="w-2/3 shared-input-gray-2 border-[1px] border-fillLight"
-              />
-            </div>
-          </div>
+      {/* 저장 버튼 */}
+      <div className="mt-6 mb-12">
+        <div className="flex justify-center">
+          <button onClick={handleSave} aria-label="저장" className="shared-button-green w-[65px]">
+            저장
+          </button>
+        </div>
+      </div>
 
-          <div>
-            <label htmlFor="secondLinkType" className="block text-sm font-medium text-labelNormal mb-1">
-              추가 링크 2
-            </label>
-            <div className="flex gap-2">
-              <select
-                id="secondLinkType"
-                name="secondLinkType"
-                value={secondLinkType}
-                onChange={(e) => setSecondLinkType(e.target.value)}
-                className="w-1/3 shared-select-gray-2 border-[1px] border-fillLight"
-              >
-                <option value="">링크 선택</option>
-                {platforms.map((platform) => (
-                  <option key={platform.value} value={platform.value}>
-                    {platform.label}
-                  </option>
-                ))}
-              </select>
-              <input
-                type="url"
-                id="secondLink"
-                name="secondLink"
-                value={secondLink}
-                onChange={(e) => setSecondLink(e.target.value)}
-                placeholder="링크를 입력하세요."
-                className="w-2/3 shared-input-gray-2 border-[1px] border-fillLight"
-              />
-            </div>
-          </div>
-
-          <div className="mt-6 mb-12">
-            <div className="s:fixed flex s:justify-center s:bottom-0 s:left-0 s:right-0 s:p-4 s:bg-background s:z-10">
-              <div className="flex justify-end s:justify-center gap-2 w-full s:max-w-container-s">
-                <button type="submit" aria-label="프로필 저장" className="shared-button-green w-[65px] s:w-1/2">
-                  저장
-                </button>
-              </div>
-            </div>
-          </div>
-        </fieldset>
-      </form>
-
-      <TeamworkQuestions />
+      {toastState.state && (
+        <Toast
+          state={toastState.state}
+          message={toastState.message}
+          onClear={() => setToastState({ state: "", message: "" })}
+        />
+      )}
     </section>
   );
 };
