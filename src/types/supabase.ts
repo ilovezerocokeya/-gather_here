@@ -248,7 +248,12 @@ export type Database = {
           job_title: string | null
           nickname: string | null
           profile_image_url: string | null
-          self_introduction: string | null
+          description: string | null
+          hubCard?: boolean
+          background_image_url?: string | null
+          answer1?: string | null
+          answer2?: string | null
+          answer3?: string | null
           user_id: string
         }
         Insert: {
@@ -259,7 +264,6 @@ export type Database = {
           job_title?: string | null
           nickname?: string | null
           profile_image_url?: string | null
-          self_introduction?: string | null
           user_id?: string
         }
         Update: {
@@ -270,7 +274,12 @@ export type Database = {
           job_title?: string | null
           nickname?: string | null
           profile_image_url?: string | null
-          self_introduction?: string | null
+          description?: string | null
+          hubCard?: boolean
+          background_image_url?: string | null
+          answer1?: string | null
+          answer2?: string | null
+          answer3?: string | null
           user_id?: string
         }
         Relationships: [

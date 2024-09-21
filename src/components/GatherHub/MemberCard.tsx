@@ -233,7 +233,7 @@ useEffect(() => {
     onClick={closeModal}
   >
     <div
-      className="bg-background rounded-3xl shadow-lg s:w-[400px] s:h-[600px] w-[600px] h-[700px] overflow-y-auto transform transition-transform duration-300 ease-in-out scale-95 opacity-0"
+      className="bg-background rounded-3xl shadow-lg s:w-[400px] s:h-[600px] w-[550px] h-[700px] overflow-y-auto transform transition-transform duration-300 ease-in-out scale-95 opacity-0"
       style={{ opacity: isModalOpen ? 1 : 0, transform: isModalOpen ? "scale(1)" : "scale(0.95)" }}
       onClick={(e) => e.stopPropagation()}
     > 

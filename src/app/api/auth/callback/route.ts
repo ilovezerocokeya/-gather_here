@@ -31,13 +31,12 @@ export async function GET(request: Request) {
         const nickname = user.user_metadata?.full_name || user.email?.split("@")[0] || "사용자";
         const job_title = "";
         const experience =  "";
-
-        const description = `안녕하세요! ${nickname}이라고 합니다. 반갑습니다😆`;
+        const description = `안녕하세요! ${job_title ? job_title : "OO"}를 ${experience ? experience : "0"}년 동안 공부하고 있는 ${nickname}입니다. 반갑습니다😆`;
 
         // answer1, answer2, answer3 기본값 설정
-        const answer1 = "아직 답변이 없습니다.";
-        const answer2 = "아직 답변이 없습니다.";
-        const answer3 = "아직 답변이 없습니다.";
+        const answer1 = "";
+        const answer2 = ""
+        const answer3 = "";
 
         // 디폴트 이미지 URL
         const defaultBackgroundImageUrl = "/logos/hi.png"; 

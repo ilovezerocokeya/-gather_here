@@ -46,23 +46,38 @@ const LeftNav: React.FC = () => {
     const supabase = createClient();
     const getUserData = async () => {
       if (user) {
-        const { data, error } = await supabase.from("Users").select("*").eq("user_id", user.id).limit(1).single();
+        const { data, error } = await supabase
+          .from("Users")
+          .select("*")
+          .eq("user_id", user.id)
+          .limit(1)
+          .single();
+          
+        if (error) {
+          console.error("Users 테이블 데이터 에러:", error);
+        }
+
+        // 데이터가 있을 경우 'userData' 상태를 업데이트
         if (data) {
           const updatedUserData = {
             nickname: data.nickname ?? "", 
             job_title: data.job_title ?? "",
             experience: data.experience ?? "",
             profile_image_url: data.profile_image_url ?? "",
-            blog: data.blog ?? ""
+            blog: data.blog ?? "",
+            description: data.description ?? "",
+            hubCard: data.hubCard ?? false,
+            background_image_url: data.background_image_url ?? "",
+            answer1: data.answer1 ?? "", 
+            answer2: data.answer2 ?? "", 
+            answer3: data.answer3 ?? "",
           };
           setUserData(updatedUserData);
-        } else {
-          console.error("Users 테이블 데이터 에러:", error);
         }
       }
     };
     getUserData();
-  }, [user]); 
+  }, [user]);
 
   return (
     <aside className="sticky top-0 p-6 s:p-0 w-[250px] max-h-[235px] flex flex-col items-start gap-3 rounded-[20px] bg-fillStrong text-fontWhite shadow-sm s:hidden">
