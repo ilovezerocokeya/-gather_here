@@ -23,18 +23,42 @@ export async function GET(request: Request) {
       }
 
       if (userData) {
+        // 이미 사용자 데이터가 있는 경우 메인 페이지로 리다이렉트
         return NextResponse.redirect(`${origin}/`);
       } else {
+        
+        // 기본값 설정
         const nickname = user.user_metadata?.full_name || user.email?.split("@")[0] || "사용자";
+        const job_title = "";
+        const experience = "0";
+        
+        // 연차에 따라 문구를 동적으로 생성
+        const experienceText = experience === "0" ? "신입" : `${experience}년 동안`;
+        const description = `안녕하세요, ${job_title || '무직'}을 ${experienceText} 하고 있는 ${nickname}입니다.`;
+
+        // answer1, answer2, answer3 기본값 설정
+        const answer1 = "아직 답변이 없습니다.";
+        const answer2 = "아직 답변이 없습니다.";
+        const answer3 = "아직 답변이 없습니다.";
+
+        // 디폴트 이미지 URL
+        const defaultBackgroundImageUrl = "/logos/hi.png"; 
         const defaultData = {
           nickname,
           email: user.email,
           blog: "",
           profile_image_url: user.user_metadata?.avatar_url || "",
-          experience: "",
-          job_title: "",
+          experience,
+          job_title: job_title,
           user_id: user.id,
+          description,
+          hubCard: false,
+          background_image_url: defaultBackgroundImageUrl,
+          answer1,
+          answer2,
+          answer3,
         };
+
 
         const { error: insertError } = await supabase.from("Users").insert([defaultData]);
 
@@ -42,6 +66,7 @@ export async function GET(request: Request) {
           console.error("Error inserting user into Users table:", insertError.message);
           return NextResponse.redirect(`${origin}/auth/auth-code-error`);
         }
+
 
         return NextResponse.redirect(`${origin}/signup`);
       }

@@ -68,7 +68,7 @@ const Signup03: React.FC<Signup03Type> = ({ setUserData }) => {
 
   return (
     <div className="flex justify-center items-center min-h-screen bg-black bg-opacity-50" style={{ marginTop: '-30px' }}>
-      <div className="s:w-[370px] s:h-[590px] xs:h-[630px] w-[430px] h-[630px] relative bg-background rounded-[20px] p-4 select-none border border-background shadow-lg">
+      <div className="s:w-[370px] s:h-[580px] w-[430px] h-[610px] relative bg-background rounded-[20px] p-4 select-none border border-background shadow-lg">
         {prevStep && (
           <button onClick={prevStep} className="absolute left-9 top-10 text-[c4c4c4]">
             &larr;
@@ -95,7 +95,7 @@ const Signup03: React.FC<Signup03Type> = ({ setUserData }) => {
           자신을 나타낼 수 있는 포트폴리오 링크를 알려주시면 <br className="s:hidden" /> 함께 할 동료를 만나는 데 큰 도움이 될거예요.
         </div>
   
-        <form ref={formRef} onSubmit={handleSubmit(handleFormSubmit)} className="max-h-[380px] overflow-y-auto mt-6">
+        <form ref={formRef} onSubmit={handleSubmit(handleFormSubmit)} className="max-h-[380px] overflow-y-auto s:mt-6 mt-1">
           <NicknameInput register={register} errors={errors} nicknameAvailable={nicknameAvailable} watch={watch} />
           <BlogInput
             register={register}
@@ -106,7 +106,7 @@ const Signup03: React.FC<Signup03Type> = ({ setUserData }) => {
             setBlogSuccess={setBlogSuccess}
             validateUrl={validateUrl}
           />
-          <div className="flex justify-center items-center mt-6">
+          <div className="flex justify-center items-center s:mt-10 mt-8">
             <button
               type="submit"
               className={`s:w-[300px] w-[350px] h-[45px] py-3 flex justify-center items-center rounded-md transition-transform transform hover:scale-105 active:scale-95 active:bg-gray-800 active:text-gray-200 ${

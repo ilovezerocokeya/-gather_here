@@ -2,21 +2,33 @@ import React, { createContext, useContext, useState, useEffect, useCallback, Rea
 import { createClient } from "@/utils/supabase/client";
 import { User } from "@supabase/supabase-js";
 
+// 사용자 인증 상태 인터페이스
+// 로그인한 사용자의 정보를 포함하고 있으며, 인증 상태와 관련된 함수를 제공합니다.
 interface AuthState {
-  user: User | null;
-  isAuthenticated: boolean;
-  setUser: (user: User | null) => void;
-  resetAuthUser: () => void;
+  user: User | null; // 현재 로그인한 사용자
+  isAuthenticated: boolean; // 사용자의 인증 여부
+  setUser: (user: User | null) => void; // 사용자를 설정하는 함수
+  resetAuthUser: () => void; // 사용자 인증 정보를 초기화하는 함수
 }
 
+// 사용자의 프로필과 관련된 데이터를 관리하는 인터페이스입니다.
+// 사용자의 직업 정보, 포트폴리오, 자기소개 등 멤버 카드와 관련된 세부 정보를 포함합니다.
 interface UserData {
   nickname: string;
   job_title: string;
   experience: string;
+  description: string; // 자기소개
   profile_image_url: string;
-  blog: string;
+  blog: string; // 대표 포트폴리오
+  hubCard?: boolean;
+  background_image_url?: string; // 포트폴리오 이미지
+  answer1?: string
+  answer2?: string
+  answer3?: string
 }
 
+// 회원가입 상태를 관리하는 인터페이스입니다.
+// 회원가입 프로세스의 단계별 상태를 포함하고 있으며, 관련된 필드를 업데이트하거나 초기화하는 함수를 제공합니다.
 interface SignupState {
   step: number;
   job_title: string;
@@ -34,24 +46,71 @@ interface SignupState {
   setNickname: (nickname: string) => void;
 }
 
+// 전체 상태를 관리하는 인터페이스입니다.
+// AuthState, SignupState, UserData를 상속받아 사용자 인증, 회원가입 상태, 사용자 데이터를 모두 포함합니다.
 interface StoreState extends AuthState, SignupState {
-  userData: UserData | null;
-  setUserData: (data: UserData | null) => void; // userData를 null로 설정할 수 있게 변경
-  fetchUserData: () => Promise<void>;
-  initializationUser: () => void;
-  loading: boolean; // 로딩 상태 추가
+  userData: UserData | null; // 사용자 관련 데이터
+  setUserData: (data: UserData | null) => void; // 사용자 데이터를 설정하는 함수
+  fetchUserData: () => Promise<void>; // 사용자 데이터를 가져오는 함수
+  initializationUser: () => void; // 모든 사용자 관련 상태를 초기화하는 함수
+  loading: boolean; // 로딩 상태 (비동기 작업 동안 true)
+  description?: string;  // description 추가
+  background_image_url?: string;  // background_image_url 추가
+  hubCard?: boolean;  // hubCard 추가
+  likedMembers: { [key: string]: boolean }; // 특정 유저에 대한 좋아요 상태를 저장하는 객체
+  toggleLike: (nickname: string) => void; // 좋아요 상태를 변경하는 함수, nickname을 인자로 받아 상태를 변경함
+  updateUserAnswers: (answers: { answer1?: string; answer2?: string; answer3?: string }) => Promise<void>; // 사용자 답변을 업데이트하는 비동기 함수
 }
 
+// UserContext 생성 (기본값은 undefined로 설정)
 const UserContext = createContext<StoreState | undefined>(undefined);
 
+// UserProvider 컴포넌트: 전역 사용자 상태를 관리하고 하위 컴포넌트들에게 UserContext를 제공
 export const UserProvider: React.FC<{ children: ReactNode }> = ({ children }) => {
-  const supabase = createClient(); // Supabase 클라이언트 생성
+  const supabase = createClient();
 
-  // 사용자 상태
+   // 사용자 인증 상태
   const [user, setUser] = useState<User | null>(null);
   const [isAuthenticated, setIsAuthenticated] = useState<boolean>(false);
-  const [userData, setUserData] = useState<UserData | null>(null); // null 초기값
-  const [loading, setLoading] = useState<boolean>(false); // 로딩 상태 추가
+
+  //사용자 데이터 상태
+  const [userData, setUserData] = useState<UserData | null>(null);
+
+  //로딩 상태
+  const [loading, setLoading] = useState<boolean>(false);
+
+   // 유저 답변을 업데이트하는 함수
+   const updateUserAnswers = async (answers: Partial<UserData>) => {
+    if (!user) return;
+    try {
+      const { error } = await supabase
+        .from('Users')
+        .update(answers)
+        .eq('user_id', user.id);
+  
+      if (error) {
+        console.error('Error updating answers:', error.message);
+      } else {
+        setUserData((prev) => {
+          if (prev) {
+            return { ...prev, ...answers };
+          }
+          return prev;
+        });
+      }
+    } catch (error) {
+      console.error('Error updating answers:', error);
+    }
+  };
+
+  // 좋아요 상태
+  const [likedMembers, setLikedMembers] = useState<{ [key: string]: boolean }>({}); 
+  const toggleLike = (nickname: string) => {
+    setLikedMembers((prevLikedMembers) => ({
+      ...prevLikedMembers,
+      [nickname]: !prevLikedMembers[nickname], // 좋아요 상태 반전
+    }));
+  };
 
   // 회원가입 상태
   const [step, setStep] = useState<number>(1);
@@ -61,7 +120,7 @@ export const UserProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
   const [blog, setBlog] = useState<string>("");
   const [profile_image_url, setProfileImageUrl] = useState<string>("");
 
-  // 세션 확인 함수
+  // 세션 확인 함수 (로그인 상태 확인)
   useEffect(() => {
     const checkSession = async () => {
       setLoading(true); // 세션 확인 중 로딩 상태 true
@@ -73,6 +132,7 @@ export const UserProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
         }
 
         if (session?.user) {
+          // 세션이 유효하면 사용자 인증 정보를 설정
           setAuthUser(session.user);
         }
       } catch (error) {
@@ -83,55 +143,57 @@ export const UserProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
     };
 
     if (!user) {
-      checkSession();
+      checkSession();  // 로그인된 사용자가 없을 경우 세션을 확인
     }
   }, [user, supabase]);
 
-  // 사용자 데이터 호출
-  const fetchUserData = useCallback(async () => {
-    if (!user || !user.id || userData) return;
+ // 사용자 데이터를 서버에서 가져오는 함수 수정
+ const fetchUserData = useCallback(async () => {
+  if (!user || !user.id || userData) return;
 
-    setLoading(true); // 사용자 데이터를 불러오는 동안 로딩 상태 true
-    try {
-      const { data, error } = await supabase
-        .from('Users')
-        .select('nickname, job_title, experience, profile_image_url, blog')
-        .eq("user_id", user.id)
-        .single();
+  setLoading(true);
+  try {
+    const { data, error } = await supabase
+      .from('Users')
+      .select('nickname, job_title, experience, profile_image_url, blog, hubCard, description, background_image_url, answer1, answer2, answer3')
+      .eq("user_id", user.id)
+      .single();
 
-      if (error) {
-        console.error('Error fetching user data:', error.message);
-        return;
-      }
-
-      if (data) {
-        setUserData(data as UserData);
-      }
-    } catch (error) {
-      console.error('Error fetching user data:', error);
-    } finally {
-      setLoading(false); // 데이터 호출 완료 후 로딩 상태 false
+    if (error) {
+      console.error('Error fetching user data:', error.message);
+      return;
     }
-  }, [user, userData, supabase]);
 
-  // 사용자 설정 함수
+    if (data) {
+      setUserData(data as unknown as UserData); // 일단 unknown으로 처리 후 UserData로 캐스팅
+    }
+  } catch (error) {
+    console.error('Error fetching user data:', error);
+  } finally {
+    setLoading(false);
+  }
+}, [user, userData, supabase]);
+
+ // 사용자 인증 정보를 설정하는 함수
   const setAuthUser = useCallback(async (user: User | null) => {
     setUser(user);
-    setIsAuthenticated(!!user);
+    setIsAuthenticated(!!user); // 사용자가 있으면 true, 없으면 false로 설정
 
     if (user && !userData) {
+      // 사용자 데이터가 없으면 서버에서 데이터를 가져옴
       await fetchUserData();
     }
   }, [fetchUserData, userData]);
 
-  // 사용자 초기화 함수
+
+  // 사용자 인증 상태를 초기화하는 함수 (로그아웃 시 호출)
   const resetAuthUser = useCallback(() => {
     setUser(null);
     setIsAuthenticated(false);
     setUserData(null); // 유저 데이터도 null로 초기화
   }, []);
 
-  // 회원가입 상태 필드 설정
+  // 회원가입 상태 필드 업데이트 함수
   const setField = useCallback((field: keyof SignupState, value: string) => {
     switch (field) {
       case "job_title":
@@ -172,33 +234,41 @@ export const UserProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
   const initializationUser = () => {
     resetAuthUser();
     resetSignupUser();
+
   };
 
-  const contextValue: StoreState = {
-    user,
-    isAuthenticated,
-    setUser: setAuthUser,
-    resetAuthUser,
-    userData,
-    setUserData,
-    fetchUserData,
-    initializationUser,
-    step,
-    job_title,
-    experience,
-    nickname,
-    blog,
-    profile_image_url,
-    setField,
-    nextStep,
-    prevStep,
-    resetSignupUser,
-    setJob,
-    setProfileImageUrl,
-    setBlog,
-    setNickname,
-    loading, // 추가된 로딩 상태
-  };
+// Context에 제공할 값에 userData.hubCard 상태 포함
+const contextValue: StoreState = {
+  user,
+  isAuthenticated,
+  setUser: setAuthUser,
+  resetAuthUser,
+  userData,
+  setUserData,
+  fetchUserData,
+  initializationUser,
+  step,
+  job_title,
+  experience,
+  nickname,
+  blog,
+  profile_image_url,
+  description: userData?.description || "",
+  background_image_url: userData?.background_image_url || "",
+  hubCard: userData?.hubCard || false,
+  setField,
+  nextStep,
+  prevStep,
+  resetSignupUser,
+  setJob,
+  setProfileImageUrl,
+  setBlog,
+  setNickname,
+  loading,
+  likedMembers,
+  toggleLike,
+  updateUserAnswers, 
+};
 
   return <UserContext.Provider value={contextValue}>{children}</UserContext.Provider>;
 };
