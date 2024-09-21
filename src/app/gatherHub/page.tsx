@@ -13,6 +13,17 @@ const MemberCard = React.memo(dynamic(() => import('@/components/GatherHub/Membe
   ssr: false,
 }), (prevProps, nextProps) => prevProps.liked === nextProps.liked);
 
+// 에러 상태 코드 상수화
+const ERROR_STATUS = {
+  NOT_FOUND: 404,
+  UNAUTHORIZED: 401,
+  FORBIDDEN: 403,
+  SERVER_ERROR: 500,
+};
+
+// 스크롤 위치를 저장할 키
+const SCROLL_POSITION_KEY = 'gatherHubScrollPosition'; 
+
 // 유저 데이터 인터페이스 (유저의 응답 및 설명)
 interface UserData {
   answer1?: string;
@@ -46,6 +57,13 @@ const getDefaultUserData = (userData: Partial<UserData>) => ({
   answer3: userData?.answer3 || '기본 답변 3',
   description: userData?.description || '항상 사용자의 입장에서 친절한 화면을 지향합니다.',
 });
+
+// 필터링 로직을 함수로 분리
+const filterMembers = (members: MemberCardProps[], job: string) => {
+  return job === 'all'
+    ? members.filter(member => member.nickname && member.jobTitle && member.profileImageUrl)
+    : members.filter(member => member.jobTitle?.toLowerCase() === job && member.nickname && member.profileImageUrl);
+};
 
 // axios 인스턴스를 생성하여 요청 타임아웃을 설정
 const axiosInstance = axios.create({
@@ -106,14 +124,7 @@ const GatherHubPage: React.FC = () => {
   const [filteredJob, setFilteredJob] = useState<string>('all');  // 필터링된 직업 상태 관리
   const hasNextPageRef = useRef<boolean | undefined>(undefined);  // 다음 페이지 여부 참조값
   const isFetchingNextPageRef = useRef<boolean>(false);  // 다음 페이지 fetching 여부 참조값
-
-  // 좋아요 상태를 토글하는 함수
-  const toggleLike = useCallback((nickname: string) => {
-    setLikedMembers(prev => ({
-      ...prev,
-      [nickname]: !prev[nickname],
-    }));
-  }, []);
+  const scrollContainerRef = useRef<HTMLDivElement>(null); // 스크롤 컨테이너 참조값
 
   // 데이터 페이징을 처리하는 React Query 사용
   const {
@@ -137,51 +148,76 @@ const GatherHubPage: React.FC = () => {
     isFetchingNextPageRef.current = isFetchingNextPage;
   }, [hasNextPage, isFetchingNextPage]);
 
-  // 스크롤을 감지하여, 맨 아래에 도달하면 다음 페이지 데이터를 가져옴
+   // 스크롤 위치 저장 함수
+  const saveScrollPosition = () => {
+    if (scrollContainerRef.current) {
+      sessionStorage.setItem(SCROLL_POSITION_KEY, scrollContainerRef.current.scrollTop.toString());
+    }
+  };
+
+  // 스크롤 이벤트 핸들링
   useEffect(() => {
     const handleScroll = throttle(() => {
-      if (window.innerHeight + document.documentElement.scrollTop >= document.documentElement.offsetHeight - 200) {
+      saveScrollPosition();
+      if (
+        scrollContainerRef.current &&
+        scrollContainerRef.current.scrollTop + scrollContainerRef.current.clientHeight >=
+          scrollContainerRef.current.scrollHeight - 200
+      ) {
         if (hasNextPageRef.current && !isFetchingNextPageRef.current) {
           fetchNextPage();
         }
       }
-    }, 300); // 스크롤 감지 빈도를 조절 (300ms)
-
-    window.addEventListener('scroll', handleScroll);
-    return () => window.removeEventListener('scroll', handleScroll);
+    }, 300);
+  
+    const scrollContainer = scrollContainerRef.current;
+    if (scrollContainer) {
+      scrollContainer.addEventListener('scroll', handleScroll);
+    }
+  
+    return () => {
+      if (scrollContainer) {
+        scrollContainer.removeEventListener('scroll', handleScroll);
+      }
+    };
   }, [fetchNextPage]);
+
+  // 컴포넌트가 마운트될 때 스크롤 위치 복원
+  useEffect(() => {
+    const savedScrollPosition = sessionStorage.getItem(SCROLL_POSITION_KEY);
+    if (scrollContainerRef.current && savedScrollPosition) {
+      scrollContainerRef.current.scrollTo(0, parseInt(savedScrollPosition, 10));
+    }
+  }, []);
 
   // 모든 멤버 데이터를 합산하여 반환하는 함수
   const allMembers = useMemo(() => {
-    const members = data?.pages?.flatMap(page => page.members) || [];
-    
-    // 유저가 Hub에 등록된 경우 유저 프로필을 맨 앞에 추가
+    let members = data?.pages?.flatMap(page => page.members) || [];
     if (isHubRegistered && userData?.nickname) {
       members.unshift({
-        nickname: userData.nickname || '',
-        jobTitle: userData.job_title || '',
-        experience: userData.experience || '',
-        blog: userData.blog || '',
+        nickname: userData.nickname,
+        jobTitle: userData.job_title,
+        experience: userData.experience,
+        blog: userData.blog,
         ...getDefaultUserData(userData),
         backgroundImageUrl: '',
-        profileImageUrl: userData.profile_image_url || '',
+        profileImageUrl: userData.profile_image_url,
         notionLink: 'https://www.notion.so/',
         instagramLink: 'https://www.instagram.com/',
-        liked: likedMembers[userData.nickname || ''] || false,
-        toggleLike: () => toggleLike(userData.nickname || ''),
+        liked: likedMembers[userData.nickname] || false,
+        toggleLike: () => setLikedMembers(prev => ({
+          ...prev,
+          [userData.nickname]: !prev[userData.nickname],
+        })),
       });
     }
     return members;
-  }, [isHubRegistered, userData?.nickname, data, likedMembers]);
+  }, [isHubRegistered, userData, data, likedMembers]);
 
-  // 직업 필터링을 적용하여 필터링된 멤버 데이터를 반환하는 함수
-  const filteredMembers = useMemo(() => {
-    return filteredJob === 'all'
-      ? allMembers.filter(member => member.nickname && member.jobTitle && member.profileImageUrl)
-      : allMembers.filter(member => member.jobTitle?.toLowerCase() === filteredJob && member.nickname && member.profileImageUrl);
-  }, [allMembers, filteredJob]);
+  // 필터링된 멤버 데이터를 반환하는 함수
+  const filteredMembers = useMemo(() => filterMembers(allMembers, filteredJob), [allMembers, filteredJob]);
 
-  // 데이터 로딩 중일 때 보여줄 컴포넌트
+  // 데이터 로딩 중일 때
   if (isLoading) {
     return (
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 justify-items-center">
@@ -193,36 +229,36 @@ const GatherHubPage: React.FC = () => {
   }
 
   // 에러 발생 시 처리 로직
-  if (error) {
-    let errorMessage = '알 수 없는 오류가 발생했습니다. 잠시 후 다시 시도해 주세요.';
-  
-    if (axios.isAxiosError(error)) {
-      if (error.response) {
-        if (error.response.status >= 500) {
-          errorMessage = '서버에 문제가 발생했습니다. 잠시 후 다시 시도해 주세요.';
-        } else if (error.response.status === 404) {
-          errorMessage = '요청하신 데이터를 찾을 수 없습니다.';
-        } else if (error.response.status === 401 || error.response.status === 403) {
-          errorMessage = '접근 권한이 없습니다. 로그인 후 다시 시도해 주세요.';
-        }
-      } else if (error.request) {
-        errorMessage = '네트워크 문제가 발생했습니다. 연결을 확인해 주세요.';
-      }
-    } else {
-      errorMessage = '알 수 없는 오류가 발생했습니다.';
+if (error) {
+  let errorMessage = '알 수 없는 오류가 발생했습니다. 잠시 후 다시 시도해 주세요.';
+
+  if (axios.isAxiosError(error)) {
+    const status = error.response?.status;
+
+    if (status === ERROR_STATUS.SERVER_ERROR) {
+      errorMessage = '서버에 문제가 발생했습니다. 잠시 후 다시 시도해 주세요.';
+    } else if (status === ERROR_STATUS.NOT_FOUND) {
+      errorMessage = '요청하신 데이터를 찾을 수 없습니다.';
+    } else if (status === ERROR_STATUS.UNAUTHORIZED || status === ERROR_STATUS.FORBIDDEN) {
+      errorMessage = '접근 권한이 없습니다. 로그인 후 다시 시도해 주세요.';
+    } else if (!error.response && error.request) {
+      // request가 존재할 경우 네트워크 관련 오류일 가능성 처리
+      errorMessage = '네트워크 문제가 발생했습니다. 연결을 확인해 주세요.';
     }
-  
-    return (
-      <div>
-        <p>{errorMessage}</p>
-        <button onClick={() => fetchNextPage()}>다시 시도</button>
-      </div>
-    );
+  } else {
+    errorMessage = '알 수 없는 오류가 발생했습니다.';
   }
+  return (
+    <div>
+      <p>{errorMessage}</p>
+      <button onClick={() => fetchNextPage()}>다시 시도</button>
+    </div>
+  );
+}
 
   return (
     <div className="flex flex-col lg:flex-row justify-center">
-      <div className="w-full lg:max-w-6xl lg:flex lg:justify-between px-4 py-8">
+      <div className="w-full lg:max-w-6xl lg:flex lg:justify-between px-4 py-8" ref={scrollContainerRef}>
               
       {/* 작은 화면(모바일)에서는 JobDirectory를 상단에 표시 */}
         <div className="mb-6 lg:hidden">
@@ -237,7 +273,10 @@ const GatherHubPage: React.FC = () => {
               key={`${member.nickname}-${index}`} 
               {...member} 
               liked={likedMembers[member.nickname] || false}
-              toggleLike={() => toggleLike(member.nickname)}
+              toggleLike={() => setLikedMembers(prev => ({
+                ...prev,
+                [member.nickname]: !prev[member.nickname],
+              }))}
               description={member.description || ''}  
               answer1={member.answer1 || ''}          
               answer2={member.answer2 || ''}          
