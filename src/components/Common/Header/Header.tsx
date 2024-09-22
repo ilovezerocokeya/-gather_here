@@ -100,34 +100,34 @@ const Header: React.FC = () => {
     <header className="bg-background shadow-md relative text-fontWhite">
       <div className="w-full mx-auto max-w-container-l m:max-w-container-m s:max-w-container-s s:flex-row flex justify-between items-center py-[14px] s:py-2">
       <div className="flex items-center s:space-x-4 space-x-12">
-        <Link href="/" className="flex items-center">
-          <Image
+      <Link href="/" className="flex items-center logo-link">
+        <Image
           src="/logos/gatherhere.svg"
           alt="@gather_here 로고"
           priority
           width={100}
           height={50}
           className="s:hidden"
-          />
-          <Image
-            src="/assets/header/mobile_logo.svg"
-            alt="@gather_here 로고"
-            priority
-            width={20}
-            height={25}
-            className="hidden s:block"
-          />
-        </Link>
-          <Link href="/gatherHub">
-            <Image
-              src="/logos/hub2.png"
-              alt="@gather_hub 로고"
-              priority
-              width={120}  
-              height={50}  
-              className="s:w-[90px] s:h-[25px]" 
-            />
-          </Link>
+        />
+        <Image
+          src="/assets/header/mobile_logo.svg"
+          alt="@gather_here 로고"
+          priority
+          width={20}
+          height={25}
+          className="hidden s:block"
+        />
+      </Link>
+      <Link href="/gatherHub" className="logo-link">
+        <Image
+          src="/logos/hub2.png"
+          alt="@gather_hub 로고"
+          priority
+          width={120}
+          height={50}
+          className="s:w-[90px] s:h-[25px]"
+        />
+      </Link>
       </div>
         <Suspense>
           <nav className="flex items-center gap-2">

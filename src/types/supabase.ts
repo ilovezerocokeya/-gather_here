@@ -242,54 +242,57 @@ export type Database = {
           job_title: string | null;
           nickname: string | null;
           profile_image_url: string | null;
-          self_introduction: string | null;
+          background_image_url?: string | null
+          description?: string | null
+          hubCard?: boolean
           user_id: string;
+          answer1: string | null;
+          answer2: string | null;
+          answer3: string | null;
           first_link_type: string | null;
           first_link: string | null;
           second_link_type: string | null;
           second_link: string | null;
+        };
+        Insert: {
+          blog: string | null;
+          created_at: string | null;
+          email: string | null;
+          experience: string | null;
+          job_title: string | null;
+          nickname: string | null;
+          profile_image_url: string | null;
+          background_image_url?: string | null
+          description?: string | null
+          hubCard?: boolean
+          user_id: string;
           answer1: string | null;
           answer2: string | null;
           answer3: string | null;
-          description: string | null;
-        };
-        Insert: {
-          blog?: string | null;
-          created_at?: string | null;
-          email?: string | null;
-          experience?: string | null;
-          job_title?: string | null;
-          nickname?: string | null;
-          profile_image_url?: string | null;
-          self_introduction?: string | null;
-          user_id?: string;
-          first_link_type?: string | null;
-          first_link?: string | null;
-          second_link_type?: string | null;
-          second_link?: string | null;
-          answer1?: string | null;
-          answer2?: string | null;
-          answer3?: string | null;
-          description?: string | null;
+          first_link_type: string | null;
+          first_link: string | null;
+          second_link_type: string | null;
+          second_link: string | null;
         };
         Update: {
-          blog?: string | null;
-          created_at?: string | null;
-          email?: string | null;
-          experience?: string | null;
-          job_title?: string | null;
-          nickname?: string | null;
-          profile_image_url?: string | null;
-          self_introduction?: string | null;
-          user_id?: string;
-          first_link_type?: string | null;
-          first_link?: string | null;
-          second_link_type?: string | null;
-          second_link?: string | null;
-          answer1?: string | null;
-          answer2?: string | null;
-          answer3?: string | null;
-          description?: string | null;
+          blog: string | null;
+          created_at: string | null;
+          email: string | null;
+          experience: string | null;
+          job_title: string | null;
+          nickname: string | null;
+          profile_image_url: string | null;
+          background_image_url?: string | null
+          description?: string | null
+          hubCard?: boolean
+          user_id: string;
+          answer1: string | null;
+          answer2: string | null;
+          answer3: string | null;
+          first_link_type: string | null;
+          first_link: string | null;
+          second_link_type: string | null;
+          second_link: string | null;
         };
         Relationships: [
           {

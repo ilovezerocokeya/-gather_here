@@ -133,15 +133,14 @@ const JobDirectory: React.FC<JobDirectoryProps> = ({ setFilteredJob, className }
       {/* Hub 등록 버튼 (큰 화면용) */}
       <div className="hidden lg:block relative group">
         <button
-          className="mt-3 w-full bg-fillLight text-primary text-sm p-3 rounded-lg shadow-lg hover:shadow-xl transform hover:scale-105 transition-all duration-300 ease-out hover:bg-fillLighter hover:text-bright hover:brightness-125"
+          className="mt-20 w-full bg-fillLight text-primary text-sm p-3 rounded-lg shadow-lg hover:shadow-xl transform hover:scale-105 transition-all duration-300 ease-out hover:bg-fillLighter hover:text-bright hover:brightness-125"
           onClick={handleAddCard}
         >
           {isHubRegistered ? '프로필 수정' : '프로필 등록'}
         </button>
         {/* 말풍선 */}
-        <div className="absolute top-[-60px] left-1/2 transform -translate-x-1/2 w-[200px] px-3 py-2 bg-yellow-500 text-black text-sm text-center rounded-lg opacity-0 group-hover:opacity-100 transition-opacity duration-200 shadow-lg">
+        <div className="absolute top-[10px] left-1/2 transform -translate-x-1/2 w-[200px] px-3 py-2 bg-yellow-500 text-black text-sm text-center rounded-lg opacity-0 group-hover:opacity-100 transition-opacity duration-200 shadow-lg">
           Hub멤버가 되기 위해 <br /> 카드를 등록해주세요
-          <div className="absolute bottom-[-8px] left-1/2 transform -translate-x-1/2 w-3 h-3 bg-yellow-500 rotate-45 rounded-sm shadow-lg"></div>
         </div>
       </div>
 

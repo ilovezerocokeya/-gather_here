@@ -309,3 +309,18 @@ body {
 .custom-tooltip-bottom-3 {
   @apply top-full mt-2 left-1/2 transform -translate-x-1/2 bg-fillStrong text-fontWhite text-xs rounded py-1 px-2;
 }
+.logo-link {
+  transition: transform 0.3s ease, opacity 0.3s ease;
+}
+
+/* hover 상태에서 살짝 확대 */
+.logo-link:hover {
+  transform: scale(1.15); /* 5% 확대 */
+  opacity: 0.9;
+}
+
+/* 클릭할 때 살짝 눌리는 효과 */
+.logo-link:active {
+  transform: scale(0.9); /* 5% 축소 */
+  opacity: 0.8;
+}
