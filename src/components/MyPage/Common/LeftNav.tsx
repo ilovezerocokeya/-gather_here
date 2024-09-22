@@ -80,7 +80,7 @@ const LeftNav: React.FC = () => {
   }, [user]);
 
   return (
-    <aside className="sticky top-0 p-6 s:p-0 w-[250px] max-h-[235px] flex flex-col items-start gap-3 rounded-[20px] bg-fillStrong text-fontWhite shadow-sm s:hidden">
+    <aside className="sticky top-0 p-6 s:p-0 w-[250px] max-h-[360px] flex flex-col items-start gap-3 rounded-[20px] bg-fillStrong text-fontWhite shadow-sm s:hidden">
       {loading ? (
         <LeftNavLoader />
       ) : userData ? (
@@ -109,31 +109,80 @@ const LeftNav: React.FC = () => {
       )}
       <nav>
         <ul className="w-full">
+          {/* 프로필 관리 */}
           <li className="mb-3">
             <Link
               href="/mypage"
-              className={`block w-full ${
-                pathname === "/mypage" ? "text-labelStrong font-baseBold" : "text-labelNeutral"
+              className={`block w-full text-lg text-labelNeutral font-baseBold hover:text-primary focus:text-primary ${
+                pathname === "/mypage" ? "text-primary font-baseBold" : "text-labelNeutral"
               }`}
             >
-              내 정보 수정
+              프로필 관리
             </Link>
+            <ul className="ml-4 mt-2">
+              <li className="mb-2">
+                <Link
+                  href="/mypage"
+                  className={`block w-full hover:text-primary focus:text-primary ${
+                    pathname === "/mypage" ? "text-primary font-baseBold" : "text-labelNeutral"
+                  }`}
+                >
+                  프로필 수정
+                </Link>
+              </li>
+              <li className="mb-2">
+                <Link
+                  href="/mypage/hubprofile"
+                  className={`block w-full hover:text-primary focus:text-primary ${
+                    pathname === "/mypage/hubprofile" ? "text-primary font-baseBold" : "text-labelNeutral"
+                  }`}
+                >
+                  허브 프로필 관리
+                </Link>
+              </li>
+            </ul>
           </li>
+
+          {/* 북마크 */}
           <li className="mb-3">
             <Link
               href="/mypage/myinterests"
-              className={`block w-full ${
-                pathname === "/mypage/myinterests" ? "text-labelStrong font-baseBold" : "text-labelNeutral"
+              className={`block w-full text-lg text-labelNeutral font-baseBold hover:text-primary focus:text-primary ${
+                pathname === "/mypage/myinterests" ? "text-primary font-baseBold" : "text-labelNeutral"
               }`}
             >
-              내 관심글
+              북마크
             </Link>
+            <ul className="ml-4 mt-2">
+              <li className="mb-2">
+                <Link
+                  href="/mypage/myinterests"
+                  className={`block w-full hover:text-primary focus:text-primary ${
+                    pathname === "/mypage/myinterests" ? "text-primary font-baseBold" : "text-labelNeutral"
+                  }`}
+                >
+                  내 관심글
+                </Link>
+              </li>
+              <li className="mb-2">
+                <Link
+                  href="/mypage/savedpeople"
+                  className={`block w-full hover:text-primary focus:text-primary ${
+                    pathname === "/mypage/savedpeople" ? "text-primary font-baseBold" : "text-labelNeutral"
+                  }`}
+                >
+                  내가 저장한 사람
+                </Link>
+              </li>
+            </ul>
           </li>
+
+          {/* 내 작성글 */}
           <li className="mb-3">
             <Link
               href="/mypage/myposts"
-              className={`block w-full ${
-                pathname === "/mypage/myposts" ? "text-labelStrong font-baseBold" : "text-labelNeutral"
+              className={`block w-full text-lg hover:text-primary focus:text-primary ${
+                pathname === "/mypage/myposts" ? "text-primary font-baseBold" : "text-labelNeutral"
               }`}
             >
               내 작성글

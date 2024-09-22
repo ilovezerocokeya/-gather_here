@@ -40,7 +40,6 @@ export async function GET(request: Request) {
 
         // 디폴트 이미지 URL
         const defaultBackgroundImageUrl = "/logos/hi.png"; 
-
         const defaultData = {
           nickname,
           email: user.email,
@@ -57,7 +56,7 @@ export async function GET(request: Request) {
           answer3,
         };
 
-        // Users 테이블에 데이터 삽입
+
         const { error: insertError } = await supabase.from("Users").insert([defaultData]);
 
         if (insertError) {
@@ -65,7 +64,7 @@ export async function GET(request: Request) {
           return NextResponse.redirect(`${origin}/auth/auth-code-error`);
         }
 
-        // 회원가입 완료 후 리다이렉트
+
         return NextResponse.redirect(`${origin}/signup`);
       }
     } else {
@@ -78,6 +77,5 @@ export async function GET(request: Request) {
     console.warn("No code found in the request URL");
   }
 
-  // 회원가입 페이지로 리다이렉트
   return NextResponse.redirect(`${origin}/signup`);
 }

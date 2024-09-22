@@ -40,7 +40,6 @@ const LoginForm = () => {
   return (
     <div className="flex flex-col items-center s:w-[330px] s:h-[490px] w-[430px] h-[580px] bg-background rounded-[20px] p-4 select-none ">
       <div className="w-full s:pt-8 pt-16 pb-4 text-center text-white text-4xl font-medium leading-9">시작하기</div>
-
       <div className="w-full pb-8 text-center text-[#9A9A9A] text-l font-normal leading-relaxed">
        1분만에 SNS로 가입하고 <br /> 나에게 꼭 맞는 동료들을 만나보세요!
       </div>
