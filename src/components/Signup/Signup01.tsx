@@ -1,6 +1,6 @@
 "use client";
 
-import React from "react";
+import React, { useState } from "react";
 import JobSelectionButton from "./components/JobSelectionButton";
 import SkipButton from "./components/SkipButton";
 import useSelectJob from "@/hooks/useSelectJob";
@@ -26,22 +26,22 @@ const Signup01: React.FC = () => {
   const { selectedJob, handleJobSelection } = useSelectJob();
   const router = useRouter();
   const { closeModal } = useModal();
+  const [isModalOpen, setIsModalOpen] = useState(false);
 
   const handleSkipWithConfirmation = () => {
-    document.body.classList.remove("page-disabled");
+    // 모달을 열기 위한 상태 설정
+    setIsModalOpen(true);
+  };
 
-    AlertModal({
-      title: "정말 건너뛰시겠습니까?",
-      text: "기본정보는 마이페이지에서 수정할 수 있습니다.",
-      icon: "warning",
-      confirmButtonText: "네, 건너뛰기",
-      cancelButtonText: "아니요, 계속 입력하기",
-      onConfirm: () => {
-        closeModal();
-        router.replace("/");
-      },
-      onCancel: () => document.body.classList.add("page-disabled"),
-    });
+  const handleConfirmSkip = () => {
+    // 모달에서 "네, 건너뛰기" 선택 시 처리
+    closeModal();
+    router.replace("/");
+  };
+
+  const handleCancelSkip = () => {
+    // 모달에서 "아니요, 계속 입력하기" 선택 시 처리
+    setIsModalOpen(false); // 모달 닫기
   };
 
   return (
@@ -78,6 +78,15 @@ const Signup01: React.FC = () => {
             />
           ))}
         </div>
+
+        {/* 모달 컴포넌트 */}
+        {isModalOpen && (
+          <AlertModal
+            isOpen={isModalOpen}
+            onConfirm={handleConfirmSkip}
+            onCancel={handleCancelSkip}
+          />
+        )}
       </div>
     </div>
   );
