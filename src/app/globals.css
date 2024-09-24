@@ -308,3 +308,19 @@ body {
 .custom-tooltip-bottom-3 {
   @apply top-full mt-2 left-1/2 transform -translate-x-1/2 bg-fillStrong text-fontWhite text-xs rounded py-1 px-2;
 }
+
+.floating-icon {
+  animation: floating 3s ease-in-out infinite;
+}
+
+@keyframes floating {
+  0% {
+    transform: translateY(0);
+  }
+  50% {
+    transform: translateY(-10px);
+  }
+  100% {
+    transform: translateY(0);
+  }
+}

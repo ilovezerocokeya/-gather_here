@@ -9,11 +9,11 @@ import { createPortal } from 'react-dom';
 // MemberCardProps: 멤버 카드 컴포넌트에서 필요한 속성들을 정의하는 인터페이스
 interface MemberCardProps {
   nickname: string;
-  jobTitle: string;
+  job_title: string;
   experience: string;
   description: string;
-  backgroundImageUrl: string;
-  profileImageUrl: string;
+  background_image_url: string;
+  profile_image_url: string;
   blog: string; // 대표 포트폴리오
   answer1: string; 
   answer2: string; 
@@ -27,11 +27,11 @@ interface MemberCardProps {
 // MemberCard: 각 멤버의 정보를 카드 형태로 렌더링하는 컴포넌트
 const MemberCard: React.FC<MemberCardProps> = ({
   nickname,
-  jobTitle,
+  job_title,
   experience,
   description,
-  backgroundImageUrl,
-  profileImageUrl,
+  background_image_url,
+  profile_image_url,
   blog,
   answer1,
   answer2,
@@ -99,11 +99,11 @@ return (
        <div className="absolute top-2 left-2 z-10">
          <button
            onClick={() => toggleLike(nickname)}
-           className="p-2 rounded-full bg-white shadow-lg hover:bg-gray-100
+           className="p-2 rounded-full bg-white border-2 border-black shadow-lg hover:bg-gray-100
            transition-transform duration-200 ease-in-out transform hover:scale-110"
          >
            <Image
-             src={liked ? "/assets/liked-icon.svg" : "/assets/unliked-icon.svg"} 
+             src={liked ? '/path/to/default/image.jpg' : '/path/to/default/image.jpg'} 
              alt="좋아요" 
              width={5}
              height={5}
@@ -115,11 +115,11 @@ return (
        {/* 우상단 1:1 채팅 버튼 */}
        <div className="absolute top-2 right-2 group z-10">
          <button 
-           className="p-2 rounded-full bg-white shadow-lg
+           className="p-2 rounded-full bg-white border-2 border-black shadow-lg
             hover:bg-gray-100 transition-transform duration-200 ease-in-out transform hover:scale-110"
          >
            <Image 
-              src="/assets/chat-icon.svg" 
+              src='/path/to/default/image.jpg'
               alt="채팅" 
               width={5}
               height={5}
@@ -140,9 +140,9 @@ return (
            className="w-full h-[250px] bg-gray-300 rounded-t-[20px] overflow-hidden cursor-pointer group"
            onClick={() => window.open(blog, '_blank')}
          >
-           {backgroundImageUrl ? (
+           {background_image_url ? (
              <Image 
-               src={backgroundImageUrl} 
+               src={background_image_url} 
                alt="포트폴리오" 
                width={300}
                height={40}
@@ -157,7 +157,7 @@ return (
               priority
               sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
               className="object-cover transition-transform duration-300 ease-in-out hover:scale-105"
-              style={{ width: "300px", height: "auto" }} // 자동 비율 유지
+              style={{ width: "300px", height: "auto" }} 
             />
            )}
            {/* 말풍선 효과 */}
@@ -169,7 +169,7 @@ return (
          </div>
 
          {/* 프로필 보기 버튼 */}
-         <div className="absolute bottom-[200px] p-2 right-4">
+         <div className="absolute bottom-[185px] p-2 right-4">
            <button
              onClick={openModal}
              className="p-2 bg-primary text-black rounded-lg shadow hover:bg-primaryStrong transition-transform duration-200 ease-in-out transform hover:scale-105 cursor-pointer"
@@ -179,19 +179,20 @@ return (
          </div>
          
          {/* 프로필 이미지 */}
-          <div 
-            className="w-16 h-16 rounded-full bg-white p-6 border-4 border-fillStrong absolute bottom-[200px] left-4 overflow-hidden cursor-pointer transition-transform duration-200 ease-in-out hover:scale-105"
-            onClick={() => setIsProfileModalOpen(true)}
-          >
-            <Image
-              src={profileImageUrl}
-              alt={nickname}
-              width={64}
-              height={64}
-              className="object-cover"
-              priority
-            />
-          </div>
+         <div 
+          className="w-[60px] h-[60px] rounded-full  insert-0 border-2 border-black justiy-center flex absolute bottom-[185px] left-4 overflow-hidden cursor-pointer transition-transform duration-200 ease-in-out hover:scale-105"
+          onClick={() => setIsProfileModalOpen(true)}
+        >
+          <Image
+            src={profile_image_url}
+            alt={nickname}
+            width={100}
+            height={100}
+            style={{ width: 'auto', height: 'auto' }}
+            className="object-cover rounded-full shadow-lg"
+            priority
+          />
+        </div>
 
        {/* 프로필 이미지 확대 모달 */}
        {isProfileModalOpen && createPortal(
@@ -201,7 +202,7 @@ return (
         >
          <div className="relative">
            <Image
-             src={profileImageUrl || ''}
+             src={profile_image_url || ''}
              alt={nickname}
              width={500}
              height={500}
@@ -222,7 +223,7 @@ return (
       {/* 하단 멤버 정보 */}
       <div className="mt-2 p-6 user-select-none">
          <h3 className="text-xl font-bold text-fontWhite">{nickname}</h3>
-         <p className="text-base text-primary mt-1">{jobTitle} | {experience}</p>
+         <p className="text-base text-primary mt-1">{job_title} | {experience}</p>
          <p className="mt-4 text-sm text-fontGray line-clamp-1 cursor-pointer" 
            onClick={openModal}
          >
@@ -278,7 +279,7 @@ return (
         onClick={() => window.open(blog, '_blank')}
       >
         <Image 
-          src={backgroundImageUrl} 
+          src={background_image_url} 
           alt="배경 이미지" 
           fill 
           sizes="(max-width: 768px) 100vw, 50vw" 
@@ -288,11 +289,11 @@ return (
 
       {/* 프로필 정보 */}
       <div className="relative flex flex-col items-center -mt-12">
-        <div className="w-36 h-36 rounded-full p-14 bg-white border-4 border-background overflow-hidden">
-          <Image src={profileImageUrl} alt={nickname} width={144} height={144} className="object-cover" />
+        <div className="w-100 h-100 rounded-full bg-white border-4 border-background overflow-hidden">
+          <Image src={profile_image_url} alt={nickname} width={144} height={144} style={{ width: 'auto', height: 'auto' }} className="object-cover rounded-full shadow-lg" />
         </div>
         <h2 className="mt-4 text-2xl font-bold text-white">{nickname}</h2>
-        <p className="text-primary text-lg">{jobTitle} | {experience}</p>
+        <p className="text-primary text-lg">{job_title} | {experience}</p>
       </div>
 
       {/* 좋아요와 버튼 */}
@@ -301,7 +302,7 @@ return (
           onClick={() => toggleLike(nickname)}
           className="bg-gray-700 text-white p-6 py-2 rounded-lg hover:bg-gray-600 transition flex items-center space-x-2"
         >
-          <Image src="/assets/liked-icon.svg" alt="좋아요 아이콘" width={20} height={20} className="w-5 h-5" />
+          <Image src='/path/to/default/image.jpg' alt="좋아요 아이콘" width={20} height={20} className="w-5 h-5" />
           <span>좋아요</span>
         </button>
 
@@ -310,7 +311,7 @@ return (
         className="bg-gray-700 text-white px-4 py-2 rounded-lg hover:bg-gray-600 transition flex items-center space-x-2"
         onClick={closeModal}
         >
-        <Image src="/assets/message-icon.svg" alt="메시지 아이콘" width={20} height={20} className="w-5 h-5" />
+        <Image src='/path/to/default/image.jpg' alt="메시지 아이콘" width={20} height={20} className="w-5 h-5" />
         <span>1:1채팅</span>
       </button>
     </div>
@@ -329,13 +330,13 @@ return (
         )}
         {notionLink && (
           <a href={notionLink} target="_blank" className="flex items-center space-x-2 text-green-500 hover:underline">
-            <Image src="/assets/notion-icon.svg" alt="Notion 아이콘" width={20} height={20} className="w-5 h-5" />
+            <Image src='/path/to/default/image.jpg' alt="Notion 아이콘" width={20} height={20} className="w-5 h-5" />
             <span>Notion</span>
           </a>
         )}
         {instagramLink && (
           <a href={instagramLink} target="_blank" className="flex items-center space-x-2 text-pink-500 hover:underline">
-            <Image src="/assets/instagram-icon.svg" alt="Instagram 아이콘" width={20} height={20} className="w-5 h-5" />
+            <Image src= '/path/to/default/image.jpg' alt="Instagram 아이콘" width={20} height={20} className="w-5 h-5" />
             <span>Instagram</span>
           </a>
         )}

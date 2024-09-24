@@ -27,15 +27,15 @@ const JobDirectory: React.FC<JobDirectoryProps> = ({ setFilteredJob, className }
   // 직업군 리스트 캐싱
   const jobCategories = useMemo(() => [
     { name: '전체 보기', value: 'all', hoverClass: 'hover:bg-primary hover:text-black text-black' },
-    { name: '프론트엔드', value: 'frontend', hoverClass: 'hover:bg-primaryStrong hover:text-black' },
-    { name: '백엔드', value: 'backend', hoverClass: 'hover:bg-accentOrange hover:text-black' },
+    { name: '프론트엔드', value: '프론트엔드', hoverClass: 'hover:bg-primaryStrong hover:text-black' },
+    { name: '백엔드', value: '백엔드', hoverClass: 'hover:bg-accentOrange hover:text-black' },
     { name: 'iOS', value: 'ios', hoverClass: 'hover:bg-accentMaya hover:text-black' },
     { name: '안드로이드', value: 'android', hoverClass: 'hover:bg-accentPurple hover:text-black' },
-    { name: '데브옵스', value: 'devops', hoverClass: 'hover:bg-accentRed hover:text-black' },
-    { name: '디자인', value: 'design', hoverClass: 'hover:bg-accentMint hover:text-black' },
+    { name: '데브옵스', value: '데브옵스', hoverClass: 'hover:bg-accentRed hover:text-black' },
+    { name: '디자인', value: '디자인', hoverClass: 'hover:bg-accentMint hover:text-black' },
     { name: 'PM', value: 'pm', hoverClass: 'hover:bg-accentColumbia hover:text-black' },
-    { name: '기획', value: 'planning', hoverClass: 'hover:bg-accentPink hover:text-black' },
-    { name: '마케팅', value: 'marketing', hoverClass: 'hover:bg-accentYellow hover:text-black' }
+    { name: '기획', value: '기획', hoverClass: 'hover:bg-accentPink hover:text-black' },
+    { name: '마케팅', value: '마케팅', hoverClass: 'hover:bg-accentYellow hover:text-black' }
   ], []);
 
   // 로컬 스토리지 접근 최적화
@@ -101,19 +101,30 @@ const JobDirectory: React.FC<JobDirectoryProps> = ({ setFilteredJob, className }
       </ul>
       
       {/* Hub 등록 버튼 (작은 화면용) */}
-      <div className="lg:hidden relative group">
-        <button
-          className="mb-4 w-full bg-fillLight text-primary text-xl p-3 rounded-lg shadow-xl hover:shadow-xl transform hover:scale-105 transition-all duration-300 ease-out hover:bg-fillLighter hover:text-bright hover:brightness-125 cursor-pointer"
-          onClick={handleAddCard}
+      <button
+        className="fixed bottom-10 right-5 w-14 h-14 bg-fillLight text-primary text-xl 
+        rounded-full shadow-xl hover:shadow-2xl transform transition-all duration-300 ease-out 
+        hover:scale-120 active:scale-95 hover:bg-fillStrong cursor-pointer floating-icon lg:hidden"
+        onClick={handleAddCard}
+        style={{
+          zIndex: 1000,
+        }}
+      >
+        <svg
+          xmlns="http://www.w3.org/2000/svg"
+          fill="none"
+          viewBox="0 0 24 24"
+          strokeWidth={1.5}
+          stroke="currentColor"
+          className="w-8 h-8 m-auto text-bright"
         >
-          {isHubRegistered ? '프로필 수정' : '프로필 등록'}
-        </button>
-        {/* 말풍선 */}
-        <div className="absolute top-[-50px] left-1/2 transform -translate-x-1/2 w-[200px] px-3 py-2 bg-yellow-500 text-black text-sm text-center rounded-lg opacity-0 group-hover:opacity-100 transition-opacity duration-200 shadow-lg">
-          Hub멤버가 되기 위해 <br /> Hub에서 카드를 등록해주세요
-          <div className="absolute bottom-[-8px] left-1/2 transform -translate-x-1/2 w-3 h-3 bg-yellow-500 rotate-45 rounded-sm shadow-lg"></div>
-        </div>
-      </div>
+          <path
+            strokeLinecap="round"
+            strokeLinejoin="round"
+            d="M12 4.5v15m7.5-7.5h-15"
+          />
+        </svg>
+      </button>
       
       {/* 작은 화면에서는 셀렉트 박스로 */}
       <div className="block lg:hidden">
@@ -133,15 +144,14 @@ const JobDirectory: React.FC<JobDirectoryProps> = ({ setFilteredJob, className }
       {/* Hub 등록 버튼 (큰 화면용) */}
       <div className="hidden lg:block relative group">
         <button
-          className="mt-3 w-full bg-fillLight text-primary text-sm p-3 rounded-lg shadow-lg hover:shadow-xl transform hover:scale-105 transition-all duration-300 ease-out hover:bg-fillLighter hover:text-bright hover:brightness-125"
+          className="mt-5 w-full bg-fillLight text-primary text-sm p-3 rounded-lg shadow-lg hover:shadow-xl transform hover:scale-105 transition-all duration-300 ease-out hover:bg-fillLighter hover:text-bright hover:brightness-125"
           onClick={handleAddCard}
         >
           {isHubRegistered ? '프로필 수정' : '프로필 등록'}
         </button>
         {/* 말풍선 */}
-        <div className="absolute top-[-60px] left-1/2 transform -translate-x-1/2 w-[200px] px-3 py-2 bg-yellow-500 text-black text-sm text-center rounded-lg opacity-0 group-hover:opacity-100 transition-opacity duration-200 shadow-lg">
+        <div className="absolute top-[70px] left-1/2 transform -translate-x-1/2 w-[150px] px-3 py-2 bg-yellow-500 text-black text-sm text-center rounded-lg opacity-0 group-hover:opacity-100 transition-opacity duration-200 shadow-lg">
           Hub멤버가 되기 위해 <br /> 카드를 등록해주세요
-          <div className="absolute bottom-[-8px] left-1/2 transform -translate-x-1/2 w-3 h-3 bg-yellow-500 rotate-45 rounded-sm shadow-lg"></div>
         </div>
       </div>
 
