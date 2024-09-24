@@ -59,7 +59,7 @@ const ProfilePicture: React.FC = () => {
           .update({ profile_image_url: profileImageUrl })
           .eq("user_id", user.id);
         if (updateError) throw updateError;
-
+      
         setProfileImage(profileImageUrl);
         setProfileAlt(altText);
         setUserData({
@@ -68,7 +68,11 @@ const ProfilePicture: React.FC = () => {
           nickname: userData?.nickname ?? "",
           job_title: userData?.job_title ?? "",
           experience: userData?.experience ?? "",
-          blog: userData?.blog ?? ""
+          blog: userData?.blog ?? "",
+          description: userData?.description ?? "",
+          answer1: userData?.answer1 ?? "",
+          answer2: userData?.answer2 ?? "",
+          answer3: userData?.answer3 ?? "",
         });
         setToastState({ state: "success", message: "업데이트 완료되었습니다" });
       } else {
@@ -161,11 +165,11 @@ const ProfilePicture: React.FC = () => {
                       className="hidden m:block absolute inset-1/2 transform -translate-x-1/2 -translate-y-1/2 w-[48px] h-[48px] bg-fillLight opacity-0 group-hover:opacity-100 z-20 rounded-[20px]"
                       onClick={handleFileUploadClick}
                     >
-                      <img
+                      <Image
                         src="/assets/mypage/image_upload.svg"
+                        alt="이미지 업로드 아이콘"
                         width={24}
                         height={24}
-                        alt="이미지 업로드 아이콘"
                         className="mx-auto"
                       />
                     </button>
@@ -186,7 +190,12 @@ const ProfilePicture: React.FC = () => {
                     className="w-[52px] h-[52px] m:w-[48px] m:h-[48px] rounded-full overflow-hidden bg-fillLight flex items-center justify-center"
                     onClick={handleFileUploadClick}
                   >
-                    <img src="/assets/mypage/image_upload.svg" width={24} height={24} alt="이미지 업로드 아이콘" />
+                    <Image 
+                      src="/assets/mypage/image_upload.svg" 
+                      alt="이미지 업로드 아이콘"
+                      width={24} 
+                      height={24} 
+                    />
                   </button>
                 </div>
                 {iconImages.map((icon, index) => (
@@ -206,11 +215,11 @@ const ProfilePicture: React.FC = () => {
                           className="rounded-full m:rounded-[9px]"
                         />
                         <div className="absolute inset-0 flex items-center justify-center bg-black bg-opacity-50 opacity-0 group-hover:opacity-100 transition-opacity z-10">
-                          <img
+                          <Image
+                            alt="호버시 플러스 버튼 아이콘"
                             src="/assets/mypage/hover_plus.svg"
                             width={24}
                             height={24}
-                            alt="호버시 플러스 버튼 아이콘"
                           />
                         </div>
                       </div>
