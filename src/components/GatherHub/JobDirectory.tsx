@@ -109,7 +109,7 @@ const JobDirectory: React.FC<JobDirectoryProps> = ({ setFilteredJob, className }
         style={{
           zIndex: 1000,
         }}
-      >
+      >316
         <svg
           xmlns="http://www.w3.org/2000/svg"
           fill="none"
