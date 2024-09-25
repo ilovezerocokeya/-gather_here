@@ -36,7 +36,6 @@ const MainDetailPage = () => {
           .single();
 
         if (postError) {
-          console.error("Error fetching post:", postError);
           setLoading(false);
           return;
         }

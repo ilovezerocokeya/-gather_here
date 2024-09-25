@@ -185,6 +185,7 @@ export const UserProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
     }
   }, [fetchUserData, userData]);
 
+
   // 사용자 인증 상태를 초기화하는 함수 (로그아웃 시 호출)
   const resetAuthUser = useCallback(() => {
     setUser(null);
@@ -233,6 +234,7 @@ export const UserProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
   const initializationUser = () => {
     resetAuthUser();
     resetSignupUser();
+
   };
 
 // Context에 제공할 값에 userData.hubCard 상태 포함

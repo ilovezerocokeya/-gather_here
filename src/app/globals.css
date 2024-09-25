@@ -187,6 +187,7 @@ body {
   padding: 1rem 0;
 }
 
+
 .page-disabled .modal-content {
   pointer-events: auto;
   user-select: auto;
@@ -308,9 +309,8 @@ body {
 .custom-tooltip-bottom-3 {
   @apply top-full mt-2 left-1/2 transform -translate-x-1/2 bg-fillStrong text-fontWhite text-xs rounded py-1 px-2;
 }
-
-.floating-icon {
-  animation: floating 3s ease-in-out infinite;
+.logo-link {
+  transition: transform 0.3s ease, opacity 0.3s ease;
 }
 
 /* hover 상태에서 살짝 확대 */
@@ -325,6 +325,9 @@ body {
   opacity: 0.8;
 }
 
+.floating-icon {
+  animation: floating 3s ease-in-out infinite;
+}
 @keyframes floating {
   0% {
     transform: translateY(0);
@@ -336,3 +339,4 @@ body {
     transform: translateY(0);
   }
 }
+
