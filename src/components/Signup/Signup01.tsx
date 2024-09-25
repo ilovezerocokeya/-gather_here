@@ -8,7 +8,7 @@ import { useRouter } from "next/navigation";
 import { useModal } from "@/provider/ContextProvider";
 import AlertModal from "./components/AlertModal";
 
-const jobTitles = ["프론트엔드", "백엔드", "IOS", "안드로이드", "데브옵스", "기획", "디자인", "마케팅", "PM"];
+const job_titles = ["프론트엔드", "백엔드", "IOS", "안드로이드", "데브옵스", "기획", "디자인", "마케팅", "PM"];
 
 const jobClasses: { [key: string]: string } = {
   프론트엔드: "button-frontend",
@@ -68,7 +68,7 @@ const Signup01: React.FC = () => {
           직무와 관련된 스터디 및 프로젝트, <br /> 다양한 IT행사를 추천해 드려요.
         </div>
         <div className="grid grid-cols-3 gap-1 s:mt-4 mt-6 s:w-[335px] w-[370px] h-[365px] s:h-[335px] mx-auto">
-          {jobTitles.map((job) => (
+          {job_titles.map((job) => (
             <JobSelectionButton
               key={job}
               job={job}

@@ -99,33 +99,38 @@ const Header: React.FC = () => {
   return (
     <header className="bg-background shadow-md relative text-fontWhite">
       <div className="w-full mx-auto max-w-container-l m:max-w-container-m s:max-w-container-s s:flex-row flex justify-between items-center py-[14px] s:py-2">
+
       <div className="flex items-center s:space-x-4 space-x-12">
       <Link href="/" className="flex items-center logo-link">
         <Image
-          src="/logos/gatherhere.svg"
+          src="/assets/header/logo.svg"
           alt="@gather_here 로고"
+          width={140}
+          height={70}
           priority
-          width={100}
-          height={50}
           className="s:hidden"
+          style={{ objectFit: 'contain' }}
         />
+
         <Image
           src="/assets/header/mobile_logo.svg"
-          alt="@gather_here 로고"
-          priority
+          alt="@gather_here 모바일 로고"
           width={20}
           height={25}
+          priority
           className="hidden s:block"
+          style={{ objectFit: 'contain' }}
         />
       </Link>
       <Link href="/gatherHub" className="logo-link">
         <Image
           src="/logos/hub2.png"
           alt="@gather_hub 로고"
-          priority
           width={120}
           height={50}
-          className="s:w-[90px] s:h-[25px]"
+          priority
+          className="s:w-[50px] s:h-[25px]"
+          style={{ width: "auto", height: "auto" }}
         />
       </Link>
       </div>

@@ -324,3 +324,19 @@ body {
   transform: scale(0.9); /* 5% 축소 */
   opacity: 0.8;
 }
+
+.floating-icon {
+  animation: floating 3s ease-in-out infinite;
+}
+@keyframes floating {
+  0% {
+    transform: translateY(0);
+  }
+  50% {
+    transform: translateY(-10px);
+  }
+  100% {
+    transform: translateY(0);
+  }
+}
+

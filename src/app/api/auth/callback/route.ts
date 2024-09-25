@@ -30,8 +30,9 @@ export async function GET(request: Request) {
         // 기본값 설정
         const nickname = user.user_metadata?.full_name || user.email?.split("@")[0] || "사용자";
         const job_title = "";
-        const experience =  "";
-        const description = `안녕하세요! ${job_title ? job_title : "OO"}를 ${experience ? experience : "0"}년 동안 공부하고 있는 ${nickname}입니다. 반갑습니다😆`;
+        const experience = "0";
+        const description = `안녕하세요! 반갑습니다😆`;
+
 
         // answer1, answer2, answer3 기본값 설정
         const answer1 = "";

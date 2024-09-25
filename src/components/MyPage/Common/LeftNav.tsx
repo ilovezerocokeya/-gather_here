@@ -27,11 +27,11 @@ const LeftNav: React.FC = () => {
     데브옵스: "text-accentRed",
   };
 
-  const getJobTitleClass = (jobTitle: string) => {
-    if (!jobTitle) {
+  const getJobTitleClass = (job_title: string) => {
+    if (!job_title) {
       return "";
     }
-    const lowerJobTitle = jobTitle.toLowerCase();
+    const lowerJobTitle = job_title.toLowerCase();
     for (const [key, value] of Object.entries(jobTitleClassMap)) {
       if (lowerJobTitle.includes(key.toLowerCase())) {
         return value;
@@ -66,7 +66,6 @@ const LeftNav: React.FC = () => {
             profile_image_url: data.profile_image_url ?? "",
             blog: data.blog ?? "",
             description: data.description ?? "",
-            hubCard: data.hubCard ?? false,
             background_image_url: data.background_image_url ?? "",
             answer1: data.answer1 ?? "", 
             answer2: data.answer2 ?? "", 

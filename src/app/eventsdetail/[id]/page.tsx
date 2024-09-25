@@ -151,7 +151,12 @@ const EventDetailPage = () => {
                 className="shared-button-green self-end s:w-full"
               >
                 <span className="mr-1">신청하러 가기</span>
-                <img src="/assets/arrowsmall.svg" alt="신청하러 가기 아이콘" width={16} height={16} />
+                <Image
+                  src="/assets/arrowsmall.svg"
+                  alt="신청하러 가기 아이콘"
+                  width={16}
+                  height={16}
+                />
               </Link>
             </div>
           </div>
