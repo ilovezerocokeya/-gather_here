@@ -186,16 +186,15 @@ return (
 
     {/* 프로필 이미지 */}
     <div
-      className="w-[60px] h-[60px] rounded-full insert-0 border-2 bg-black border-black justiy-center flex absolute bottom-[185px] left-4 overflow-hidden cursor-pointer transition-transform duration-200 ease-in-out hover:scale-105"
+      className="w-30 h-30 rounded-full flex items-center justify-center border-2 bg-black border-black absolute bottom-[180px] left-4 overflow-hidden cursor-pointer transition-transform duration-200 ease-in-out hover:scale-105"
       onClick={() => setIsProfileModalOpen(true)}
       style={{ userSelect: 'none' }} 
     >
       <Image
         src={profile_image_url}
         alt={nickname}
-        width={100}
-        height={100}
-        style={{ width: 'auto', height: 'auto' }}
+        width={60}
+        height={60}
         className="object-cover rounded-full shadow-lg"
         priority
       />
@@ -330,12 +329,12 @@ return (
 
           {/* 프로필 정보 */}
           <div className="relative flex flex-col items-center -mt-12">
-            <div className="w-100 h-100 rounded-full bg-white border-4 border-background overflow-hidden">
+            <div className="w-20 h-20 rounded-full bg-white border-4 border-background overflow-hidden">
               <Image
                 src={profile_image_url}
                 alt={nickname}
-                width={144}
-                height={144}
+                width={40}
+                height={40}
                 style={{ width: 'auto', height: 'auto' }}
                 className="object-cover rounded-full shadow-lg"
               />
