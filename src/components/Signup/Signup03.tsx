@@ -1,53 +1,76 @@
 "use client";
 
-import React, { useEffect, useRef } from "react";
-import { useForm } from "react-hook-form";
+import React, { useEffect, useRef, useState } from "react"; 
+import { useForm, SubmitHandler } from "react-hook-form";
 import NicknameInput from "@/components/Signup/components/NicknameInput";
 import BlogInput from "@/components/Signup/components/BlogInput";
 import useCheckNickname from "@/hooks/useCheckNickname";
-import useSubmitProfile from "@/hooks/useSubmitProfile";
-import AlertModal from "./components/AlertModal";
-import { useUser } from "@/provider/UserContextProvider";
+import useSubmitProfile from "@/hooks/useSubmitProfile"; 
+import CustomModal from "./components/CustomModal"; 
+import { useUser } from "@/provider/UserContextProvider"; 
+import { useModal } from "@/provider/ContextProvider"; 
 
+// 폼 데이터의 타입 정의
 export interface FormValues {
-  nickname: string;
+  nickname: string; 
   blog?: string;
 }
 
 interface Signup03Type {
-  setUserData: (data: any) => void;
+  setUserData: (data: any) => void; // 사용자 데이터를 설정하는 함수
 }
 
+// 회원가입 3단계 컴포넌트
 const Signup03: React.FC<Signup03Type> = ({ setUserData }) => {
   const { prevStep } = useUser();
+  const { closeModal } = useModal();
+  const [isModalOpen, setIsModalOpen] = useState(false); // 모달 오픈 상태 관리
   const {
     register,
     handleSubmit,
     watch,
-    formState: { errors },
+    formState: { errors }, 
     setError,
-  } = useForm<FormValues>();
-  const watchNickname = watch("nickname");
-  const formRef = useRef<HTMLFormElement>(null);
-  const nicknameAvailable = useCheckNickname(watchNickname);
-  const { onSubmit, blogError, blogSuccess, setBlogError, setBlogSuccess, validateUrl } = useSubmitProfile(setUserData);
+  } = useForm<FormValues>(); // react-hook-form 훅을 사용하여 폼 초기화
 
-  const handleFormSubmit = (data: FormValues) => {
-    document.body.classList.remove("page-disabled");
+  const watchNickname = watch("nickname"); // 닉네임 필드 감시
+  const formRef = useRef<HTMLFormElement>(null); // 폼 요소에 대한 참조를 저장하는 useRef 훅을 사용하여 초기값을 null로 설정
+  const nicknameAvailable = useCheckNickname(watchNickname); // 닉네임 사용 가능 여부 확인 훅
+  const { onSubmit, blogError, blogSuccess, setBlogError, setBlogSuccess, validateUrl } = useSubmitProfile(setUserData); // 프로필 제출 훅
 
-    if (!data.blog || data.blog.trim() === "") {
-      AlertModal({
-        title: "URL 주소가 비어 있습니다.",
-        text: "URL 주소를 입력하지 않으셨습니다.\n그래도 프로필을 저장하시겠습니까?",
-        icon: "warning",
-        confirmButtonText: "네, 저장하기",
-        cancelButtonText: "아니요, 다시 입력하기",
-        onConfirm: () => onSubmit(data, nicknameAvailable, setError),
-        onCancel: () => document.body.classList.add("page-disabled"),
-      });
-    } else {
-      onSubmit(data, nicknameAvailable, setError);
+  // handleSubmit과 맞는 함수로 재정의한 onSubmitForm
+  const onSubmitForm: SubmitHandler<FormValues> = async (data: FormValues) => {
+    if (nicknameAvailable === false) {
+      setError("nickname", { message: "이미 사용 중인 닉네임입니다." });
+      return;
     }
+
+    await onSubmit(data, nicknameAvailable, setError); // 기존 onSubmit 호출
+  };
+
+  // 폼 제출 핸들러
+  const handleFormSubmit = (data: FormValues) => {
+    document.body.classList.remove("page-disabled"); // 페이지 비활성화 클래스 제거
+
+    // 블로그 URL이 비어있는 경우 경고 모달 표시
+    if (!data.blog || data.blog.trim() === "") {
+      setIsModalOpen(true); // 모달을 열기 위한 상태 설정
+    } else {
+      onSubmitForm(data); // 블로그 URL이 있을 경우 데이터 제출
+    }
+  };
+
+  const handleConfirmSkip = () => {
+    // 모달에서 "네, 저장하기" 선택 시 처리
+    setIsModalOpen(false);
+    document.body.classList.remove("page-disabled");
+    handleSubmit(onSubmitForm)(); // handleSubmit 함수와 연결된 onSubmitForm 실행
+  };
+
+  const handleCancelSkip = () => {
+    // 모달에서 "아니요, 다시 입력하기" 선택 시 처리
+    setIsModalOpen(false); // 모달 닫기
+    document.body.classList.add("page-disabled"); // 페이지 비활성화
   };
 
   useEffect(() => {
@@ -58,7 +81,7 @@ const Signup03: React.FC<Signup03Type> = ({ setUserData }) => {
      888  888  888      .d88b.   8888b.  888888 88888b.   .d88b.  888d888          88888b.   .d88b.  888d888  .d88b.
      888  888bd88P     d88P"88b     "88b 888    888 "88b d8P  Y8b 888P"            888 "88b d8P  Y8b 888P"   d8P  Y8b
      888  Y8888P"      888  888 .d888888 888    888  888 88888888 888              888  888 88888888 888     88888888
-     Y88b.     .d8     Y88b 888 888  888 Y88b.  888  888 Y8b.     888              888  888 Y8b.     888     Y8b.
+     Y88b.     .d8     Y88b 888 888  888 Y88b. 888  888 Y8b.     888              888  888 Y8b.     888     Y8b.
       "Y88888888P"      "Y88888 "Y888888  "Y888 888  888  "Y8888  888     88888888 888  888  "Y8888  888      "Y8888
                             888
                        Y8b d88P
@@ -94,8 +117,8 @@ const Signup03: React.FC<Signup03Type> = ({ setUserData }) => {
         <div className="text-center text-[#9a9a9a] s:mt-1 mt-3">
           자신을 나타낼 수 있는 포트폴리오 링크를 알려주시면 <br className="s:hidden" /> 함께 할 동료를 만나는 데 큰 도움이 될거예요.
         </div>
-  
-        <form ref={formRef} onSubmit={handleSubmit(handleFormSubmit)} className="max-h-[380px] overflow-y-auto s:mt-6 mt-1">
+
+        <form onSubmit={handleSubmit(handleFormSubmit)} className="max-h-[380px] overflow-y-auto s:mt-6 mt-1">
           <NicknameInput register={register} errors={errors} nicknameAvailable={nicknameAvailable} watch={watch} />
           <BlogInput
             register={register}
@@ -119,6 +142,15 @@ const Signup03: React.FC<Signup03Type> = ({ setUserData }) => {
             </button>
           </div>
         </form>
+        
+        {/* 모달 구현 */}
+        {isModalOpen && (
+          <CustomModal
+            isOpen={isModalOpen}
+            onCancel={handleCancelSkip}
+            onConfirm={handleConfirmSkip}
+          />
+        )}
       </div>
     </div>
   );

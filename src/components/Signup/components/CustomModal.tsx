@@ -51,10 +51,9 @@ const AlertModal: React.FC<ModalProps> = ({ isOpen, onCancel, onConfirm }) => {
         className="bg-fillStrong w-[360px] p-6 rounded-2xl shadow-lg"
         onClick={(e) => e.stopPropagation()} 
       >
-        <div className="text-lg font-semibold text-gray-100 mb-3">작성 중인 내용이 있어요.</div>
+        <div className="text-lg font-semibold text-gray-100 mb-3">URL 주소가 비어 있습니다</div>
         <p className="text-sm text-gray-400 mb-6">
-          이 화면을 나가시면 프로필 기본정보가 저장되지 않아요. <br />
-          회원님의 기본프로필 작성을 취소하시겠어요?
+            Hub프로필의 포트폴리오 URL을 입력하지 않으셨습니다. <br />그래도 프로필을 저장하시겠습니까?
         </p>
         <div className="flex justify-between">
           <button
@@ -67,7 +66,7 @@ const AlertModal: React.FC<ModalProps> = ({ isOpen, onCancel, onConfirm }) => {
             onClick={onConfirm}
             className="bg-[#b4e373] text-[#343437] px-4 py-2 w-[48%] rounded-md text-sm font-semibold transition-colors duration-200 hover:bg-[#9cb97a] hover:text-white"
           >
-            나갈래요
+            네, 저장할래요
           </button>
         </div>
       </div>
