@@ -187,7 +187,6 @@ body {
   padding: 1rem 0;
 }
 
-
 .page-disabled .modal-content {
   pointer-events: auto;
   user-select: auto;
@@ -266,16 +265,6 @@ body {
   }
 }
 
-.swal2-confirm-button {
-  font-size: 16px;
-  color: #343437;
-}
-
-.swal2-cancel-button {
-  font-size: 16px;
-  color: #343437;
-}
-
 .ql-editor.ql-blank {
   height: 167px;
 }
@@ -339,4 +328,3 @@ body {
     transform: translateY(0);
   }
 }
-

@@ -103,7 +103,7 @@ const Header: React.FC = () => {
       <div className="flex items-center s:space-x-4 space-x-12">
       <Link href="/" className="flex items-center logo-link">
         <Image
-          src="/assets/header/logo.svg"
+          src="/logos/gatherhere.svg"
           alt="@gather_here 로고"
           width={140}
           height={70}
