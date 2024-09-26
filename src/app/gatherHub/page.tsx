@@ -42,14 +42,13 @@ const fetchMembers = async ({ pageParam = 1 }) => {
 };
 
 // 유저 데이터를 페이지네이션으로 가져오는 함수 (목데이터 사용)
-
 // const fetchMembers = async ({ pageParam = 1 }) => {
 //   const mockMembers = Array.from({ length: 100 }, (_, index) => ({
 //     nickname: `User${index + 1}`,
-//     job_title: ['프론트엔드', '백엔드', '디자인', 'pm', 'ios', 'android'][index % 6], // 직업 데이터 추가
+//     job_title: ['프론트엔드', '백엔드', '디자인', 'PM', 'IOS', 'Android', 'DevOps'][index % 6], // 직업 데이터 추가
 //     experience: ['신입', '1년차', '2년차', '3년차', '4년차', '5년차', '6년차'][index % 4],
 //     background_image_url: '/logos/hi.png',
-//     profile_image_url: '/path-to-profile-image',
+//     profile_image_url: '/logos/github.svg',
 //     blog: 'https://github.com/gather-here',
 //     notionLink: 'https://www.notion.so/',
 //     instagramLink: 'https://www.instagram.com/',
