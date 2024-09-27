@@ -100,17 +100,17 @@ const Header: React.FC = () => {
     <header className="bg-background shadow-md relative text-fontWhite">
       <div className="w-full mx-auto max-w-container-l m:max-w-container-m s:max-w-container-s s:flex-row flex justify-between items-center py-[14px] s:py-2">
         <div className="flex items-center s:space-x-4 space-x-12">
+        <div className="flex items-center s:space-x-4 space-x-12">
           <Link href="/" className="flex items-center logo-link">
             <Image
-              src="/assets/header/logo.svg"
+              src="/logos/gatherhere.svg"
               alt="@gather_here 로고"
               width={140}
               height={70}
               priority
               className="s:hidden"
-              style={{ objectFit: 'contain', width: 'auto', height: 'auto' }} 
+              style={{ objectFit: 'contain' }}
             />
-
             <Image
               src="/assets/header/mobile_logo.svg"
               alt="@gather_here 모바일 로고"
