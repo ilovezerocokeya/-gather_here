@@ -26,12 +26,12 @@ const JobDirectory: React.FC<JobDirectoryProps> = ({ setFilteredJob, className }
 
   // 직업군 리스트 캐싱
   const jobCategories = useMemo(() => [
-    { name: '전체 보기', value: 'all', hoverClass: 'hover:bg-primary hover:text-black text-black' },
+    { name: '전체보기', value: 'all', hoverClass: 'hover:bg-primary hover:text-black text-black' },
     { name: '프론트엔드', value: '프론트엔드', hoverClass: 'hover:bg-primaryStrong hover:text-black' },
     { name: '백엔드', value: '백엔드', hoverClass: 'hover:bg-accentOrange hover:text-black' },
-    { name: 'iOS', value: 'ios', hoverClass: 'hover:bg-accentMaya hover:text-black' },
-    { name: '안드로이드', value: 'android', hoverClass: 'hover:bg-accentPurple hover:text-black' },
-    { name: '데브옵스', value: '데브옵스', hoverClass: 'hover:bg-accentRed hover:text-black' },
+    { name: 'IOS', value: 'ios', hoverClass: 'hover:bg-accentMaya hover:text-black' },
+    { name: 'Android', value: 'android', hoverClass: 'hover:bg-accentPurple hover:text-black' },
+    { name: 'DevOps', value: '데브옵스', hoverClass: 'hover:bg-accentRed hover:text-black' },
     { name: '디자인', value: '디자인', hoverClass: 'hover:bg-accentMint hover:text-black' },
     { name: 'PM', value: 'pm', hoverClass: 'hover:bg-accentColumbia hover:text-black' },
     { name: '기획', value: '기획', hoverClass: 'hover:bg-accentPink hover:text-black' },
@@ -41,11 +41,11 @@ const JobDirectory: React.FC<JobDirectoryProps> = ({ setFilteredJob, className }
   // 로컬 스토리지 접근 최적화
   const storedJob = useMemo(() => localStorage.getItem('selectedJob') || 'all', []);
   
-  // 로컬 스토리지에서 직업군 상태 불러오기
-  useEffect(() => {
-    setSelectedJob(storedJob);
-    setFilteredJob(storedJob);
-  }, [storedJob, setFilteredJob]);
+  // // 로컬 스토리지에서 직업군 상태 불러오기
+  // useEffect(() => {
+  //   setSelectedJob(storedJob);
+  //   setFilteredJob(storedJob);
+  // }, [storedJob, setFilteredJob]);
 
   // 직업군 선택 핸들러
   const handleSelectJob = useCallback((jobValue: string) => {
@@ -53,6 +53,8 @@ const JobDirectory: React.FC<JobDirectoryProps> = ({ setFilteredJob, className }
     setFilteredJob(jobValue);
     localStorage.setItem('selectedJob', jobValue);
   }, [setFilteredJob]);
+
+  const [hoveredJob, setHoveredJob] = useState<string | null>(null);
 
   // Hub 등록 카드 추가 버튼 핸들러
   const handleAddCard = useCallback(() => {
@@ -82,29 +84,54 @@ const JobDirectory: React.FC<JobDirectoryProps> = ({ setFilteredJob, className }
 
 
   return (
-    <aside className={`${className} p-4 rounded-lg sticky top-4 user-select-none`} style={{ userSelect: 'none' }}>
-  {/* 큰 화면에서는 리스트로 */}
-  <ul className="hidden lg:block job-list rounded-2xl bg-fillStrong">
-    {jobCategories.map((job, index) => (
-      <li
-        key={job.value}
-        className={`job-item 
-          ${selectedJob === job.value ? 'bg-primary text-black font-bold' : ''} 
-          ${job.hoverClass} text-center rounded-lg p-2 transition-all duration-300 
-          ${index < jobCategories.length - 1}`}
-        onClick={() => handleSelectJob(job.value)}
-        style={{ userSelect: 'none' }} 
+    <aside className={`${className} p-2 rounded-lg sticky top-4 user-select-none`} style={{ userSelect: 'none' }}>
+      {/* 큰 화면에서는 리스트로 */}
+      <ul className="hidden lg:block job-list rounded-2xl bg-fillStrong p-4 space-y-2 shadow-lg mt-6 mb-6"
+        style={{ minHeight: '500px', paddingTop: '20px', paddingBottom: '20px' }}
       >
-        {job.name}
-      </li>
-    ))}
-  </ul>
+      {jobCategories.map((job, index) => (
+        <li
+          key={job.value}
+          className={`job-item flex items-center justify-start
+            ${selectedJob === job.value ? 'bg-background text-primary font-bold' : 'text-gray-400'} 
+            ${job.value === 'all' && hoveredJob !== 'all' ? '' : 'hover:bg-background hover:text-primary'} 
+            cursor-pointer rounded-lg p-4 transition-all duration-300`}
+          onClick={() => handleSelectJob(job.value)}
+          onMouseEnter={() => setHoveredJob(job.value)}
+          onMouseLeave={() => setHoveredJob(null)}
+          style={{ userSelect: 'none', width: '100%' }} 
+        >
+          {/* 화살표 아이콘: 선택된 항목 또는 호버한 항목에만 표시 */}
+          {selectedJob === job.value  && (
+            <svg
+              xmlns="http://www.w3.org/2000/svg"
+              className="h-5 w-5 text-primary transform rotate-180 mr-2"
+              fill="none"
+              viewBox="0 0 24 24"
+              stroke="currentColor"
+            >
+              <path
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                strokeWidth="2"
+                d="M9 5l7 7-7 7"
+              />
+            </svg>
+          )}
+
+          {/* 직업 이름 */}
+          <span className={`flex-grow text-center ${selectedJob === job.value ? 'text-primary' : ''}`}>
+            {job.name}
+          </span> {/* 중앙 배치 및 선택된 항목에 primary 색상 유지 */}
+        </li>
+      ))}
+    </ul>
   
   {/* Hub 등록 버튼 (작은 화면용) */}
   <button
-    className="fixed bottom-10 right-5 w-14 h-14 bg-fillLight text-primary text-xl 
-    rounded-full shadow-xl hover:shadow-2xl transform transition-all duration-300 ease-out 
-    hover:scale-120 active:scale-95 hover:bg-fillStrong cursor-pointer floating-icon lg:hidden"
+    className="fixed bottom-10 right-5 w-14 h-14 bg-fillStrong text-primary text-xl 
+    rounded-2xl shadow-xl hover:shadow-2xl transform transition-all duration-300 ease-out 
+    hover:scale-120 active:scale-95 hover:bg-fillLight cursor-pointer floating-icon lg:hidden"
     onClick={handleAddCard}
     style={{
       zIndex: 1000,
