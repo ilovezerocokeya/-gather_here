@@ -29,32 +29,25 @@ export async function GET(request: Request) {
         
         // 기본값 설정
         const nickname = user.user_metadata?.full_name || user.email?.split("@")[0] || "사용자";
-        const job_title = "";
-        const experience = "0";
         const description = `안녕하세요! 반갑습니다😆`;
-
-
-        // answer1, answer2, answer3 기본값 설정
-        const answer1 = "";
-        const answer2 = ""
-        const answer3 = "";
 
         // 디폴트 이미지 URL
         const defaultBackgroundImageUrl = "/logos/hi.png"; 
+        
         const defaultData = {
           nickname,
           email: user.email,
           blog: "",
           profile_image_url: user.user_metadata?.avatar_url || "",
-          experience,
-          job_title: job_title,
+          experience: "0",
+          job_title: "",
           user_id: user.id,
           description,
           hubCard: false,
           background_image_url: defaultBackgroundImageUrl,
-          answer1,
-          answer2,
-          answer3,
+          answer1: "",
+          answer2: "",
+          answer3: "",
         };
 
 

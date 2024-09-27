@@ -1,6 +1,6 @@
 "use client";
 
-import React from "react";
+import React, { useState } from "react";
 import JobSelectionButton from "./components/JobSelectionButton";
 import SkipButton from "./components/SkipButton";
 import useSelectJob from "@/hooks/useSelectJob";
@@ -14,8 +14,8 @@ const jobClasses: { [key: string]: string } = {
   프론트엔드: "button-frontend",
   백엔드: "button-backend",
   IOS: "button-ios",
-  Android: "button-android",
-  DevOps: "button-devops",
+  안드로이드: "button-android",
+  데브옵스: "button-devops",
   기획: "button-planner",
   디자인: "button-designer",
   마케팅: "button-marketer",
@@ -26,22 +26,22 @@ const Signup01: React.FC = () => {
   const { selectedJob, handleJobSelection } = useSelectJob();
   const router = useRouter();
   const { closeModal } = useModal();
+  const [isModalOpen, setIsModalOpen] = useState(false);
 
   const handleSkipWithConfirmation = () => {
-    document.body.classList.remove("page-disabled");
+    // 모달을 열기 위한 상태 설정
+    setIsModalOpen(true);
+  };
 
-    AlertModal({
-      title: "정말 건너뛰시겠습니까?",
-      text: "기본정보는 마이페이지에서 수정할 수 있습니다.",
-      icon: "warning",
-      confirmButtonText: "네, 건너뛰기",
-      cancelButtonText: "아니요, 계속 입력하기",
-      onConfirm: () => {
-        closeModal();
-        router.replace("/");
-      },
-      onCancel: () => document.body.classList.add("page-disabled"),
-    });
+  const handleConfirmSkip = () => {
+    // 모달에서 "네, 건너뛰기" 선택 시 처리
+    closeModal();
+    router.replace("/");
+  };
+
+  const handleCancelSkip = () => {
+    // 모달에서 "아니요, 계속 입력하기" 선택 시 처리
+    setIsModalOpen(false); // 모달 닫기
   };
 
   return (
@@ -67,7 +67,7 @@ const Signup01: React.FC = () => {
         <div className="text-center text-[#9a9a9a] mt-2">
           직무와 관련된 스터디 및 프로젝트, <br /> 다양한 IT행사를 추천해 드려요.
         </div>
-        <div className="grid grid-cols-3 gap-1 s:mt-7 mt-6 s:w-[335px] w-[370px] h-[365px] s:h-[335px] mx-auto">
+        <div className="grid grid-cols-3 gap-1 s:mt-4 mt-6 s:w-[335px] w-[370px] h-[365px] s:h-[335px] mx-auto">
           {job_titles.map((job) => (
             <JobSelectionButton
               key={job}
@@ -78,6 +78,15 @@ const Signup01: React.FC = () => {
             />
           ))}
         </div>
+
+        {/* 모달 컴포넌트 */}
+        {isModalOpen && (
+          <AlertModal
+            isOpen={isModalOpen}
+            onConfirm={handleConfirmSkip}
+            onCancel={handleCancelSkip}
+          />
+        )}
       </div>
     </div>
   );
