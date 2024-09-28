@@ -53,8 +53,8 @@ const AlertModal: React.FC<ModalProps> = ({ isOpen, onCancel, onConfirm }) => {
       >
         <div className="text-lg font-semibold text-gray-100 mb-3">작성 중인 내용이 있어요.</div>
         <p className="text-sm text-gray-400 mb-6">
-          이 화면을 나가시면 프로필 기본정보가 저장되지 않아요. <br />
-          회원님의 기본프로필 작성을 취소하시겠어요?
+          지금 화면을 나가시면 프로필 기본 정보가 저장되지 않아요. <br />
+          회원님의 기본 프로필 작성을 취소하시겠어요?
         </p>
         <div className="flex justify-between">
           <button

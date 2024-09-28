@@ -3,6 +3,7 @@
 "use client";
 import { useUser } from '@/provider/UserContextProvider';
 import Image from 'next/image';
+import Link from 'next/link';
 import React, { useEffect, useMemo, useState } from 'react';
 import { createPortal } from 'react-dom';
 
@@ -93,55 +94,51 @@ useEffect(() => {
 
 return (
   <>
-  <div
-    className="member-card bg-fillStrong rounded-[20px] shadow-lg relative w-[300px] h-[460px] flex flex-col justify-between z-30 user-select-none"
-    style={{ userSelect: 'none' }}
-  >
-    {/* 좌상단 좋아요 버튼 */}
-    <div className="absolute top-2 left-6 z-10">
+  <div className="member-card bg-fillStrong rounded-[20px] shadow-lg relative w-[290px] h-96 flex-col z-30 user-select-none justify-start items-center gap-[78px] inline-flex" style={{ userSelect: 'none' }}>
+    {/* 우상단 좋아요 버튼 */}
+    <div className="absolute top-3 right-3 z-10 justify-center items-center gap-2.5 flex">
       <button
         onClick={() => toggleLike(nickname)}
-        className="p-2 rounded-2xl bg-black border-2 border-black shadow-lg transition-transform duration-200 ease-in-out transform hover:scale-110"
+        className="p-1 rounded-[9px] bg-[#141415] border border-[#2d2d2f] shadow-lg transition-transform duration-200 ease-in-out transform hover:scale-110"
         style={{ userSelect: 'none' }} 
       >
         <Image
           src={liked ? '/assets/bookmark2.svg' : '/assets/bookmark1.svg'}
           alt="좋아요"
-          width={5}
-          height={5}
-          className="w-5 h-5"
+          width={6}
+          height={6}
+          className="w-6 h-6 p-1"
         />
       </button>
     </div>
 
-    {/* 우상단 1:1 채팅 버튼 */}
-    <div className="absolute top-2 right-6 group z-10">
+    {/* 메세지 보내기 버튼 */}
+    <div className="absolute bottom-[200px] p-1 z-10 right-3 justify-center items-center gap-2 inline-flex">
       <button
-        className="p-2 rounded-2xl bg-black border-2 border-black shadow-lgtransition-transform duration-200 ease-in-out transform hover:scale-110"
-        style={{ userSelect: 'none' }} 
+        className="bg-[#28282a] text-white px-3 py-2 rounded-xl hover:bg-gray-900 transition flex items-center space-x-2 group"
+        style={{ userSelect: 'none', cursor: 'not-allowed'}} 
+        disabled
       >
         <Image
           src="/assets/chat.svg"
-          alt="채팅"
-          width={5}
-          height={5}
+          alt="메시지 아이콘"
+          width={20}
+          height={20}
           className="w-5 h-5"
         />
+        <span className=" text-[#c4c4c4] text-xs font-semibold font-['Pretendard'] leading-none">대화 신청하기</span>
+        {/* 말풍선 */}
+        <div className="absolute top-[100%] s:left-[50%] left-[65%] transform -translate-x-1/2 min-w-[140px] px-3 py-2 bg-[orange] text-black text-sm rounded-lg opacity-0 group-hover:opacity-100 transition-opacity duration-300 shadow-lg">
+          현재 개발 중인 <br /> 기능 입니다.
+          <div className="absolute top-[-6px] s:left-[70%] left-1/2 transform -translate-x-1/2 w-3 h-3 bg-[orange] rotate-45"></div>
+        </div>
       </button>
-      {/* 말풍선 효과 */}
-      <div
-        className="absolute top-[-70px] left-1/2 transform -translate-x-1/2 px-3 py-2 bg-yellow-500 text-black text-sm font-medium rounded-md opacity-0 group-hover:opacity-100 transition-opacity duration-200 shadow-lg"
-        style={{ userSelect: 'none' }} 
-      >
-        <strong>{nickname}</strong>님과 채팅해보세요!
-        <div className="absolute bottom-[-8px] left-1/2 transform -translate-x-1/2 w-3 h-3 bg-yellow-500 rotate-45"></div>
-      </div>
     </div>
 
     {/* 대표 포트폴리오 이미지 */}
     <div className="relative mb-4">
       <div
-        className="w-full h-[250px] bg-gray-300 rounded-t-[20px] overflow-hidden cursor-pointer group"
+        className="w-full h-40 bg-gray-300 rounded-t-[20px] overflow-hidden cursor-pointer group"
         onClick={() => window.open(blog, '_blank')}
         style={{ userSelect: 'none' }} 
       >
@@ -173,24 +170,13 @@ return (
       </div>
     </div>
 
-    {/* 프로필 보기 버튼 */}
-    <div className="absolute bottom-[185px] p-2 right-4">
-      <button
-        onClick={openModal}
-        className="p-2 bg-primary text-black rounded-lg shadow hover:bg-primaryStrong transition-transform duration-200 ease-in-out transform hover:scale-105 cursor-pointer"
-        style={{ userSelect: 'none' }} 
-      >
-        프로필 보기
-      </button>
-    </div>
-
     {/* 프로필 이미지 */}
     <div
-      className="w-30 h-30 rounded-2xl flex items-center justify-center border-2 bg-black border-black absolute bottom-[180px] left-4 overflow-hidden cursor-pointer transition-transform duration-200 ease-in-out hover:scale-105"
+      className="w-30 h-30 rounded-2xl flex items-center justify-center  bg-black absolute bottom-[190px] left-4 overflow-hidden cursor-pointer transition-transform duration-200 ease-in-out hover:scale-105"
       onClick={() => setIsProfileModalOpen(true)}
       style={{ userSelect: 'none' }} 
     >
-      <div className="relative w-20 h-20"> 
+      <div className="relative w-[60px] h-[60px]"> 
         <Image
           src={profile_image_url}
           alt={nickname}
@@ -210,13 +196,13 @@ return (
           onClick={() => setIsProfileModalOpen(false)}
           style={{ userSelect: 'none' }}
         >
-          <div className="relative">
+          <div className="relative s:w-[340px] s:h-[340px] h-[500px] w-[500px]">
             <Image
               src={profile_image_url || ''}
               alt={nickname}
               width={500}
               height={500}
-              className="s:w-[340px] s:h-[340px] h-[500px] w-[500px] object-cover rounded-2xl shadow-lg border-4 border-white"
+              className=" object-cover rounded-2xl shadow-lg"
             />
             <button
               className="absolute top-2 right-2 text-black text-2xl font-bold rounded-full p-2 hover:text-gray-800 hover:scale-110 transition-transform duration-200 ease-in-out"
@@ -227,66 +213,94 @@ return (
             </button>
           </div>
         </div>,
-        document.body
-      )}
-      {/* 하단 멤버 정보 */}
-      <div className="mt-2 p-6 user-select-none " >
-         <h3 className="text-xl font-bold text-fontWhite">{nickname}</h3>
-         <p className="text-base text-primary mt-1">{job_title} | {experience}</p>
-         <p
-          className="mt-4 text-sm text-fontGray line-clamp-1 cursor-pointer transition-transform duration-300 ease-in-out transform hover:scale-105"
-          onClick={openModal}
-        >
-          {description}
-        </p>
+      document.body
+    )}
 
-        {/* 포트폴리오 링크 */}
-        <div className="flex justify-start mt-3 space-x-4" style={{ userSelect: 'none' }}>
-          {/* 대표 포트폴리오 링크 */}
-          <a
-            href={blog}
-            target="_blank"
-            className="flex flex-col items-center space-y-1 transition-transform duration-300 hover:scale-110 hover:rotate-3"
-            style={{ userSelect: 'none' }}
-          >
-            <span className="text-xl">⭐️</span> 
-          </a>
+    {/* 하단 멤버 정보 */}
+    <div className="self-stretch pl-4 h-[234px] flex-col justify-start items-start gap-2 flex mt-[-40px]">
+      <div 
+        className="self-stretch h-[129px] flex-col justify-start items-start cursor-pointer gap-3 flex"
+        onClick={openModal}
+      >
+        <div className="self-stretch justify-between items-center inline-flex">
+          <div className="h-[57px] flex-col justify-start items-start gap-2 inline-flex">
+            <div className="text-center text-[#f7f7f7] text-xl font-medium font-['Pretendard'] leading-7">{nickname}</div>
+            <div className="text-primary text-sm font-normal font-['Pretendard'] leading-[21px]">
+              {job_title} 
+              <span className="text-[#5e5e5e] text-sm font-normal font-['Pretendard'] leading-[21px]">
+                &nbsp; |&nbsp; {experience}
+              </span>
+            </div>
+            <div className="self-stretch h-[41px] text-[#919191] text-sm font-normal font-['Pretendard'] leading-[21px]">
+              {description.length > 30 ? description.substring(0, 30) + '...' : description}
+            </div>         
+          </div>
+        </div>
+      </div>
+
+      {/* 포트폴리오 링크 */}
+      <div className="flex justify-start space-x-4 mt-[-15px]" style={{ userSelect: 'none' }}>
+        {/* 대표 포트폴리오 링크 */}
+        <div className="self-stretch h-8 justify-start items-center gap-2 inline-flex">
+          <div className="p-1 bg-[#28282a] rounded-[9px] justify-center items-center gap-2.5 flex">
+            <div className="w-6 h-6 p-1 justify-center items-center flex">
+              <Link
+                href={blog}
+                target="_blank"
+                className="flex flex-col items-center space-y-1 transition-transform duration-300 hover:scale-110 hover:rotate-3"
+                 style={{ userSelect: 'none' }}
+              >
+                <span className="text-xl">⭐️</span> 
+              </Link>
+            </div>
+          </div>
 
           {/* first_link 자리 */}
-          <a
-            href={notionLink || 'first_link'}
-            target="_blank"
-            className="flex flex-col items-center space-y-1 transition-transform duration-300 hover:scale-110 hover:rotate-3"
-            style={{ userSelect: 'none' }}
-          >
-            <Image
-              src={"/logos/github.svg"}
-              alt="포폴2"
-              width={24} 
-              height={24} 
-              className="w-6 h-6" 
-            />
-          </a>
-
+          <div className="p-1 bg-[#28282a] rounded-[9px] justify-center items-center gap-2.5 flex">
+            <div className="w-6 h-6 p-1 justify-center items-center flex">
+              <Link
+                href={notionLink || 'first_link'}
+                target="_blank"
+                className="flex flex-col items-center space-y-1 transition-transform duration-300 hover:scale-110 hover:rotate-3"
+                style={{ userSelect: 'none' }}
+              >
+                <Image
+                  src={"/logos/github.svg"}
+                  alt="포폴2"
+                  width={24} 
+                  height={24} 
+                  className="w-6 h-6" 
+                />
+              </Link>
+            </div>
+          </div>
+          
           {/* second_link 링크 자리 */}
-          <a
-            href={instagramLink || 'second_link'}
-            target="_blank"
-            className="flex flex-col items-center space-y-1 transition-transform duration-300 hover:scale-110 hover:rotate-3"
-            style={{ userSelect: 'none' }}
-          >
-            <Image
-              src={"/logos/google.svg"}
-              alt="포폴3"
-              width={24}  
-              height={24} 
-              className="w-6 h-6" 
-            />
-          </a>
+          <div className="p-1 bg-[#28282a] rounded-[9px] justify-center items-center gap-2.5 flex">
+            <div className="w-6 h-6 p-1 justify-center items-center flex">
+              <Link
+                href={instagramLink || 'second_link'}
+                target="_blank"
+                className="flex flex-col items-center space-y-1 transition-transform duration-300 hover:scale-110 hover:rotate-3"
+                style={{ userSelect: 'none' }}
+              >
+                <Image
+                  src={"/logos/google.svg"}
+                  alt="포폴3"
+                  width={24}  
+                  height={24} 
+                  className="w-6 h-6" 
+                />
+              </Link>
+            </div>
+          </div>
         </div>
-       </div>
       </div>
-      
+
+    </div>
+
+  </div>
+
   {/* 모달 창 */}
   {isModalOpen &&
     createPortal(
@@ -296,7 +310,7 @@ return (
         style={{ userSelect: 'none' }} 
       >
         <div
-          className="bg-background rounded-3xl shadow-lg s:w-[400px] s:h-[600px] w-[550px] h-[700px] overflow-y-auto transform transition-transform duration-300 ease-in-out scale-95 opacity-0"
+          className="bg-[#141415] rounded-3xl shadow-lg s:w-[400px] s:h-[600px] w-[744px] h-[800px] overflow-y-auto transform transition-transform duration-300 ease-in-out scale-95 opacity-0"
           style={{
             opacity: isModalOpen ? 1 : 0,
             transform: isModalOpen ? 'scale(1)' : 'scale(0.95)',
@@ -305,45 +319,44 @@ return (
           onClick={(e) => e.stopPropagation()}
         >
           <button
-            className="absolute top-2 right-2 text-black text-3xl font-bold rounded-full p-4 hover:text-white hover:scale-110 transition-transform duration-200 ease-in-out z-50"
+            className="absolute top-2 right-2 text-[#1919a] text-3xl font-bold rounded-full p-4 hover:text-black hover:scale-110 transition-transform duration-200 ease-in-out z-50"
             onClick={closeModal}
             style={{ userSelect: 'none' }} 
           >
             &times;
           </button>
-
-        {/* 대표 포트폴리오 이미지 */}
-        <div
-          className="relative h-[300px] bg-gray-200 rounded-t-[20px] overflow-hidden cursor-pointer"
-          onClick={() => window.open(blog, '_blank')}
-          style={{ userSelect: 'none' }} 
-        >
-          {background_image_url ? (
-            <Image
-              src={background_image_url}
-              alt="배경 이미지"
-              fill
-              sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"  // 적절한 sizes 추가
-              priority
-              className="absolute inset-0 w-full h-full object-cover object-center"
-            />
-          ) : (
-            <Image
-              src="/logos/hi.png"
-              alt="기본 이미지"
-              fill
-              sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"  // 적절한 sizes 추가
-              priority
-              className="absolute inset-0 w-full h-full object-cover object-center"
-            />
-          )}
-        </div>
+          {/* 대표 포트폴리오 이미지 */}
+          <div
+            className="relative h-[300px] bg-gray-200 rounded-t-[20px] overflow-hidden cursor-pointer"
+            onClick={() => window.open(blog, '_blank')}
+            style={{ userSelect: 'none' }} 
+          >
+            {background_image_url ? (
+              <Image
+                src={background_image_url}
+                alt="배경 이미지"
+                fill
+                sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"  
+                priority
+                className="absolute inset-0 w-full h-full object-cover object-center"
+              />
+            ) : (
+              <Image
+                src="/logos/hi.png"
+                alt="기본 이미지"
+                fill
+                sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw" 
+                priority
+                className="absolute inset-0 w-full h-full object-cover object-center"
+              />
+            )}
+          </div>
 
         {/* 프로필 정보 */}
         <div className="relative">
           <div className="absolute -top-20 flex flex-col items-start p-6"> 
-            <div className="w-28 h-28 rounded-2xl bg-white border-4 border-background overflow-hidden"> 
-              <div className="relative w-28 h-28">
+            <div className="w-[120px] h-[120px] rounded-2xl bg-white border-1 border-background overflow-hidden"> 
+              <div className="relative w-[120px] h-[120px]">
                 <Image
                   src={profile_image_url}
                   alt={nickname}
@@ -354,33 +367,40 @@ return (
                 />
               </div>
             </div>
-            <div className="mt-4">
-              <h2 className="text-xl font-bold text-#3e3e3d">{nickname}</h2>
-              <p className="text-primary text-ml">{job_title} | {experience}</p>
+            <div className="mt-5">
+              <h2 className="text-xl font-medium text-f7f7f7 font-['Pretendard'] leading-7">{nickname}</h2>
+              <p className="text-primary mt-1 text-sm font-normal font-['Pretendard'] leading-[21px]">
+                {job_title}
+                <span 
+                  className="text-[#5e5e5e] text-sm font-normal font-['Pretendard'] leading-[21px]"
+                >
+                &nbsp; |&nbsp; {experience}
+               </span>
+              </p>
             </div>
           </div>
 
           {/* 좋아요 & 1:1채팅 버튼 */}
           <div className="absolute -top-10 right-0 flex items-center space-x-4 p-6">
-          <button
-            onClick={() => toggleLike(nickname)}
-            className={`p-3 rounded-lg transition flex items-center space-x-2 ${liked ? 'bg-gray-700 text-primary' : 'bg-gray-700 text-white'} hover:bg-gray-900`}
-            style={{ userSelect: 'none' }} 
-          >
-            <Image
-              src={liked ? '/assets/bookmark2.svg' : '/assets/bookmark1.svg'}
-              alt="좋아요"
-              width={5}
-              height={5}
-              className="w-5 h-5"
-            />
-            <span className={`hidden md:block ${liked ? 'text-primary' : 'text-white'}`}>북마크</span>
-          </button>
+            <button
+              onClick={() => toggleLike(nickname)}
+              className={`p-3 rounded-xl transition flex items-center space-x-2 ${liked ? 'bg-gray-800 text-primary' : 'bg-[#28282a] text-white'} hover:bg-gray-900`}
+              style={{ userSelect: 'none' }} 
+            >
+              <Image
+                src={liked ? '/assets/bookmark2.svg' : '/assets/bookmark1.svg'}
+                alt="북마크"
+                width={5}
+                height={5}
+                className="w-5 h-5"
+              />
+              <span className={`hidden md:block ${liked ? 'text-primary' : 'text-white'}`}>북마크 저장하기</span>
+            </button>
 
             <button
-              className="bg-gray-700 text-white px-4 py-3 rounded-lg hover:bg-gray-900 transition flex items-center space-x-2"
-              onClick={closeModal}
-              style={{ userSelect: 'none' }}
+              className="bg-[#28282a] text-white px-4 py-3 rounded-xl hover:bg-gray-900 transition flex items-center space-x-2 group"
+              style={{ userSelect: 'none', cursor: 'not-allowed'}} 
+              disabled
             >
               <Image
                 src="/assets/chat.svg"
@@ -389,149 +409,152 @@ return (
                 height={20}
                 className="w-5 h-5"
               />
-              <span className="hidden md:block">1:1채팅</span>
+              <span className="hidden md:block">대화 신청하기</span>
+
+              {/* 말풍선 */}
+              <div className="absolute top-[100%] s:left-[50%] left-[65%] transform -translate-x-1/2 min-w-[140px] px-3 py-2 bg-[orange] text-black text-sm rounded-lg opacity-0 group-hover:opacity-100 transition-opacity duration-300 shadow-lg">
+                현재 개발 중인 <br /> 기능 입니다.
+                <div className="absolute top-[-6px] s:left-[70%] left-1/2 transform -translate-x-1/2 w-3 h-3 bg-[orange] rotate-45"></div>
+              </div>
             </button>
           </div>
         </div>
 
-        <div className="w-240px border-t border-gray-500 border-opacity-40 mt-40 mx-5"></div>
+        <div className="s:w-[340px] w-[680px] border-t border-gray-500 border-opacity-40 mt-40 mx-5"></div>
 
         {/* 자기소개 섹션 */}
-        <div className="p-6 flex items-start space-x-16">
-          {/* 왼쪽: 자기소개 제목 */}
-          <div className="flex-shrink-0">
-            <h3 className="text-ml text-#3e3e3d">자기소개</h3>
-          </div>
-          {/* 오른쪽: 자기소개 내용 */}
-          <div className="flex-grow bg-fillLight p-4 rounded-lg">
-            <p className="text-gray-300">{description}</p>
-          </div>
-        </div>
-
-        <div className="w-240px border-t border-gray-500 border-opacity-40 mt-30 mx-5"></div>
-
-        {/* 공통 질문 섹션 */}
-        <div className="p-6 flex items-start space-x-16">
-
-          {/* 왼쪽: 공통 질문 제목 */}
-          <div className="flex-shrink-0">
-            <h3 className="text-ml text-#3e3e3d">공통 질문</h3>
-          </div>
-
-          {/* 오른쪽: 공통 질문 답변 */}
-          <div className="flex-grow space-y-6">
-
-            {/* 첫 번째 질문 */}
-            <div className="flex items-start flex-col space-y-2">
-              <div className="flex-shrink-0">
-                {/* 화면 크기에 따라 텍스트 크기 변경 */}
-                <h4 className="text-xs md:text-base lg:text-lg font-bold text-#3e3e3d">
-                  1️. 팀으로 일할 때 나는 어떤 팀원인가요?
-                </h4>
-              </div>
-              <div className="w-full bg-fillLight p-4 rounded-lg">
-                <p className="text-xs md:text-sm lg:text-base text-gray-300">{answer1}</p>
-              </div>
+        <div className="h-[92px] justify-start p-6 items-start gap-5 inline-flex space-x-8 md:space-x-20">
+          <div className="h-[29px] p-1 justify-start items-center gap-1 flex">
+            <div className="text-[#c4c4c4] text-sm font-medium font-['Pretendard'] leading-[21px]">
+              자기소개
             </div>
-
-            {/* 두 번째 질문 */}
-            <div className="flex items-start flex-col space-y-2">
-              <div className="flex-shrink-0">
-                <h4 className="text-xs md:text-base lg:text-lg font-bold text-#3e3e3d">
-                  2️. 팀과 목표를 이루기 위해 가장 중요한 것은 무엇인가요?
-                </h4>
-              </div>
-              <div className="w-full bg-fillLight p-4 rounded-lg">
-                <p className="text-xs md:text-sm lg:text-base text-gray-300">{answer2}</p>
-              </div>
-            </div>
-            
-            {/* 세 번째 질문 */}
-            <div className="flex items-start flex-col space-y-2">
-              <div className="flex-shrink-0">
-                <h4 className="text-xs md:text-base lg:text-lg font-bold text-#3e3e3d">
-                  3️. 자신의 부족한 부분을 어떻게 보완했나요?
-                </h4>
-              </div>
-              <div className="w-full bg-fillLight p-4 rounded-lg">
-                <p className="text-xs md:text-sm lg:text-base text-gray-300">{answer3}</p>
+          </div>
+          <div className="s:w-[240px] md:w-[524px] flex-col justify-start items-start inline-flex">
+            <div className="self-stretch h-[92px] py-1 flex-col justify-center items-center flex">
+              <div className="self-stretch h-[84px] p-3 bg-[#19191a] rounded-xl shadow border border-[#212121] justify-between items-start inline-flex">
+                <div className="text-xs md:text-sm text-gray-300 md:h-auto h-[60px] overflow-y-auto md:overflow-y-visible leading-relaxed md:leading-normal">
+                  {description}
+                </div>
+                <div className="w-6 h-6 p-1 justify-center items-center flex">
+                  <div className="h-4 p-2.5"></div>
+                </div>
               </div>
             </div>
           </div>
         </div>
 
-      <div className="w-240px border-t border-gray-500 border-opacity-40 mt-30 mx-5"></div>
+        <div className="s:w-[340px] w-[680px] border-t border-gray-500 border-opacity-40 mx-5"  style={{ marginTop: '50px' }}></div>
 
-          {/* 기술스택 섹션 */}
-          <div className="p-6 flex items-start space-x-16">
-           {/* 왼쪽: 기술스택 제목 */}
-           <div className="flex-shrink-0">
-             <h3 className="text-ml text-#3e3e3d">기술스택</h3>
-           </div>
-           {/* 오른쪽: 기술스택 */}
-          <div>
-            JavaScript, TypeScript, React, NEXT.JS
+        <div className="h-[411px] justify-start p-6 items-start gap-5 inline-flex space-x-6 md:space-x-16">
+          <div className="h-[29px] p-2 justify-start items-center gap-1 flex">
+            <div className="text-[#c4c4c4] text-sm font-medium font-['Pretendard'] leading-[21px] whitespace-nowrap">공통 질문</div>
           </div>
-         </div>
 
-         <div className="w-240px border-t border-gray-500 border-opacity-40 mt-30 mx-5"></div>
+          <div className="s:w-[240px] md:w-[524px] flex-col justify-start items-start gap-6 inline-flex">
+            <div className="self-stretch h-[121px] flex-col justify-start items-start flex">
+              <div className="self-stretch p-1 justify-start items-center gap-2 inline-flex">
+                <div className="text-[#c4c4c4] s:text-xs text-sm font-medium font-['Pretendard'] leading-[21px]">
+                  1. 팀으로 일할 때 나는 어떤 팀원인지 설명해 주세요.
+                </div>
+              </div>
+              <div className="self-stretch h-[92px] py-1 flex-col justify-center items-center flex">
+                <div className="self-stretch h-[84px] p-3 bg-[#19191a] rounded-xl shadow border border-[#212121] justify-between items-start inline-flex">
+                  <div className="text-xs md:text-sm text-gray-300 md:h-auto h-[60px] overflow-y-auto md:overflow-y-visible leading-relaxed md:leading-normal">
+                    {answer1}
+                  </div>
+                  <div className="w-6 h-6 p-1 justify-center items-center flex">
+                    <div className="h-4 p-2.5"></div>
+                  </div>
+                </div>
+              </div>
+            </div>
 
-        {/* 포트폴리오 섹션 */}
-        <div className="p-6 flex items-start space-x-24">
-          {/* 왼쪽: 기술스택 제목 */}
-          <div className="flex-shrink-0">
-            <h3 className="text-ml text-#3e3e3d">URL</h3>
+            <div className="self-stretch h-[121px] flex-col justify-start items-start flex">
+              <div className="self-stretch p-1 justify-start items-center gap-2 inline-flex">
+                <div className="text-[#c4c4c4] s:text-xs text-sm font-medium font-['Pretendard'] leading-[21px]">
+                  2. 팀과 함께 목표를 이루기 위해 무엇이 가장 중요하다고 생각하는지 알려 주세요.
+                </div>
+              </div>
+              <div className="self-stretch h-[92px] py-1 flex-col justify-center items-center flex">
+                <div className="self-stretch h-[84px] p-3 bg-[#19191a] rounded-xl shadow border border-[#212121] justify-between items-start inline-flex">
+                  <div className="text-xs md:text-sm text-gray-300 md:h-auto h-[60px] overflow-y-auto md:overflow-y-visible leading-relaxed md:leading-normal">
+                    {answer2}
+                  </div>
+                  <div className="w-6 h-6 p-1 justify-center items-center flex">
+                    <div className="h-4 p-2.5"></div>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <div className="self-stretch h-[121px] flex-col justify-start items-start flex">
+              <div className="self-stretch p-1 justify-start items-center gap-2 inline-flex">
+                <div className="text-[#c4c4c4] s:text-xs text-sm font-medium font-['Pretendard'] leading-[21px]">
+                  3. 자신이 부족하다고 느낀 부분을 어떻게 보완하거나 학습해왔는지 이야기해 주세요.
+                </div>
+              </div>
+              <div className="self-stretch h-[92px] py-1 flex-col justify-center items-center flex">
+                <div className="self-stretch h-[84px] p-3 bg-[#19191a] rounded-xl shadow border border-[#212121] justify-between items-start inline-flex">
+                  <div className="text-xs md:text-sm text-gray-300 md:h-auto h-[60px] overflow-y-auto md:overflow-y-visible leading-relaxed md:leading-normal">
+                    {answer3}
+                  </div>
+                  <div className="w-6 h-6 p-1 justify-center items-center flex">
+                    <div className="h-4 p-2.5"></div>
+                  </div>
+                </div>
+              </div>
+            </div>
           </div>
-          
-          {/* 오른쪽: 포트폴리오 링크 */}
-          <div className="flex space-x-4">
-
-            {/* 첫 번째 포트폴리오 링크 */}
-            <a
-              href={blog}
-              target="_blank"
-              rel="noopener noreferrer"
-              className="flex flex-col items-center space-y-1 text-blue-500 hover:underline transition-transform duration-300 hover:scale-105"
-              style={{ userSelect: 'none' }}
-            >
-              <span className="text-3xl">⭐️</span>         
-            </a>
-            {/* 두 번째 포트폴리오 링크 */}
-            <a
-              href={notionLink || 'first_link'}
-              target="_blank"
-              rel="noopener noreferrer"
-              className="flex flex-col items-center space-y-1 text-green-500 hover:underline transition-transform duration-300 hover:scale-105"
-              style={{ userSelect: 'none' }}
-            >
-              <Image
-                src="/logos/github.svg" 
-                alt="first_link_type"
-                width={40}
-                height={40}
-                className="w-10 h-10"
-              />
-            </a>
-            {/* 세 번째 포트폴리오 링크 */}
-            <a
-              href={instagramLink || 'second_link'}
-              target="_blank"
-              rel="noopener noreferrer"
-              className="flex flex-col items-center space-y-1 text-pink-500 hover:underline transition-transform duration-300 hover:scale-105"
-              style={{ userSelect: 'none' }}
-            >
-              <Image
-                src="/logos/google.svg" 
-                alt="second_link_type"
-                width={40}
-                height={40}
-                className="w-10 h-10"
-              />
-            </a>
-
-          </div>
-          
         </div>
+
+        <div className="s:w-[340px] w-[680px] border-t border-gray-500 border-opacity-40 s:mt-[90px] mt-[54px] mx-5"></div>
+
+        <div className="h-8 justify-start items-start p-6 gap-5 inline-flex space-x-20">
+          <div className="h-[29px] p-1 justify-start items-center gap-1 flex">
+            <div className="text-[#c4c4c4] text-sm font-medium font-['Pretendard'] leading-[21px]">기술 스택</div>
+          </div>
+          <div className="self-stretch justify-start items-start gap-2 flex">
+            <div className="px-4 py-2 bg-[#28282a] rounded-full border border-[#2d2d2f] justify-center items-center gap-2 flex">
+              <div className="w-2 h-4 justify-center items-center flex"></div>
+              <div className="text-[#f7f7f7] text-xs font-medium font-['Pretendard'] leading-none">Kotlin</div>
+            </div>
+            <div className="px-3 py-2 bg-[#28282a] rounded-full border border-[#2d2d2f] justify-center items-center gap-2 flex">
+              <div className="w-4 h-4 justify-center items-center flex"></div>
+              <div className="text-[#f7f7f7] text-xs font-medium font-['Pretendard'] leading-none">Swift</div>
+            </div>
+          </div>
+        </div>
+
+        <div className="w-240px border-t border-gray-500 border-opacity-40 mx-5"  style={{ marginTop: '50px' }}></div>
+
+        <div className="h-9 justify-start items-start gap-5 inline-flex p-6 space-x-20">
+          <div className="h-[29px] p-1 justify-start items-center gap-1 flex">
+            <div className="w-[52px] text-[#c4c4c4] text-sm font-medium font-['Pretendard'] leading-[21px]">URL</div>
+          </div>
+
+          <div className="grow shrink basis-0 h-9 justify-start items-center gap-2 flex">
+            <div className="p-1 bg-[#28282a] rounded-[10px] border border-[#2d2d2f] justify-center items-center gap-2.5 flex">
+              <div className="w-7 h-7 p-1 justify-center items-center flex">
+                <div className="w-5 h-5 justify-center items-center flex"></div>
+              </div>
+            </div>
+            <div className="p-1 bg-[#28282a] rounded-[10px] border border-[#2d2d2f] justify-center items-center gap-2.5 flex">
+              <div className="w-7 h-7 p-1 justify-center items-center flex">
+                <div className="w-5 h-5 justify-center items-center flex"></div>
+              </div>
+            </div>
+            <div className="p-1 bg-[#28282a] rounded-[10px] border border-[#2d2d2f] justify-center items-center gap-2.5 flex">
+              <div className="w-7 h-7 p-1 justify-center items-center flex">
+                <div className="w-5 h-5 justify-center items-center flex"></div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+
+        
+        <div className="w-240px border-t border-gray-500 border-opacity-10 mx-5"  style={{ marginTop: '50px' }}></div>
+
       </div>
     </div>,
   document.body
