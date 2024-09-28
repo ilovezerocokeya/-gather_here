@@ -172,7 +172,7 @@ return (
 
     {/* 프로필 이미지 */}
     <div
-      className="w-30 h-30 rounded-2xl flex items-center justify-center  bg-black absolute bottom-[190px] left-4 overflow-hidden cursor-pointer transition-transform duration-200 ease-in-out hover:scale-105"
+      className="w-30 h-30 rounded-2xl flex items-center justify-center ml-1 bg-black absolute bottom-[190px] left-4 overflow-hidden cursor-pointer transition-transform duration-200 ease-in-out hover:scale-105"
       onClick={() => setIsProfileModalOpen(true)}
       style={{ userSelect: 'none' }} 
     >
@@ -196,13 +196,13 @@ return (
           onClick={() => setIsProfileModalOpen(false)}
           style={{ userSelect: 'none' }}
         >
-          <div className="relative s:w-[340px] s:h-[340px] h-[500px] w-[500px]">
+          <div className="relative">
             <Image
               src={profile_image_url || ''}
               alt={nickname}
               width={500}
               height={500}
-              className=" object-cover rounded-2xl shadow-lg"
+              className="s:w-[340px] s:h-[340px] h-[500px] w-[500px] object-cover rounded-2xl shadow-lg"
             />
             <button
               className="absolute top-2 right-2 text-black text-2xl font-bold rounded-full p-2 hover:text-gray-800 hover:scale-110 transition-transform duration-200 ease-in-out"
@@ -213,11 +213,11 @@ return (
             </button>
           </div>
         </div>,
-      document.body
-    )}
+        document.body
+      )}
 
     {/* 하단 멤버 정보 */}
-    <div className="self-stretch pl-4 h-[234px] flex-col justify-start items-start gap-2 flex mt-[-40px]">
+    <div className="self-stretch pl-4 h-[234px] flex-col justify-start items-start gap-2 ml-1 flex mt-[-40px]">
       <div 
         className="self-stretch h-[129px] flex-col justify-start items-start cursor-pointer gap-3 flex"
         onClick={openModal}
@@ -239,7 +239,7 @@ return (
       </div>
 
       {/* 포트폴리오 링크 */}
-      <div className="flex justify-start space-x-4 mt-[-15px]" style={{ userSelect: 'none' }}>
+      <div className="flex justify-start space-x-4 mt-[-18px]" style={{ userSelect: 'none' }}>
         {/* 대표 포트폴리오 링크 */}
         <div className="self-stretch h-8 justify-start items-center gap-2 inline-flex">
           <div className="p-1 bg-[#28282a] rounded-[9px] justify-center items-center gap-2.5 flex">
@@ -384,7 +384,7 @@ return (
           <div className="absolute -top-10 right-0 flex items-center space-x-4 p-6">
             <button
               onClick={() => toggleLike(nickname)}
-              className={`p-3 rounded-xl transition flex items-center space-x-2 ${liked ? 'bg-gray-800 text-primary' : 'bg-[#28282a] text-white'} hover:bg-gray-900`}
+              className={`p-3 rounded-xl transition flex items-center space-x-2 ${liked ? 'bg-gray-800 text-white' : 'bg-[#28282a] text-white'} hover:bg-gray-900`}
               style={{ userSelect: 'none' }} 
             >
               <Image
@@ -394,7 +394,7 @@ return (
                 height={5}
                 className="w-5 h-5"
               />
-              <span className={`hidden md:block ${liked ? 'text-primary' : 'text-white'}`}>북마크 저장하기</span>
+              <span className={`hidden md:block`}>북마크 저장하기</span>
             </button>
 
             <button
