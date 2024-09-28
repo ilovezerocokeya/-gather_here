@@ -1,6 +1,7 @@
 "use client"
 import React from 'react';
 import Link from 'next/link';
+import Image from 'next/image';
 
 export default function NotFound() {
   return (
@@ -18,7 +19,13 @@ export default function NotFound() {
       margin: 0,
       boxSizing: 'border-box',
     }}>
-       <img src="/logos/404Error.gif" alt="Not Found" style={{ width: '100%', maxWidth: '330px', marginBottom: '20px' }} />
+       <Image 
+          src="/logos/404Error.gif" 
+          alt="Not Found" 
+          width={330} 
+          height={330} 
+          style={{ width: '100%', maxWidth: '330px', marginBottom: '20px' }} 
+        />
       <h1 style={{ color: 'white', fontSize: '35px', fontWeight: 'bold', marginBottom: '10px' }}>페이지를 찾을 수 없어요</h1>
       <p style={{
         color: '#6a6a6a',

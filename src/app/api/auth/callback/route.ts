@@ -23,18 +23,40 @@ export async function GET(request: Request) {
       }
 
       if (userData) {
+        // 이미 사용자 데이터가 있는 경우 메인 페이지로 리다이렉트
         return NextResponse.redirect(`${origin}/`);
       } else {
+        
+        // 기본값 설정
         const nickname = user.user_metadata?.full_name || user.email?.split("@")[0] || "사용자";
+        const job_title = "";
+        const experience = "0";
+        const description = `안녕하세요! 반갑습니다😆`;
+
+
+        // answer1, answer2, answer3 기본값 설정
+        const answer1 = "";
+        const answer2 = ""
+        const answer3 = "";
+
+        // 디폴트 이미지 URL
+        const defaultBackgroundImageUrl = "/logos/hi.png"; 
         const defaultData = {
           nickname,
           email: user.email,
           blog: "",
           profile_image_url: user.user_metadata?.avatar_url || "",
-          experience: "",
-          job_title: "",
+          experience,
+          job_title: job_title,
           user_id: user.id,
+          description,
+          hubCard: false,
+          background_image_url: defaultBackgroundImageUrl,
+          answer1,
+          answer2,
+          answer3,
         };
+
 
         const { error: insertError } = await supabase.from("Users").insert([defaultData]);
 
@@ -42,6 +64,7 @@ export async function GET(request: Request) {
           console.error("Error inserting user into Users table:", insertError.message);
           return NextResponse.redirect(`${origin}/auth/auth-code-error`);
         }
+
 
         return NextResponse.redirect(`${origin}/signup`);
       }
