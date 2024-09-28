@@ -453,7 +453,7 @@ const MemberCard: React.FC<MemberCardProps> = ({
   );
 };
 
-const AdCard: React.FC = () => {
+const PrCard: React.FC = () => {
     const settings = {
       infinite: true,
       speed: 600,
@@ -515,4 +515,4 @@ const AdCard: React.FC = () => {
     );
 };
 
-export default AdCard;
+export default PrCard;
