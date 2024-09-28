@@ -46,10 +46,11 @@ const NicknameInput: React.FC<NicknameInputProps> = ({ register, errors, nicknam
             if (value.trim() === "") return "닉네임에 공백이 포함될 수 없습니다.";
             if (/\s/.test(value)) return "닉네임에 공백이 포함될 수 없습니다.";
             if (hasSpecialCharacter(value)) return "닉네임에 공백 및 특수문자가 포함될 수 없습니다.";
+            if (/^\d+$/.test(value)) return "숫자만으로 닉네임을 사용할 수 없습니다."; 
             return true;
           },
         })}
-        className="block focus:outline-primaryHeavy s:w-[300px] w-[350px] s:mt-1 mt-3 ml-5 h-[50px] p-2 bg-background rounded-md border-2 border-fillLight"
+        className="block focus:outline-primaryHeavy s:w-[300px] w-[350px] s:mt-1 mt-3 ml-5 h-[50px] p-2 bg-background rounded-xl border-2 border-fillLight"
       />
       <p className={`text-xs mt-2 ml-5 ${getLengthMessageClass()}`}>
         닉네임은 2 ~ 11자 내로 작성해주세요.
@@ -59,7 +60,16 @@ const NicknameInput: React.FC<NicknameInputProps> = ({ register, errors, nicknam
           닉네임에 공백 및 특수문자가 포함될 수 없습니다.
         </p>
       )}
-      {nicknameAvailable === false && <p className="text-xs text-red-500 mt-1 ml-5">이미 사용 중인 닉네임입니다.</p>}
+
+      {/* 숫자만 사용했을 때 경고 메시지 */}
+      {errors.nickname?.message === "숫자만으로 닉네임을 사용할 수 없습니다." && (
+        <p className="text-xs text-red-500 mt-2 ml-5">{errors.nickname.message}</p>
+      )}
+      
+      {/* 중복 닉네임 경고 메시지 */}
+      {nicknameAvailable === false && (
+        <p className="text-xs text-red-500 mt-1 ml-5">이미 사용 중인 닉네임입니다.</p>
+        )}
     </div>
   );
 };

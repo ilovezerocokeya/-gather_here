@@ -110,17 +110,23 @@ const Calender: NextPage = () => {
         }}
         plugins={[dayGridPlugin, listPlugin, interactionPlugin]}
         ref={calenderRef}
-        initialView={`${isMobileDevice ? "listMonth" : "dayGridMonth"}`}
+        // initialView={`${isMobileDevice ? "listMonth" : "dayGridMonth"}`}
+        initialView="listMonth"
         locale="ko"
         events={IT_Events}
         headerToolbar={
-          isMobileDevice
-            ? {
-                start: "prev",
-                center: "title",
-                end: "next",
-              }
-            : { start: "title", end: "prev next viewChanger" }
+          // isMobileDevice
+          // ? {
+          //     start: "prev",
+          //     center: "title",
+          //     end: "next",
+          //   }
+          // : { start: "title", end: "prev next viewChanger" }
+          {
+            start: "prev",
+            center: "title",
+            end: "next",
+          }
         }
         titleFormat={(date) => {
           return date.date.year + ". " + String(date.date.month + 1).padStart(2, "0") + ".";

@@ -2,7 +2,6 @@
 
 import React, { createContext, useContext, useState, useEffect, ReactNode, FC } from "react";
 import Modal from "react-modal";
-import CommonModal from "@/components/Common/Modal/CommonModal";
 
 interface ModalContextType {
   openModal: (content: ReactNode, disablePage?: boolean) => void;
