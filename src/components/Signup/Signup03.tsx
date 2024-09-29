@@ -102,13 +102,14 @@ const Signup03: React.FC<Signup03Type> = ({ setUserData }) => {
           <button
             type="submit"
             className={`s:w-[300px] w-[350px] h-[45px] mt-24 py-3 flex justify-center items-center rounded-2xl transition-transform transform hover:scale-105 active:scale-95 active:bg-gray-800 active:text-gray-200 ${
-              watchNickname && watchNickname.trim() !== ""
-                ? "text-[#C3E88D]" 
-                : "text-[#FFFFFF]" 
+              watchNickname && watchNickname.trim() !== "" && nicknameAvailable
+                ? "text-[#C3E88D]"  // 닉네임 사용 가능하면 텍스트 색상 변경
+                : "text-[#FFFFFF]"  // 기본 텍스트 색상
             } bg-[#343437]`} 
+            disabled={!watchNickname || watchNickname.trim() === "" || !nicknameAvailable} // 조건 만족 안 하면 비활성화
           >
-              등록하기
-            </button>
+            등록하기
+          </button>
           </div>
         </form>
       </div>

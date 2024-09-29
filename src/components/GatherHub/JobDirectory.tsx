@@ -29,11 +29,11 @@ const JobDirectory: React.FC<JobDirectoryProps> = ({ setFilteredJob, className }
     { name: '전체보기', value: 'all', hoverClass: 'hover:bg-primary hover:text-black text-black' },
     { name: '프론트엔드', value: '프론트엔드', hoverClass: 'hover:bg-primaryStrong hover:text-black' },
     { name: '백엔드', value: '백엔드', hoverClass: 'hover:bg-accentOrange hover:text-black' },
-    { name: 'IOS', value: 'ios', hoverClass: 'hover:bg-accentMaya hover:text-black' },
-    { name: 'Android', value: 'android', hoverClass: 'hover:bg-accentPurple hover:text-black' },
-    { name: 'DevOps', value: '데브옵스', hoverClass: 'hover:bg-accentRed hover:text-black' },
+    { name: 'IOS', value: 'IOS', hoverClass: 'hover:bg-accentMaya hover:text-black' },
+    { name: '안드로이드', value: '안드로이드', hoverClass: 'hover:bg-accentPurple hover:text-black' },
+    { name: '데브옵스', value: '데브옵스', hoverClass: 'hover:bg-accentRed hover:text-black' },
     { name: '디자인', value: '디자인', hoverClass: 'hover:bg-accentMint hover:text-black' },
-    { name: 'PM', value: 'pm', hoverClass: 'hover:bg-accentColumbia hover:text-black' },
+    { name: 'PM', value: 'PM', hoverClass: 'hover:bg-accentColumbia hover:text-black' },
     { name: '기획', value: '기획', hoverClass: 'hover:bg-accentPink hover:text-black' },
     { name: '마케팅', value: '마케팅', hoverClass: 'hover:bg-accentYellow hover:text-black' }
   ], []);
@@ -84,9 +84,9 @@ const JobDirectory: React.FC<JobDirectoryProps> = ({ setFilteredJob, className }
 
 
   return (
-    <aside className={`${className} p-2 rounded-lg sticky top-4 user-select-none`} style={{ userSelect: 'none' }}>
+    <aside className={`${className} p-1 rounded-lg sticky top-4 user-select-none`} style={{ userSelect: 'none' }}>
       {/* 큰 화면에서는 리스트로 */}
-      <ul className="hidden lg:block job-list rounded-2xl bg-fillStrong p-4 space-y-2 shadow-lg mt-6 mb-6"
+      <ul className="hidden lg:block job-list flex-col gap-1 justify-start item-start rounded-[20px] bg-fillStrong p-5 space-y-2 shadow mt-6 mb-6 w-[120px] h-[445px]"
         style={{ minHeight: '500px', paddingTop: '20px', paddingBottom: '20px' }}
       >
       {jobCategories.map((job, index) => (
@@ -101,11 +101,10 @@ const JobDirectory: React.FC<JobDirectoryProps> = ({ setFilteredJob, className }
           onMouseLeave={() => setHoveredJob(null)}
           style={{ userSelect: 'none', width: '100%' }} 
         >
-          {/* 화살표 아이콘: 선택된 항목 또는 호버한 항목에만 표시 */}
           {selectedJob === job.value  && (
             <svg
               xmlns="http://www.w3.org/2000/svg"
-              className="h-5 w-5 text-primary transform rotate-180 mr-2"
+            className="h-5 w-5 text-primary transform rotate-180 translate-x-[10px]" 
               fill="none"
               viewBox="0 0 24 24"
               stroke="currentColor"
@@ -118,7 +117,6 @@ const JobDirectory: React.FC<JobDirectoryProps> = ({ setFilteredJob, className }
               />
             </svg>
           )}
-
           {/* 직업 이름 */}
           <span className={`flex-grow text-center ${selectedJob === job.value ? 'text-primary' : ''}`}>
             {job.name}
@@ -173,16 +171,35 @@ const JobDirectory: React.FC<JobDirectoryProps> = ({ setFilteredJob, className }
   {/* Hub 등록 버튼 (큰 화면용) */}
   <div className="hidden lg:block relative group">
     <button
-      className="mt-5 w-full bg-fillLight text-primary text-sm p-3 rounded-lg shadow-lg hover:shadow-xl transform hover:scale-105 transition-all duration-300 ease-out hover:bg-fillLighter hover:text-bright hover:brightness-125"
+      className="fixed bottom-[40px] right-10 w-14 h-14 bg-fillStrong text-primary text-xl 
+                rounded-2xl shadow-xl hover:shadow-2xl transform transition-all duration-300 ease-out 
+                hover:scale-120 active:scale-95 hover:animate-bounce hover:bg-fillLight cursor-pointer"
       onClick={handleAddCard}
-      style={{ userSelect: 'none' }} 
+      style={{
+      zIndex: 1000,
+      userSelect: 'none',
+    }}
     >
-      {isHubRegistered ? '프로필 수정' : '프로필 등록'}
+      <svg
+        xmlns="http://www.w3.org/2000/svg"
+        fill="none"
+        viewBox="0 0 24 24"
+        strokeWidth={1.5}
+        stroke="currentColor"
+        className="w-8 h-8 m-auto text-bright"
+      >
+      <path
+        strokeLinecap="round"
+        strokeLinejoin="round"
+        d="M12 4.5v15m7.5-7.5h-15"
+      />
+      </svg>
     </button>
     {/* 말풍선 */}
-    <div className="absolute top-[70px] left-1/2 transform -translate-x-1/2 w-[150px] px-3 py-2 bg-yellow-500 text-black text-sm text-center rounded-lg opacity-0 group-hover:opacity-100 transition-opacity duration-200 shadow-lg" style={{ userSelect: 'none' }}>
-      Hub멤버가 되기 위해 <br /> 카드를 등록해주세요
-    </div>
+      <div className="fixed bottom-[120px] right-10 w-[150px] px-3 py-2 bg-yellow-500 text-black text-sm text-center rounded-lg opacity-0 group-hover:opacity-100 transition-opacity duration-200 shadow-lg">
+        Hub멤버가 되기 위해 <br /> 카드를 등록해주세요
+        <div className="absolute bottom-[-8px] right-2 transform -translate-x-1/2 w-3 h-3 bg-yellow-500 rotate-45"></div>
+      </div>
   </div>
 
   {/* 로그인 모달 */}

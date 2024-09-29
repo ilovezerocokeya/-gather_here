@@ -45,7 +45,7 @@ const fetchMembers = async ({ pageParam = 1 }) => {
 // const fetchMembers = async ({ pageParam = 1 }) => {
 //   const mockMembers = Array.from({ length: 100 }, (_, index) => ({
 //     nickname: `User${index + 1}`,
-//     job_title: ['프론트엔드', '백엔드', '디자인', 'PM', 'IOS', 'Android', 'DevOps'][index % 6], // 직업 데이터 추가
+//     job_title: ['프론트엔드', '백엔드', '디자인', 'PM', 'IOS', '안드로이드', '데브옵스'][index % 6], // 직업 데이터 추가
 //     experience: ['신입', '1년차', '2년차', '3년차', '4년차', '5년차', '6년차'][index % 4],
 //     background_image_url: '/logos/hi.png',
 //     profile_image_url: '/logos/github.svg',
@@ -158,7 +158,7 @@ const GatherHubPage: React.FC = () => {
       job_title: userData.job_title || '',
       experience: userData.experience || '',
       blog: userData.blog || '',
-      description: '항상 사용자의 입장에서 친절한 화면을 지향합니다.',
+      description: userData.description || '항상 사용자의 입장에서 친절한 화면을 지향합니다.',
       background_image_url: '',
       profile_image_url: userData.profile_image_url || '',
       answer1: userData.answer1 || '기본 답변 1',
@@ -218,7 +218,7 @@ const GatherHubPage: React.FC = () => {
         </div>
 
         {/* Member Cards */}
-        <div className="flex-grow grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 justify-items-center">
+        <div className="flex-grow grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-10 ml-8 justify-items-center">
           {filteredMembers.map((member, index) => (
             <div key={`${member.nickname}-${index}`} onClick={() => handleCardClick(member)}> {/* 각 멤버 카드 클릭 시 handleCardClick 함수가 호출되어 스크롤 위치 저장 */}
               <MemberCard 
@@ -244,7 +244,7 @@ const GatherHubPage: React.FC = () => {
         </div>
 
         {/* 큰 화면에서 JobDirectory */}
-        <div className="hidden lg:block lg:ml-10 lg:w-40">
+        <div className="hidden lg:block lg:ml-10 lg:w-40 mt-[-5px]">
           <JobDirectory setFilteredJob={setFilteredJob} />
         </div>
       </div>
