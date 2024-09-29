@@ -28,7 +28,8 @@ const HubProfileForm: React.FC<{
   const [blogError, setBlogError] = useState("");
   const [firstLinkError, setFirstLinkError] = useState("");
   const [secondLinkError, setSecondLinkError] = useState("");
-  const [showSecondLink, setShowSecondLink] = useState(false);
+  const [showFirstLink, setShowFirstLink] = useState(firstLink !== "");
+  const [showSecondLink, setShowSecondLink] = useState(secondLink !== "");
 
   const platforms = [
     { value: "behance", label: "비핸스" },
@@ -90,7 +91,11 @@ const HubProfileForm: React.FC<{
     console.log("모든 링크가 유효합니다.");
   };
 
-  const handleAddLink = () => {
+  const handleAddFirstLink = () => {
+    setShowFirstLink(true);
+  };
+
+  const handleAddSecondLink = () => {
     setShowSecondLink(true);
   };
 
@@ -115,41 +120,53 @@ const HubProfileForm: React.FC<{
           {blogError && <p className="text-red-500 text-sm mt-1">{blogError}</p>}
         </div>
 
-        {/* 첫 번째 링크 */}
-        <div>
-          <label htmlFor="firstLinkType" className="block text-sm font-medium text-labelNormal mb-1">
-            추가 링크
-          </label>
-          <div className="flex gap-2">
-            <select
-              id="firstLinkType"
-              name="firstLinkType"
-              value={firstLinkType}
-              onChange={(e) => setFirstLinkType(e.target.value)}
-              className="w-1/3 shared-select-gray-2 border-[1px] border-fillLight"
-            >
-              <option value="">링크 선택</option>
-              {platforms.map((platform) => (
-                <option key={platform.value} value={platform.value}>
-                  {platform.label}
-                </option>
-              ))}
-            </select>
-            <input
-              type="url"
-              id="firstLink"
-              name="firstLink"
-              value={firstLink}
-              onChange={(e) => setFirstLink(normalizeURL(e.target.value))}
-              placeholder="링크를 입력하세요."
-              className="w-2/3 shared-input-gray-2 border-[1px] border-fillLight"
-            />
+        {/* 첫 번째 링크는 추가 버튼을 누를 때만 표시 */}
+        {showFirstLink && (
+          <div>
+            <label htmlFor="firstLinkType" className="block text-sm font-medium text-labelNormal mb-1">
+              추가 링크
+            </label>
+            <div className="flex gap-2">
+              <select
+                id="firstLinkType"
+                name="firstLinkType"
+                value={firstLinkType}
+                onChange={(e) => setFirstLinkType(e.target.value)}
+                className="w-1/3 shared-select-gray-2 border-[1px] border-fillLight"
+              >
+                <option value="">링크 선택</option>
+                {platforms.map((platform) => (
+                  <option key={platform.value} value={platform.value}>
+                    {platform.label}
+                  </option>
+                ))}
+              </select>
+              <input
+                type="url"
+                id="firstLink"
+                name="firstLink"
+                value={firstLink}
+                onChange={(e) => setFirstLink(normalizeURL(e.target.value))}
+                placeholder="링크를 입력하세요."
+                className="w-2/3 shared-input-gray-2 border-[1px] border-fillLight"
+              />
+            </div>
+            {firstLinkError && <p className="text-red-500 text-sm mt-1">{firstLinkError}</p>}
           </div>
-          {firstLinkError && <p className="text-red-500 text-sm mt-1">{firstLinkError}</p>}
-        </div>
+        )}
+
+        {!showFirstLink && (
+          <button
+            type="button"
+            onClick={handleAddFirstLink}
+            className="text-labelNeutral hover:text-primary mt-2 text-sm flex items-center"
+          >
+            <span className="mr-2">+</span> 추가 링크
+          </button>
+        )}
 
         {/* 두 번째 링크는 추가 버튼을 누를 때만 표시 */}
-        {showSecondLink && (
+        {showFirstLink && showSecondLink && (
           <div>
             <label htmlFor="secondLinkType" className="block text-sm font-medium text-labelNormal mb-1">
               추가 링크 2
@@ -183,13 +200,13 @@ const HubProfileForm: React.FC<{
           </div>
         )}
 
-        {!showSecondLink && (
+        {showFirstLink && !showSecondLink && (
           <button
             type="button"
-            onClick={handleAddLink}
+            onClick={handleAddSecondLink}
             className="text-labelNeutral hover:text-primary mt-2 text-sm flex items-center"
           >
-            <span className="mr-2">+</span> 추가하기
+            <span className="mr-2">+</span> 추가 링크 2
           </button>
         )}
 

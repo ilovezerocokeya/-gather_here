@@ -100,10 +100,19 @@ const HubProfile: React.FC = () => {
   return (
     <section>
       <BackgroundPicture />
+
+      {/* 보더 적용 */}
+      <div className="border-b-[1px] border-fillNormal my-6" />
+
       <SelfIntroduction description={description} setDescription={setDescription} />
 
-      {/* TechStack 컴포넌트 추가 */}
+      {/* 보더 적용 */}
+      <div className="border-b-[1px] border-fillNormal my-6" />
+
       <TechStack selectedStacks={techStacks} setSelectedStacks={setTechStacks} />
+
+      {/* 보더 적용 */}
+      <div className="border-b-[1px] border-fillNormal my-6" />
 
       <TeamworkQuestions
         answer1={answer1}
@@ -113,6 +122,10 @@ const HubProfile: React.FC = () => {
         answer3={answer3}
         setAnswer3={setAnswer3}
       />
+
+      {/* 보더 적용 */}
+      <div className="border-t border-labelAssistive my-6" />
+
       <HubProfileForm
         blog={blog}
         setBlog={setBlog}
@@ -125,6 +138,9 @@ const HubProfile: React.FC = () => {
         secondLink={secondLink}
         setSecondLink={setSecondLink}
       />
+
+      <div className="border-b-[1px] border-fillNormal my-6" />
+
       {/* 저장 버튼 */}
       <div className="mt-6 mb-12">
         <div className="flex justify-center">

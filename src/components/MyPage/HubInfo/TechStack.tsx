@@ -54,7 +54,7 @@ const TechStack: React.FC<{
   };
 
   return (
-    <div className="ml-5">
+    <div className="ml-5 mb-5">
       <h1 className="text-subtitle font-baseBold text-labelNeutral mb-5">기술 스택 선택</h1>
       <div className="flex flex-wrap gap-4">
         {techStacks.map((stack) => (

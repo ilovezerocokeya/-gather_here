@@ -110,7 +110,7 @@ const BackgroundPicture: React.FC = () => {
     <div>
       {user?.id ? (
         <>
-          <div className="px-6 pt-6 pb-10 s:p-0 s:pb-4 border-b-[1px] border-fillNormal">
+          <div className="px-6 pt-6 pb-10 s:p-0 s:pb-4">
             <label className="block text-subtitle font-baseBold text-labelNeutral mb-5">커버 이미지</label>
             <div className="flex items-center flex-wrap s:mb-3 gap-5">
               <div className="w-40 h-40 m:w-40 m:h-40 s:w-40 s:h-40 rounded-[20px] overflow-hidden bg-fillLight flex items-center justify-center s:mb-3 relative group">
