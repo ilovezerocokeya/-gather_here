@@ -242,9 +242,9 @@ export type Database = {
           job_title: string | null;
           nickname: string | null;
           profile_image_url: string | null;
-          background_image_url?: string | null
-          description?: string | null
-          hubCard?: boolean
+          background_image_url?: string | null;
+          description?: string | null;
+          hubCard?: boolean;
           user_id: string;
           answer1: string | null;
           answer2: string | null;
@@ -253,33 +253,35 @@ export type Database = {
           first_link: string | null;
           second_link_type: string | null;
           second_link: string | null;
-        }
+          tech_stacks: string[] | null;
+        };
         Insert: {
-          blog?: string | null
-          created_at?: string | null
-          email?: string | null
-          experience?: string | null
-          job_title?: string | null
-          nickname?: string | null
-          profile_image_url?: string | null
-          user_id?: string
-        }
+          blog?: string | null;
+          created_at?: string | null;
+          email?: string | null;
+          experience?: string | null;
+          job_title?: string | null;
+          nickname?: string | null;
+          profile_image_url?: string | null;
+          user_id?: string;
+        };
         Update: {
-          blog?: string | null
-          created_at?: string | null
-          email?: string | null
-          experience?: string | null
-          job_title?: string | null
-          nickname?: string | null
-          profile_image_url?: string | null
-          background_image_url?: string | null
-          hubCard?: boolean
-          description?: string | null
-          user_id?: string
-          answer1? : string
-          answer2? : string
-          answer3? : string
-        }
+          blog?: string | null;
+          created_at?: string | null;
+          email?: string | null;
+          experience?: string | null;
+          job_title?: string | null;
+          nickname?: string | null;
+          profile_image_url?: string | null;
+          background_image_url?: string | null;
+          hubCard?: boolean;
+          description?: string | null;
+          user_id?: string;
+          answer1?: string;
+          answer2?: string;
+          answer3?: string;
+          tech_stacks?: string[] | null;
+        };
         Relationships: [
           {
             foreignKeyName: "Users_user_id_fkey";
