@@ -6,6 +6,7 @@ import { useUser } from "@/provider/UserContextProvider";
 import SelfIntroduction from "@/components/MyPage/HubInfo/Introductioin";
 import HubProfileForm from "@/components/MyPage/HubInfo/HubProfileInfo";
 import TeamworkQuestions from "@/components/MyPage/HubInfo/TeamQuestions";
+import BackgroundPicture from "@/components/MyPage/HubInfo/BackgroundPicture"; // BackgroundPicture 추가
 import Toast from "@/components/Common/Toast/Toast";
 
 const HubProfile: React.FC = () => {
@@ -71,6 +72,7 @@ const HubProfile: React.FC = () => {
     const { error } = await supabase
       .from("Users")
       .update({
+        hubCard: true,
         description,
         blog,
         first_link_type: firstLinkType,
@@ -93,7 +95,16 @@ const HubProfile: React.FC = () => {
 
   return (
     <section>
+      <BackgroundPicture />
       <SelfIntroduction description={description} setDescription={setDescription} />
+      <TeamworkQuestions
+        answer1={answer1}
+        setAnswer1={setAnswer1}
+        answer2={answer2}
+        setAnswer2={setAnswer2}
+        answer3={answer3}
+        setAnswer3={setAnswer3}
+      />
       <HubProfileForm
         blog={blog}
         setBlog={setBlog}
@@ -106,15 +117,6 @@ const HubProfile: React.FC = () => {
         secondLink={secondLink}
         setSecondLink={setSecondLink}
       />
-      <TeamworkQuestions
-        answer1={answer1}
-        setAnswer1={setAnswer1}
-        answer2={answer2}
-        setAnswer2={setAnswer2}
-        answer3={answer3}
-        setAnswer3={setAnswer3}
-      />
-
       {/* 저장 버튼 */}
       <div className="mt-6 mb-12">
         <div className="flex justify-center">

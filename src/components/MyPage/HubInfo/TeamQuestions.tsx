@@ -12,9 +12,9 @@ const TeamworkQuestions: React.FC<{
 }> = ({ answer1, setAnswer1, answer2, setAnswer2, answer3, setAnswer3 }) => {
   return (
     <section>
-      <form className="space-y-6">
+      <form className="space-y-6 ml-2">
         <fieldset className="p-3 s:p-0">
-          <h1 className="text-subtitle font-baseBold text-labelNeutral mb-5">팀워크 관련 질문</h1>
+          <h1 className="text-subtitle font-baseBold text-labelNeutral mb-5">공통 질문</h1>
 
           <div className="mb-6">
             <h2 className="text-lg font-bold text-labelStrong mb-2">

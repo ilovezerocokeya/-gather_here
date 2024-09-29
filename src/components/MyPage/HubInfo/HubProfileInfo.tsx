@@ -26,6 +26,9 @@ const HubProfileForm: React.FC<{
   setSecondLink,
 }) => {
   const [blogError, setBlogError] = useState("");
+  const [firstLinkError, setFirstLinkError] = useState("");
+  const [secondLinkError, setSecondLinkError] = useState("");
+  const [showSecondLink, setShowSecondLink] = useState(false);
 
   const platforms = [
     { value: "behance", label: "비핸스" },
@@ -41,30 +44,62 @@ const HubProfileForm: React.FC<{
     { value: "youtube", label: "유튜브" },
   ];
 
-  const validateForm = () => {
-    if (!blog) {
-      setBlogError("포트폴리오 링크는 필수 항목입니다.");
+  // URL 유효성 검사 (http:// 또는 https:// 자동 추가)
+  const normalizeURL = (url: string) => {
+    if (!/^https?:\/\//i.test(url)) {
+      return `https://${url}`; // URL이 http:// 또는 https://로 시작하지 않으면 https://를 추가
+    }
+    return url;
+  };
+
+  const validateURL = (url: string) => {
+    try {
+      new URL(normalizeURL(url));
+      return true;
+    } catch (error) {
       return false;
     }
-    setBlogError("");
-    return true;
   };
 
   const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
-    e.preventDefault(); // 폼 제출을 차단
-    if (!validateForm()) {
-      return; // 유효성 검사에 실패하면 더 이상 진행하지 않음
+    e.preventDefault();
+
+    // URL 유효성 검사
+    if (!validateURL(blog)) {
+      setBlogError("올바른 포트폴리오 링크를 입력해주세요.");
+      return;
+    } else {
+      setBlogError("");
     }
 
-    // 저장 로직 (유효성 검사를 통과한 경우에만 실행)
-    console.log("폼 제출: 모든 값이 유효합니다.");
-    // 저장 함수 호출 또는 처리 로직
+    if (firstLink && !validateURL(firstLink)) {
+      setFirstLinkError("올바른 첫 번째 링크를 입력해주세요.");
+      return;
+    } else {
+      setFirstLinkError("");
+    }
+
+    if (secondLink && !validateURL(secondLink)) {
+      setSecondLinkError("올바른 두 번째 링크를 입력해주세요.");
+      return;
+    } else {
+      setSecondLinkError("");
+    }
+
+    // 모든 유효성 검사를 통과하면 제출 가능
+    console.log("모든 링크가 유효합니다.");
+  };
+
+  const handleAddLink = () => {
+    setShowSecondLink(true);
   };
 
   return (
-    <form className="space-y-6" onSubmit={handleSubmit}>
+    <form className="space-y-6 ml-2" onSubmit={handleSubmit}>
       <fieldset className="p-3 s:p-0">
         <div>
+          <h1 className="text-subtitle font-baseBold text-labelNeutral mb-5">URL</h1>
+          {/* 포트폴리오 링크 */}
           <label htmlFor="blog" className="block text-sm font-medium text-labelNormal mb-1">
             포트폴리오 링크<span className="text-red-500 ml-1">*</span>
           </label>
@@ -73,16 +108,17 @@ const HubProfileForm: React.FC<{
             id="blog"
             name="blog"
             value={blog}
-            onChange={(e) => setBlog(e.target.value)}
+            onChange={(e) => setBlog(normalizeURL(e.target.value))}
             placeholder="포트폴리오 링크를 입력하세요."
             className={`w-full shared-input-gray-2 border-[1px] ${blogError ? "border-red-500" : "border-fillLight"}`}
           />
           {blogError && <p className="text-red-500 text-sm mt-1">{blogError}</p>}
         </div>
 
+        {/* 첫 번째 링크 */}
         <div>
           <label htmlFor="firstLinkType" className="block text-sm font-medium text-labelNormal mb-1">
-            추가 링크 1
+            추가 링크
           </label>
           <div className="flex gap-2">
             <select
@@ -104,43 +140,60 @@ const HubProfileForm: React.FC<{
               id="firstLink"
               name="firstLink"
               value={firstLink}
-              onChange={(e) => setFirstLink(e.target.value)}
+              onChange={(e) => setFirstLink(normalizeURL(e.target.value))}
               placeholder="링크를 입력하세요."
               className="w-2/3 shared-input-gray-2 border-[1px] border-fillLight"
             />
           </div>
+          {firstLinkError && <p className="text-red-500 text-sm mt-1">{firstLinkError}</p>}
         </div>
 
-        <div>
-          <label htmlFor="secondLinkType" className="block text-sm font-medium text-labelNormal mb-1">
-            추가 링크 2
-          </label>
-          <div className="flex gap-2">
-            <select
-              id="secondLinkType"
-              name="secondLinkType"
-              value={secondLinkType}
-              onChange={(e) => setSecondLinkType(e.target.value)}
-              className="w-1/3 shared-select-gray-2 border-[1px] border-fillLight"
-            >
-              <option value="">링크 선택</option>
-              {platforms.map((platform) => (
-                <option key={platform.value} value={platform.value}>
-                  {platform.label}
-                </option>
-              ))}
-            </select>
-            <input
-              type="url"
-              id="secondLink"
-              name="secondLink"
-              value={secondLink}
-              onChange={(e) => setSecondLink(e.target.value)}
-              placeholder="링크를 입력하세요."
-              className="w-2/3 shared-input-gray-2 border-[1px] border-fillLight"
-            />
+        {/* 두 번째 링크는 추가 버튼을 누를 때만 표시 */}
+        {showSecondLink && (
+          <div>
+            <label htmlFor="secondLinkType" className="block text-sm font-medium text-labelNormal mb-1">
+              추가 링크 2
+            </label>
+            <div className="flex gap-2">
+              <select
+                id="secondLinkType"
+                name="secondLinkType"
+                value={secondLinkType}
+                onChange={(e) => setSecondLinkType(e.target.value)}
+                className="w-1/3 shared-select-gray-2 border-[1px] border-fillLight"
+              >
+                <option value="">링크 선택</option>
+                {platforms.map((platform) => (
+                  <option key={platform.value} value={platform.value}>
+                    {platform.label}
+                  </option>
+                ))}
+              </select>
+              <input
+                type="url"
+                id="secondLink"
+                name="secondLink"
+                value={secondLink}
+                onChange={(e) => setSecondLink(normalizeURL(e.target.value))}
+                placeholder="링크를 입력하세요."
+                className="w-2/3 shared-input-gray-2 border-[1px] border-fillLight"
+              />
+            </div>
+            {secondLinkError && <p className="text-red-500 text-sm mt-1">{secondLinkError}</p>}
           </div>
-        </div>
+        )}
+
+        {!showSecondLink && (
+          <button
+            type="button"
+            onClick={handleAddLink}
+            className="text-labelNeutral hover:text-primary mt-2 text-sm flex items-center"
+          >
+            <span className="mr-2">+</span> 추가하기
+          </button>
+        )}
+
+        <p className="text-labelAssistive text-xs mt-2">URL은 최대 3개까지 등록 가능합니다.</p>
       </fieldset>
     </form>
   );
