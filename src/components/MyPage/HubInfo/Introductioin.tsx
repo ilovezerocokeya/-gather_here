@@ -12,10 +12,9 @@ const SelfIntroduction: React.FC<{ description: string; setDescription: (value: 
 
   return (
     <section>
-      <fieldset className="p-3 s:p-0">
-        <h1 className="text-subtitle font-baseBold text-labelNeutral mb-3">허브 프로필</h1>
+      <fieldset className="p-3 s:p-0 ml-2">
+        <h1 className="text-subtitle font-baseBold text-labelNeutral mb-3">자기소개</h1>
         <div className="mb-6">
-          <h1 className="block text-sm font-medium text-labelNormal mb-1">한 줄 자기소개</h1>
           <textarea
             id="description"
             name="description"

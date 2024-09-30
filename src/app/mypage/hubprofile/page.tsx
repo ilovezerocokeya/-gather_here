@@ -6,7 +6,9 @@ import { useUser } from "@/provider/UserContextProvider";
 import SelfIntroduction from "@/components/MyPage/HubInfo/Introductioin";
 import HubProfileForm from "@/components/MyPage/HubInfo/HubProfileInfo";
 import TeamworkQuestions from "@/components/MyPage/HubInfo/TeamQuestions";
+import BackgroundPicture from "@/components/MyPage/HubInfo/BackgroundPicture";
 import Toast from "@/components/Common/Toast/Toast";
+import TechStack from "@/components/MyPage/HubInfo/TechStack"; // TechStack 추가
 
 const HubProfile: React.FC = () => {
   const supabase = createClient();
@@ -22,6 +24,7 @@ const HubProfile: React.FC = () => {
   const [answer1, setAnswer1] = useState("");
   const [answer2, setAnswer2] = useState("");
   const [answer3, setAnswer3] = useState("");
+  const [techStacks, setTechStacks] = useState<string[]>([]); // TechStack 상태 추가
   const [toastState, setToastState] = useState({ state: "", message: "" });
 
   // 페이지가 로드될 때 데이터베이스에서 값을 가져오는 useEffect
@@ -32,7 +35,7 @@ const HubProfile: React.FC = () => {
       const { data, error } = await supabase
         .from("Users")
         .select(
-          "description, blog, first_link_type, first_link, second_link_type, second_link, answer1, answer2, answer3",
+          "description, blog, first_link_type, first_link, second_link_type, second_link, answer1, answer2, answer3, tech_stacks",
         )
         .eq("user_id", user.id)
         .single(); // 사용자의 모든 데이터를 가져옴
@@ -48,6 +51,7 @@ const HubProfile: React.FC = () => {
         setAnswer1(data.answer1 || "");
         setAnswer2(data.answer2 || "");
         setAnswer3(data.answer3 || "");
+        setTechStacks(data.tech_stacks || []); // TechStack 상태 설정
       }
 
       if (error) {
@@ -71,6 +75,7 @@ const HubProfile: React.FC = () => {
     const { error } = await supabase
       .from("Users")
       .update({
+        hubCard: true,
         description,
         blog,
         first_link_type: firstLinkType,
@@ -80,6 +85,7 @@ const HubProfile: React.FC = () => {
         answer1,
         answer2,
         answer3,
+        tech_stacks: techStacks, // TechStack 저장
       })
       .eq("user_id", user.id);
 
@@ -93,7 +99,43 @@ const HubProfile: React.FC = () => {
 
   return (
     <section>
+      <BackgroundPicture />
+
+      {/* 보더 적용 */}
+      <div className="border-b-[1px] border-fillNormal my-6" />
+
       <SelfIntroduction description={description} setDescription={setDescription} />
+      {/* 보더 적용 */}
+      <div className="border-b-[1px] border-fillNormal my-6" />
+
+      <TeamworkQuestions
+        answer1={answer1}
+        setAnswer1={setAnswer1}
+        answer2={answer2}
+        setAnswer2={setAnswer2}
+        answer3={answer3}
+        setAnswer3={setAnswer3}
+      />
+      {/* 보더 적용 */}
+      <div className="border-b-[1px] border-fillNormal my-6" />
+
+      <TechStack selectedStacks={techStacks} setSelectedStacks={setTechStacks} />
+
+      {/* 보더 적용
+      <div className="border-b-[1px] border-fillNormal my-6" />
+
+      <TeamworkQuestions
+        answer1={answer1}
+        setAnswer1={setAnswer1}
+        answer2={answer2}
+        setAnswer2={setAnswer2}
+        answer3={answer3}
+        setAnswer3={setAnswer3}
+      /> */}
+
+      {/* 보더 적용 */}
+      <div className="border-t border-labelAssistive my-6" />
+
       <HubProfileForm
         blog={blog}
         setBlog={setBlog}
@@ -106,14 +148,8 @@ const HubProfile: React.FC = () => {
         secondLink={secondLink}
         setSecondLink={setSecondLink}
       />
-      <TeamworkQuestions
-        answer1={answer1}
-        setAnswer1={setAnswer1}
-        answer2={answer2}
-        setAnswer2={setAnswer2}
-        answer3={answer3}
-        setAnswer3={setAnswer3}
-      />
+
+      <div className="border-b-[1px] border-fillNormal my-6" />
 
       {/* 저장 버튼 */}
       <div className="mt-6 mb-12">
