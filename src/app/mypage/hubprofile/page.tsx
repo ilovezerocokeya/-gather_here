@@ -121,18 +121,6 @@ const HubProfile: React.FC = () => {
 
       <TechStack selectedStacks={techStacks} setSelectedStacks={setTechStacks} />
 
-      {/* 보더 적용
-      <div className="border-b-[1px] border-fillNormal my-6" />
-
-      <TeamworkQuestions
-        answer1={answer1}
-        setAnswer1={setAnswer1}
-        answer2={answer2}
-        setAnswer2={setAnswer2}
-        answer3={answer3}
-        setAnswer3={setAnswer3}
-      /> */}
-
       {/* 보더 적용 */}
       <div className="border-t border-labelAssistive my-6" />
 

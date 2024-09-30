@@ -64,6 +64,7 @@ const ProfilePicture: React.FC = () => {
         setProfileAlt(altText);
         setUserData({
           ...userData,
+          id: user.id ?? "",
           profile_image_url: profileImageUrl,
           nickname: userData?.nickname ?? "",
           job_title: userData?.job_title ?? "",
