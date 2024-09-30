@@ -59,7 +59,7 @@ const ProfilePicture: React.FC = () => {
           .update({ profile_image_url: profileImageUrl })
           .eq("user_id", user.id);
         if (updateError) throw updateError;
-      
+
         setProfileImage(profileImageUrl);
         setProfileAlt(altText);
         setUserData({
@@ -190,12 +190,7 @@ const ProfilePicture: React.FC = () => {
                     className="w-[52px] h-[52px] m:w-[48px] m:h-[48px] rounded-full overflow-hidden bg-fillLight flex items-center justify-center"
                     onClick={handleFileUploadClick}
                   >
-                    <Image 
-                      src="/assets/mypage/image_upload.svg" 
-                      alt="이미지 업로드 아이콘"
-                      width={24} 
-                      height={24} 
-                    />
+                    <Image src="/assets/mypage/image_upload.svg" alt="이미지 업로드 아이콘" width={24} height={24} />
                   </button>
                 </div>
                 {iconImages.map((icon, index) => (
@@ -256,4 +251,3 @@ const ProfilePicture: React.FC = () => {
 };
 
 export default ProfilePicture;
-

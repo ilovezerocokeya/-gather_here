@@ -108,7 +108,7 @@ const Header: React.FC = () => {
               height={70}
               priority
               className="s:hidden"
-              style={{ objectFit: 'contain' }}
+              style={{ objectFit: "contain" }}
             />
             <Image
               src="/assets/header/mobile_logo.svg"
@@ -117,7 +117,7 @@ const Header: React.FC = () => {
               height={50}
               priority
               className="hidden s:block"
-              style={{ objectFit: 'contain', width: 'auto', height: 'auto' }} 
+              style={{ objectFit: "contain", width: "auto", height: "auto" }}
             />
           </Link>
           <Link href="/gatherHub" className="logo-link">
@@ -188,7 +188,13 @@ const Header: React.FC = () => {
                   </button>
 
                   <Link href="/mypage" className="square-header-button-gray s:hidden">
-                    <Image src="/assets/header/mobile_logo.svg" alt="마이페이지 아이콘" priority width={14} height={16} />
+                    <Image
+                      src="/assets/header/mobile_logo.svg"
+                      alt="마이페이지 아이콘"
+                      priority
+                      width={14}
+                      height={16}
+                    />
                   </Link>
 
                   <button onClick={signOut} className="shared-button-small-gray-2 ml-2 s:hidden">
@@ -208,7 +214,10 @@ const Header: React.FC = () => {
       {/* 검색 모달 */}
       {isSearchOpen && (
         <Suspense>
-          <form className="absolute top-0 left-0 w-full bg-background z-50 p-2 flex items-center s:block" onSubmit={handleSearch}>
+          <form
+            className="absolute top-0 left-0 w-full bg-background z-50 p-2 flex items-center s:block"
+            onSubmit={handleSearch}
+          >
             <label htmlFor="search" className="sr-only">
               검색창
             </label>
@@ -221,7 +230,11 @@ const Header: React.FC = () => {
               value={searchWord}
               onChange={(evt) => setSearchWord(evt.target.value)}
             />
-            <button type="button" onClick={toggleSearch} className="absolute right-4 top-1/2 transform -translate-y-1/2">
+            <button
+              type="button"
+              onClick={toggleSearch}
+              className="absolute right-4 top-1/2 transform -translate-y-1/2"
+            >
               <Image src="/assets/header/close.svg" alt="닫기 버튼" width={16} height={16} />
             </button>
           </form>
@@ -232,7 +245,10 @@ const Header: React.FC = () => {
       {isModalOpen && (
         <>
           <div className="fixed inset-0 bg-black opacity-80 z-40" onClick={handleCloseLoginModal}></div>
-          <div className="fixed top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 bg-background rounded-[20px] p-4 z-50" onClick={(e) => e.stopPropagation()} >
+          <div
+            className="fixed top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 bg-background rounded-[20px] p-4 z-50"
+            onClick={(e) => e.stopPropagation()}
+          >
             <button
               onClick={handleCloseLoginModal}
               className="ml-auto mt-1 mr-1 block text-right p-1 text-3xl text-[fontWhite] hover:text-[#777]"
@@ -270,22 +286,55 @@ const Header: React.FC = () => {
             </div>
             <ul className="space-y-2">
               <li>
-                <Link href="/mypage" onClick={closeModalOnRouteChange} className="block text-labelNormal font-base hover:text-fontWhite">
-                  프로필 수정
+                <Link
+                  href="/mypage"
+                  onClick={closeModalOnRouteChange}
+                  className="block text-labelNormal font-base hover:text-fontWhite"
+                >
+                  기본 프로필
                 </Link>
               </li>
               <li>
-                <Link href="/mypage/myinterests" onClick={closeModalOnRouteChange} className="block text-labelNormal font-base hover:text-fontWhite">
-                  내 관심글
+                <Link
+                  href="/mypage/hubprofile"
+                  onClick={closeModalOnRouteChange}
+                  className="block text-labelNormal font-base hover:text-fontWhite"
+                >
+                  허브 프로필
                 </Link>
               </li>
               <li>
-                <Link href="/mypage/myposts" onClick={closeModalOnRouteChange} className="block text-labelNormal font-base hover:text-fontWhite">
-                  내 작성글
+                <Link
+                  href="/mypage/myinterests"
+                  onClick={closeModalOnRouteChange}
+                  className="block text-labelNormal font-base hover:text-fontWhite"
+                >
+                  내 관심 글
                 </Link>
               </li>
               <li>
-                <button onClick={signOut} className="block w-full text-left text-labelNormal font-base hover:text-fontWhite">
+                <Link
+                  href="/mypage/myposts"
+                  onClick={closeModalOnRouteChange}
+                  className="block text-labelNormal font-base hover:text-fontWhite"
+                >
+                  내 관심 멤버
+                </Link>
+              </li>
+              <li>
+                <Link
+                  href="/mypage/myposts"
+                  onClick={closeModalOnRouteChange}
+                  className="block text-labelNormal font-base hover:text-fontWhite"
+                >
+                  내 작성 글
+                </Link>
+              </li>
+              <li>
+                <button
+                  onClick={signOut}
+                  className="block w-full text-left text-labelNormal font-base hover:text-fontWhite"
+                >
                   로그아웃
                 </button>
               </li>

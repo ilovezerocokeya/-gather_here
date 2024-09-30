@@ -12,13 +12,9 @@ const ProfileInfo: React.FC = () => {
   const router = useRouter();
   const { user, userData, fetchUserData } = useUser();
   const [nickname, setNickname] = useState("");
-  const [blog, setBlog] = useState("");
   const [job, setJob] = useState("");
   const [experience, setExperience] = useState("");
   const [nicknameError, setNicknameError] = useState("");
-  const [emailError, setEmailError] = useState("");
-  const [blogError, setBlogError] = useState<string | null>(null);
-  const [blogSuccess, setBlogSuccess] = useState<string | null>(null);
   const [isCancelModalOpen, setIsCancelModalOpen] = useState(false);
   const [toastState, setToastState] = useState({ state: "", message: "" });
 
@@ -26,7 +22,6 @@ const ProfileInfo: React.FC = () => {
   useEffect(() => {
     if (userData) {
       setNickname(userData.nickname ?? "");
-      setBlog(userData.blog ?? "");
       setJob(userData.job_title ?? "");
       setExperience(userData.experience ?? "");
     }
@@ -74,48 +69,11 @@ const ProfileInfo: React.FC = () => {
     }
   }, [nickname, supabase, user?.id, userData?.nickname]);
 
-  // 블로그 URL 유효성 검사
-  useEffect(() => {
-    if (blog && blog.trim() !== "") {
-      const validateUrl = (url: string) => {
-        try {
-          new URL(url);
-          return true;
-        } catch {
-          return false;
-        }
-      };
-
-      if (validateUrl(blog)) {
-        setBlogError(null);
-        setBlogSuccess("유효한 URL입니다.");
-      } else {
-        setBlogError("유효한 URL을 입력하세요.");
-        setBlogSuccess(null);
-      }
-    } else {
-      setBlogError(null);
-      setBlogSuccess(null);
-    }
-  }, [blog]);
-
   // 폼 유효성 검사
   const validateForm = () => {
     let valid = true;
 
     if (nickname.length < 2 || nickname.length > 11 || nicknameError) {
-      valid = false;
-    }
-
-    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-    if (!emailRegex.test(user?.email ?? "")) {
-      setEmailError("유효한 이메일 주소를 입력해주세요.");
-      valid = false;
-    } else {
-      setEmailError("");
-    }
-
-    if (blog && blogError) {
       valid = false;
     }
 
@@ -131,7 +89,7 @@ const ProfileInfo: React.FC = () => {
 
     const { error } = await supabase
       .from("Users")
-      .update({ nickname, blog, job_title: job, experience })
+      .update({ nickname, job_title: job, experience })
       .eq("user_id", user.id); // user_id로 업데이트
 
     if (error) {
@@ -152,7 +110,6 @@ const ProfileInfo: React.FC = () => {
     setIsCancelModalOpen(false);
     if (userData) {
       setNickname(userData.nickname ?? "");
-      setBlog(userData.blog ?? "");
       setJob(userData.job_title ?? "");
       setExperience(userData.experience ?? "");
     }
@@ -204,7 +161,6 @@ const ProfileInfo: React.FC = () => {
                 className="w-full shared-input-gray-2 border-[1px] border-fillLight"
                 style={{ color: "#5E5E5E" }}
               />
-              {emailError && <p className="text-statusDestructive text-baseXs mt-1">{emailError}</p>}
             </div>
             <div>
               <label htmlFor="nickname" className="block text-baseS text-labelNormal font-medium mb-1">
@@ -267,24 +223,6 @@ const ProfileInfo: React.FC = () => {
                 <option value="7년">7년</option>
                 <option value="8년 이상">8년 이상</option>
               </select>
-            </div>
-            <div>
-              <label htmlFor="blog" className="block text-sm font-medium mb-1 text-labelNormal">
-                URL&nbsp;<span className="text-labelAssistive text-baseXs">(선택)</span>
-              </label>
-              <input
-                type="url"
-                id="blog"
-                name="blog"
-                value={blog}
-                onChange={(e) => setBlog(e.target.value)}
-                placeholder="링크를 입력해주세요."
-                className="w-full shared-input-gray-2 border-[1px] border-fillLight"
-              />
-              {blogError && <p className="text-statusDestructive text-baseXs mt-1">{blogError}</p>}
-              <p className="text-labelAssistive text-baseXs mt-1">
-                자신을 나타낼 수 있는 포트폴리오 링크를 알려주세요.
-              </p>
             </div>
           </div>
           <div className="mt-6 mb-12">

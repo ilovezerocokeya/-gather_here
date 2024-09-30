@@ -46,13 +46,8 @@ const LeftNav: React.FC = () => {
     const supabase = createClient();
     const getUserData = async () => {
       if (user) {
-        const { data, error } = await supabase
-          .from("Users")
-          .select("*")
-          .eq("user_id", user.id)
-          .limit(1)
-          .single();
-          
+        const { data, error } = await supabase.from("Users").select("*").eq("user_id", user.id).limit(1).single();
+
         if (error) {
           console.error("Users 테이블 데이터 에러:", error);
         }
@@ -60,15 +55,16 @@ const LeftNav: React.FC = () => {
         // 데이터가 있을 경우 'userData' 상태를 업데이트
         if (data) {
           const updatedUserData = {
-            nickname: data.nickname ?? "", 
+            id: data.user_id ?? "",
+            nickname: data.nickname ?? "",
             job_title: data.job_title ?? "",
             experience: data.experience ?? "",
             profile_image_url: data.profile_image_url ?? "",
             blog: data.blog ?? "",
             description: data.description ?? "",
             background_image_url: data.background_image_url ?? "",
-            answer1: data.answer1 ?? "", 
-            answer2: data.answer2 ?? "", 
+            answer1: data.answer1 ?? "",
+            answer2: data.answer2 ?? "",
             answer3: data.answer3 ?? "",
           };
           setUserData(updatedUserData);
@@ -110,14 +106,7 @@ const LeftNav: React.FC = () => {
         <ul className="w-full">
           {/* 프로필 관리 */}
           <li className="mb-3">
-            <Link
-              href="/mypage"
-              className={`block w-full text-lg text-labelNeutral font-baseBold hover:text-primary focus:text-primary ${
-                pathname === "/mypage" ? "text-primary font-baseBold" : "text-labelNeutral"
-              }`}
-            >
-              프로필 관리
-            </Link>
+            <span className="block w-full text-lg text-labelNeutral font-baseBold">프로필 관리</span>
             <ul className="ml-4 mt-2">
               <li className="mb-2">
                 <Link
@@ -126,7 +115,7 @@ const LeftNav: React.FC = () => {
                     pathname === "/mypage" ? "text-primary font-baseBold" : "text-labelNeutral"
                   }`}
                 >
-                  프로필 수정
+                  기본 프로필
                 </Link>
               </li>
               <li className="mb-2">
@@ -136,22 +125,15 @@ const LeftNav: React.FC = () => {
                     pathname === "/mypage/hubprofile" ? "text-primary font-baseBold" : "text-labelNeutral"
                   }`}
                 >
-                  허브 프로필 관리
+                  허브 프로필
                 </Link>
               </li>
             </ul>
           </li>
 
-          {/* 북마크 */}
+          {/* 북마크 관리*/}
           <li className="mb-3">
-            <Link
-              href="/mypage/myinterests"
-              className={`block w-full text-lg text-labelNeutral font-baseBold hover:text-primary focus:text-primary ${
-                pathname === "/mypage/myinterests" ? "text-primary font-baseBold" : "text-labelNeutral"
-              }`}
-            >
-              북마크
-            </Link>
+            <span className="block w-full text-lg text-labelNeutral font-baseBold">북마크 관리</span>
             <ul className="ml-4 mt-2">
               <li className="mb-2">
                 <Link
@@ -160,17 +142,17 @@ const LeftNav: React.FC = () => {
                     pathname === "/mypage/myinterests" ? "text-primary font-baseBold" : "text-labelNeutral"
                   }`}
                 >
-                  내 관심글
+                  내 관심 글
                 </Link>
               </li>
               <li className="mb-2">
                 <Link
-                  href="/mypage/savedpeople"
+                  href="/mypage/mypeople"
                   className={`block w-full hover:text-primary focus:text-primary ${
-                    pathname === "/mypage/savedpeople" ? "text-primary font-baseBold" : "text-labelNeutral"
+                    pathname === "/mypage/mypeople" ? "text-primary font-baseBold" : "text-labelNeutral"
                   }`}
                 >
-                  내가 저장한 사람
+                  내 관심 멤버
                 </Link>
               </li>
             </ul>
@@ -184,7 +166,7 @@ const LeftNav: React.FC = () => {
                 pathname === "/mypage/myposts" ? "text-primary font-baseBold" : "text-labelNeutral"
               }`}
             >
-              내 작성글
+              내 작성 글
             </Link>
           </li>
         </ul>
