@@ -55,6 +55,7 @@ const LeftNav: React.FC = () => {
         // 데이터가 있을 경우 'userData' 상태를 업데이트
         if (data) {
           const updatedUserData = {
+            id: data.user_id ?? "",
             nickname: data.nickname ?? "",
             job_title: data.job_title ?? "",
             experience: data.experience ?? "",
@@ -146,9 +147,9 @@ const LeftNav: React.FC = () => {
               </li>
               <li className="mb-2">
                 <Link
-                  href="/mypage/savedpeople"
+                  href="/mypage/mypeople"
                   className={`block w-full hover:text-primary focus:text-primary ${
-                    pathname === "/mypage/savedpeople" ? "text-primary font-baseBold" : "text-labelNeutral"
+                    pathname === "/mypage/mypeople" ? "text-primary font-baseBold" : "text-labelNeutral"
                   }`}
                 >
                   내 관심 멤버

@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 
 const HubProfileForm: React.FC<{
   blog: string;
@@ -28,8 +28,16 @@ const HubProfileForm: React.FC<{
   const [blogError, setBlogError] = useState("");
   const [firstLinkError, setFirstLinkError] = useState("");
   const [secondLinkError, setSecondLinkError] = useState("");
-  const [showFirstLink, setShowFirstLink] = useState(firstLink !== "");
-  const [showSecondLink, setShowSecondLink] = useState(secondLink !== "");
+
+  // 상태를 필드가 비어있는지에 따라 설정
+  const [showFirstLink, setShowFirstLink] = useState(false);
+  const [showSecondLink, setShowSecondLink] = useState(false);
+
+  useEffect(() => {
+    // 만약 firstLink나 secondLink가 이미 존재하면 해당 필드를 보이게 설정
+    if (firstLink) setShowFirstLink(true);
+    if (secondLink) setShowSecondLink(true);
+  }, [firstLink, secondLink]);
 
   const platforms = [
     { value: "behance", label: "비핸스" },
@@ -120,7 +128,7 @@ const HubProfileForm: React.FC<{
           {blogError && <p className="text-red-500 text-sm mt-1">{blogError}</p>}
         </div>
 
-        {/* 첫 번째 링크는 추가 버튼을 누를 때만 표시 */}
+        {/* 첫 번째 링크는 입력된 값이 있으면 표시 */}
         {showFirstLink && (
           <div>
             <label htmlFor="firstLinkType" className="block text-sm font-medium text-labelNormal mb-1">
@@ -165,8 +173,8 @@ const HubProfileForm: React.FC<{
           </button>
         )}
 
-        {/* 두 번째 링크는 추가 버튼을 누를 때만 표시 */}
-        {showFirstLink && showSecondLink && (
+        {/* 두 번째 링크는 입력된 값이 있으면 표시 */}
+        {showSecondLink && (
           <div>
             <label htmlFor="secondLinkType" className="block text-sm font-medium text-labelNormal mb-1">
               추가 링크 2

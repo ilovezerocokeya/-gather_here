@@ -52,6 +52,7 @@ const BackgroundPicture: React.FC = () => {
         setUserData({
           ...userData,
           background_image_url: backgroundImageUrl ?? "",
+          id: userData?.id ?? "",
           nickname: userData?.nickname ?? "",
           job_title: userData?.job_title ?? "",
           experience: userData?.experience ?? "",

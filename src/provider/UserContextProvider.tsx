@@ -14,6 +14,7 @@ interface AuthState {
 // 사용자의 프로필과 관련된 데이터를 관리하는 인터페이스입니다.
 // 사용자의 직업 정보, 포트폴리오, 자기소개 등 멤버 카드와 관련된 세부 정보를 포함합니다.
 interface UserData {
+  id: string;
   nickname: string;
   job_title: string;
   experience: string;
@@ -123,28 +124,26 @@ export const UserProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
   const [blog, setBlog] = useState<string>("");
   const [profile_image_url, setProfileImageUrl] = useState<string>("");
 
-  // 세션 확인 함수 (로그인 상태 확인)
   useEffect(() => {
     const checkSession = async () => {
-      setLoading(true); // 세션 확인 중 로딩 상태 true
+      setLoading(true);
       try {
-        const {
-          data: { session },
-          error,
-        } = await supabase.auth.getSession();
+        const { data, error } = await supabase.auth.getUser();
+
         if (error) {
-          console.error("Error fetching session:", error.message);
+          console.error("세션 가져오는 중 오류:", error.message);
           return;
         }
 
-        if (session?.user) {
-          // 세션이 유효하면 사용자 인증 정보를 설정
-          setAuthUser(session.user);
+        if (data?.user) {
+          setAuthUser(data.user);
+        } else {
+          console.log("로그인된 사용자가 없습니다.");
         }
       } catch (error) {
-        console.error("Error during session check:", error);
+        console.error("세션 확인 중 오류:", error);
       } finally {
-        setLoading(false); // 세션 확인 후 로딩 상태 false
+        setLoading(false);
       }
     };
 

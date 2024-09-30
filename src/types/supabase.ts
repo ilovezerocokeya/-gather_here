@@ -26,7 +26,7 @@ export type Database = {
           category?: string | null;
           created_at?: string;
           post_id: string;
-          user_id?: string;
+          user_id: string;
         };
         Update: {
           category?: string | null;
@@ -233,6 +233,7 @@ export type Database = {
           },
         ];
       };
+
       Users: {
         Row: {
           blog: string | null;
@@ -289,6 +290,39 @@ export type Database = {
             isOneToOne: true;
             referencedRelation: "users";
             referencedColumns: ["id"];
+          },
+        ];
+      };
+      User_Interests: {
+        Row: {
+          user_id: string;
+          liked_user_id: string;
+          created_at: string;
+        };
+        Insert: {
+          user_id: string;
+          liked_user_id: string;
+          created_at?: string;
+        };
+        Update: {
+          user_id?: string;
+          liked_user_id?: string;
+          created_at?: string;
+        };
+        Relationships: [
+          {
+            foreignKeyName: "User_Interests_user_id_fkey";
+            columns: ["user_id"];
+            isOneToOne: false;
+            referencedRelation: "Users";
+            referencedColumns: ["user_id"];
+          },
+          {
+            foreignKeyName: "User_Interests_liked_user_id_fkey";
+            columns: ["liked_user_id"];
+            isOneToOne: false;
+            referencedRelation: "Users";
+            referencedColumns: ["user_id"];
           },
         ];
       };
