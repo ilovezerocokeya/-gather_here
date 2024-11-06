@@ -49,7 +49,7 @@
 
 ## <h3 id="erd">3. 📚 ERD</h3>
 
-<img src="https://github.com/user-attachments/assets/af11dffe-0540-4641-acc6-5e22dfc7b066" alt="image" width="1000px" />
+<img src="https://github.com/user-attachments/assets/af11dffe-0540-4641-acc6-5e22dfc7b066" alt="image" width="800px" />
 
 ## <h3 id="skill">4.🍀주요 기능</h3>
 
