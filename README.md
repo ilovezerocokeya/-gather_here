@@ -46,11 +46,11 @@
 
 ## <h3 id="architecture">2. 🏗 아키텍쳐</h3>
 
-<img src="https://github.com/user-attachments/assets/5ffed050-2b2f-4de8-b97b-6be1b11aec33" alt="image" width="800px" />
+<img src="https://github.com/user-attachments/assets/48b45708-f3b6-4f25-b737-07783d6ee884" alt="image" width="800px" />
 
 ## <h3 id="erd">3. 📚 ERD</h3>
 
-<img src="https://github.com/user-attachments/assets/c7ad5635-ac70-4640-a573-07952af9faab" alt="image" width="1000px" />
+<img src="https://github.com/user-attachments/assets/af11dffe-0540-4641-acc6-5e22dfc7b066" alt="image" width="1000px" />
 
 ## <h3 id="skill">4.🍀주요 기능</h3>
 
