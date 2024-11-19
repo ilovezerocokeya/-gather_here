@@ -33,9 +33,8 @@
 
 ## <h3 id="teamintro">1.📢 팀 소개</h3>
 
-<p>안녕하세요! 5명의 프론트엔드 개발자와 1명의 디자이너로 구성된 <strong>게더 히어</strong>팀입니다.<br>
-`게더 히어`는 각기 다른 역량을 가진 우리가 모여, 협업의 시너지를 극대화 시킨다 라는 의미를 가지고 있습니다. <br>
- 항상 새로운 가능성을 발견하는 팀입니다! 🤲🔥<br>
+<p>안녕하세요! 3명의 프론트엔드 개발자와 1명의 디자이너로 구성된 <strong>게더 히어</strong>팀입니다.<br>
+`게더 히어`는 각기 다른 역량을 가진 우리가 모여, 협업의 시너지를 극대화 시킨다 라는 의미를 가지고 있습니다. 🔥<br>
 </p>
 
 |                                                            👑김영범                                                            |                                                             💻조은영                                                              |                                                                   💡김성준                                                                   |                                                              🎨전정현                                                              |
@@ -46,11 +45,11 @@
 
 ## <h3 id="architecture">2. 🏗 아키텍쳐</h3>
 
-<img src="https://github.com/user-attachments/assets/5ffed050-2b2f-4de8-b97b-6be1b11aec33" alt="image" width="800px" />
+<img src="https://github.com/user-attachments/assets/48b45708-f3b6-4f25-b737-07783d6ee884" alt="image" width="800px" />
 
 ## <h3 id="erd">3. 📚 ERD</h3>
 
-<img src="https://github.com/user-attachments/assets/c7ad5635-ac70-4640-a573-07952af9faab" alt="image" width="1000px" />
+<img src="https://github.com/user-attachments/assets/af11dffe-0540-4641-acc6-5e22dfc7b066" alt="image" width="800px" />
 
 ## <h3 id="skill">4.🍀주요 기능</h3>
 
