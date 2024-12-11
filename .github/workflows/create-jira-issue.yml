@@ -3,6 +3,7 @@ on:
   issues:
     types:
       - opened
+
 jobs:
   create-issue:
     name: Create Jira issue
@@ -20,47 +21,32 @@ jobs:
         with:
           ref: main
 
-      - name: Issue Parser
-        uses: stefanbuck/github-issue-praser@v3
-        id: issue-parser-refactor
-        with:
-          template-path: .github/ISSUE_TEMPLATE/⚒️refactor.yml
+      - name: Determine Template Based on Label
+        id: select-template
+        run: |
+          if [[ "${{ contains(github.event.issue.labels.*.name, 'refactor') }}" == "true" ]]; then
+            echo "template=refactor.yml" >> $GITHUB_ENV
+          elif [[ "${{ contains(github.event.issue.labels.*.name, 'update') }}" == "true" ]]; then
+            echo "template=update.yml" >> $GITHUB_ENV
+          elif [[ "${{ contains(github.event.issue.labels.*.name, 'style') }}" == "true" ]]; then
+            echo "template=style.yml" >> $GITHUB_ENV
+          elif [[ "${{ contains(github.event.issue.labels.*.name, 'bug') }}" == "true" ]]; then
+            echo "template=bug.yml" >> $GITHUB_ENV
+          elif [[ "${{ contains(github.event.issue.labels.*.name, 'feature') }}" == "true" ]]; then
+            echo "template=feature.yml" >> $GITHUB_ENV
+          elif [[ "${{ contains(github.event.issue.labels.*.name, 'del') }}" == "true" ]]; then
+            echo "template=del.yml" >> $GITHUB_ENV
+          elif [[ "${{ contains(github.event.issue.labels.*.name, 'fix') }}" == "true" ]]; then
+            echo "template=fix.yml" >> $GITHUB_ENV
+          else
+            echo "template=default.yml" >> $GITHUB_ENV
+          fi
 
       - name: Issue Parser
-        uses: stefanbuck/github-issue-praser@v3
-        id: issue-parser-update
+        uses: stefanbuck/github-issue-parser@v3
+        id: issue-parser
         with:
-          template-path: .github/ISSUE_TEMPLATE/✅update.yml
-
-      - name: Issue Parser
-        uses: stefanbuck/github-issue-praser@v3
-        id: issue-parser-style
-        with:
-          template-path: .github/ISSUE_TEMPLATE/✨style.yml
-
-      - name: Issue Parser
-        uses: stefanbuck/github-issue-praser@v3
-        id: issue-parser-bug
-        with:
-          template-path: .github/ISSUE_TEMPLATE/🐞bug.yml
-
-      - name: Issue Parser
-        uses: stefanbuck/github-issue-praser@v3
-        id: issue-parser-feature
-        with:
-          template-path: .github/ISSUE_TEMPLATE/📒feature.yml
-
-      - name: Issue Parser
-        uses: stefanbuck/github-issue-praser@v3
-        id: issue-parser-del
-        with:
-          template-path: .github/ISSUE_TEMPLATE/🔥del.yml
-
-      - name: Issue Parser
-        uses: stefanbuck/github-issue-praser@v3
-        id: issue-parser-fix
-        with:
-          template-path: .github/ISSUE_TEMPLATE/🩹fix.yml
+          template-path: .github/ISSUE_TEMPLATE/${{ env.template }}
 
       - name: Log Issue Parser
         run: |
@@ -95,32 +81,4 @@ jobs:
             }
 
       - name: Log created issue
-        run: echo "Jira Issue ${{ steps.issue-parser.outputs.parentKey }}/${{ steps.create.outputs.issue }} was created"
-
-      - name: Checkout develop code
-        uses: actions/checkout@v4
-        with:
-          ref: develop
-
-      - name: Create branch with Ticket number
-        run: |
-          ISSUE_NUMBER="${{ steps.create.outputs.issue }}"
-          ISSUE_TITLE="${{ steps.issue-parser.outputs.issueparser_branch}}"
-          BRANCH_NAME="${ISSUE_NUMBER}-$(echo ${ISSUE_TITLE} | sed 's/ /-/g')"
-          git checkout -b "${BRANCH_NAME}"
-          git push origin "${BRANCH_NAME}"
-
-      - name: Update issue title
-        uses: actions-cool/issues-helper@v3
-        with:
-          actions: "update-issue"
-          token: ${{ secrets.GITHUB_TOKEN }}
-          title: "[${{ steps.create.outputs.issue }}] ${{ github.event.issue.title }}"
-
-      - name: Add comment with Jira issue link
-        uses: actions-cool/issues-helper@v3
-        with:
-          actions: "create-comment"
-          token: ${{ secrets.GITHUB_TOKEN }}
-          issue-number: ${{ github.event.issue.number }}
-          body: "Jira Issue Created: [${{ steps.create.outputs.issue }}](${{ secrets.JIRA_BASE_URL }}/browse/${{ steps.create.outputs.issue }})"
+        run: echo "Jira Issue ${{ steps.issue-parser.outputs.issueparser_parentKey }}/${{ steps.create.outputs.issue }} was created"
