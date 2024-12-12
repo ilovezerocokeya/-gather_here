@@ -8,7 +8,7 @@ body:
     id: parentKey
     attributes:
       label: "상위 작업 Ticket Number"
-      description: "상위 작업의 Ticket Number를 기입해주세요 (예: GH-1234)"
+      description: "상위 작업의 Ticket Number를 기입해주세요 (ex: GH-1234)"
     validations:
       required: true
 
@@ -26,8 +26,14 @@ body:
       label: "업데이트 상세 내용 (Details)"
       description: "작업의 배경, 목적 및 기대되는 결과를 자세히 작성해주세요"
       value: |
-        - **작업 배경 및 목적:**
+        **작업 배경 및 목적:**  
+        (ex: 로그인 시 느린 응답 시간으로 사용자 불만이 증가하고 있습니다.)
 
+        **업데이트 내용:**  
+        (ex: 로그인 API를 최적화하여 응답 시간을 단축합니다.)
+
+        **기대되는 결과:**  
+        (ex: 로그인 응답 시간이 3초에서 1초 이내로 개선됩니다.)
     validations:
       required: true
 
@@ -37,18 +43,8 @@ body:
       label: "업데이트 체크리스트 (Tasks)"
       description: "업데이트에 필요한 작업 목록을 작성해주세요"
       value: |
-        - [ ] task1
-        - [ ] task2
-        - [ ] task3
+        - [ ] Task1
+        - [ ] Task2
+        - [ ] Task3
     validations:
       required: true
-
-  - type: textarea
-    id: references
-    attributes:
-      label: "관련 자료 (References)"
-      description: "이슈와 관련된 문서나 링크를 참조해주세요 (예: 관련 티켓, 기술 문서)"
-      value: |
-        -
-    validations:
-      required: false
