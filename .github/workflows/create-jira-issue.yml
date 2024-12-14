@@ -74,11 +74,12 @@ jobs:
       - name: Log created issue
         run: echo "Jira Issue ${{ steps.issue-parser.outputs.issueparser_parentKey }}/${{ steps.create.outputs.issue }} was created"
 
-      # 🔄 develop 브랜치 체크아웃
+      # 🔄 dev 브랜치 체크아웃
       - name: Checkout develop code
         uses: actions/checkout@v4
         with:
           ref: dev
+
 
       # 🌿 이슈 제목으로 브랜치 생성
       - name: Create branch with Issue Title
