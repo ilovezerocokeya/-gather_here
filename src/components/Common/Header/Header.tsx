@@ -5,14 +5,16 @@ import Link from "next/link";
 import { useRouter } from "next/navigation";
 import Image from "next/image";
 import LoginForm from "@/components/Login/LoginForm";
-import { useUser } from "@/provider/UserContextProvider";
+import { useAuth } from "@/provider/user/UserAuthProvider";
+import { useUserData } from "@/provider/user/UserDataProvider";
 import useSearch from "@/hooks/useSearch";
 import { createClient } from "@/utils/supabase/client";
 
 const supabase = createClient();
 
 const Header: React.FC = () => {
-  const { user, userData, fetchUserData, initializationUser, resetAuthUser } = useUser(); // 사용자 관련 상태 및 함수
+  const { user, resetAuthUser } = useAuth(); // 인증 관련 상태 및 함수
+  const { userData, fetchUserData } = useUserData(); // 사용자 데이터 관련 상태 및 함수
   const router = useRouter();
   const [isSearchOpen, setIsSearchOpen] = useState(false);
   const [isModalOpen, setIsModalOpen] = useState(false);
@@ -22,15 +24,20 @@ const Header: React.FC = () => {
 
   // 로그아웃 함수
   const signOut = async () => {
-    const { error } = await supabase.auth.signOut();
-    if (error) {
-      console.error("Error logging out:", error);
-      return;
+    try {
+      const { error } = await supabase.auth.signOut();
+      if (error) throw new Error(error.message);
+    } catch (err) {
+      // 'err'를 명시적으로 Error로 캐스팅
+      if (err instanceof Error) {
+        console.error("로그아웃 중 오류:", err.message);
+      } else {
+        console.error("알 수 없는 오류 발생:", err);
+      }
+    } finally {
+      resetAuthUser(); // 사용자 상태 초기화
+      router.push("/"); // 메인 페이지로 이동
     }
-
-    resetAuthUser(); // 사용자 상태 초기화
-    initializationUser(); // 사용자 데이터 초기화
-    router.push("/"); // 메인 페이지로 이동
   };
 
   // 검색 창 열기/닫기
@@ -73,8 +80,8 @@ const Header: React.FC = () => {
 
   // 사용자 데이터 가져오기
   useEffect(() => {
-    if (user) {
-      fetchUserData();
+    if (user?.id) {
+      fetchUserData(user.id); // 사용자 데이터를 가져옴
     }
   }, [user, fetchUserData]);
 
@@ -174,9 +181,11 @@ const Header: React.FC = () => {
               {/* 로그인 / 마이페이지 버튼 */}
               {user ? (
                 <div className="flex items-center">
+                  {/* 마이페이지 모달 토글 버튼 */}
                   <button
                     onClick={toggleMypageModal}
                     className="hidden s:flex items-center justify-center w-[32px] h-[32px] rounded-lg bg-fillNeutral hover:bg-fillAssistive z-50"
+                    aria-label={isMypageModalOpen ? "마이페이지 닫기" : "마이페이지 열기"}
                   >
                     <Image
                       src={isMypageModalOpen ? "/assets/header/primary_close.svg" : "/assets/header/mobile_logo.svg"}
@@ -187,7 +196,8 @@ const Header: React.FC = () => {
                     />
                   </button>
 
-                  <Link href="/mypage" className="square-header-button-gray s:hidden">
+                  {/* 마이페이지 링크 버튼 */}
+                  <Link href="/mypage" className="square-header-button-gray s:hidden" aria-label="마이페이지로 이동">
                     <Image
                       src="/assets/header/mobile_logo.svg"
                       alt="마이페이지 아이콘"
@@ -197,12 +207,22 @@ const Header: React.FC = () => {
                     />
                   </Link>
 
-                  <button onClick={signOut} className="shared-button-small-gray-2 ml-2 s:hidden">
+                  {/* 로그아웃 버튼 */}
+                  <button
+                    onClick={signOut}
+                    className="shared-button-small-gray-2 ml-2 s:hidden"
+                    aria-label="로그아웃"
+                  >
                     로그아웃
                   </button>
                 </div>
               ) : (
-                <button onClick={handleOpenLoginModal} className="shared-button-small-green">
+                /* 로그인 모달 열기 버튼 */
+                <button
+                  onClick={handleOpenLoginModal}
+                  className="shared-button-small-green"
+                  aria-label="로그인 시작하기"
+                >
                   시작하기
                 </button>
               )}
@@ -347,3 +367,4 @@ const Header: React.FC = () => {
 };
 
 export default Header;
+

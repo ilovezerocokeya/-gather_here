@@ -1,75 +1,70 @@
 import { NextResponse } from "next/server";
 import { createClient } from "@/utils/supabase/server";
 
+// 사용자 데이터 타입
+interface SupabaseUser {
+  id: string;
+  email: string;
+  user_metadata: {
+    full_name?: string;
+    avatar_url?: string;
+  };
+}
+
+// 세션 교환 함수
+const exchangeCodeForSession = async (supabase: any, code: string) => {
+  const { data, error } = await supabase.auth.exchangeCodeForSession(code);
+  if (error) throw new Error(`세션 교환 실패: ${error.message}`);
+  return data;
+};
+
+// 사용자 데이터 확인 함수
+const fetchUserData = async (supabase: any, userId: string) => {
+  const { data, error } = await supabase
+    .from("Users")
+    .select("*")
+    .eq("user_id", userId)
+    .maybeSingle();
+  if (error) throw new Error(`사용자 데이터 확인 실패: ${error.message}`);
+  return data;
+};
+
+// 새 사용자 데이터 삽입 함수
+const insertNewUser = async (supabase: any, user: SupabaseUser) => {
+  const defaultData = {
+    nickname: user.user_metadata?.full_name || user.email.split("@")[0] || "사용자",
+    email: user.email,
+    profile_image_url: user.user_metadata?.avatar_url || "/logos/hi.png",
+    job_title: "",
+    hubCard: false,
+    background_image_url: "/logos/hi.png",
+  };
+
+  const { error } = await supabase.from("Users").insert([defaultData]);
+  if (error) throw new Error(`새 사용자 삽입 실패: ${error.message}`);
+};
+
+// GET 핸들러
 export async function GET(request: Request) {
-  const { searchParams, origin } = new URL(request.url);
-  const code = searchParams.get("code");
+  try {
+    const { searchParams, origin } = new URL(request.url);
+    const code = searchParams.get("code");
+    if (!code) throw new Error("URL에서 인증 코드를 찾을 수 없습니다.");
 
-  if (code) {
     const supabase = createClient();
-    const { error, data: sessionData } = await supabase.auth.exchangeCodeForSession(code);
 
-    if (!error && sessionData?.user) {
-      const user = sessionData.user;
-      const { data: userData, error: userFetchError } = await supabase
-        .from("Users")
-        .select("user_id")
-        .eq("user_id", user.id)
-        .maybeSingle();
+    const sessionData = await exchangeCodeForSession(supabase, code);
+    const user = sessionData.user;
+    const userData = await fetchUserData(supabase, user.id);
 
-      if (userFetchError) {
-        console.error("Error fetching user from Users table:", userFetchError.message);
-        return NextResponse.redirect(`${origin}/auth/auth-code-error`);
-      }
-
-      if (userData) {
-        // 이미 사용자 데이터가 있는 경우 메인 페이지로 리다이렉트
-        return NextResponse.redirect(`${origin}/`);
-      } else {
-        
-        // 기본값 설정
-        const nickname = user.user_metadata?.full_name || user.email?.split("@")[0] || "사용자";
-        const description = `안녕하세요! 반갑습니다😆`;
-
-        // 디폴트 이미지 URL
-        const defaultBackgroundImageUrl = "/logos/hi.png"; 
-        
-        const defaultData = {
-          nickname,
-          email: user.email,
-          blog: "",
-          profile_image_url: user.user_metadata?.avatar_url || "",
-          experience: "0",
-          job_title: "",
-          user_id: user.id,
-          description,
-          hubCard: false,
-          background_image_url: defaultBackgroundImageUrl,
-          answer1: "",
-          answer2: "",
-          answer3: "",
-        };
-
-
-        const { error: insertError } = await supabase.from("Users").insert([defaultData]);
-
-        if (insertError) {
-          console.error("Error inserting user into Users table:", insertError.message);
-          return NextResponse.redirect(`${origin}/auth/auth-code-error`);
-        }
-
-
-        return NextResponse.redirect(`${origin}/signup`);
-      }
+    if (userData) {
+      return NextResponse.redirect(`${origin}${"/"}`);
     } else {
-      console.error("Error exchanging code for session:", error?.message);
-      if (error?.message.includes("Database error")) {
-        console.error("Database error saving new user:", error.message);
-      }
+      await insertNewUser(supabase, user);
+      return NextResponse.redirect(`${origin}${"/signup"}`);
     }
-  } else {
-    console.warn("No code found in the request URL");
+  } catch (error: any) {
+    console.error("에러 발생:", error.message);
+    return NextResponse.redirect("/auth/auth-code-error");
   }
-
-  return NextResponse.redirect(`${origin}/signup`);
 }
