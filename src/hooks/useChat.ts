@@ -1,5 +1,5 @@
 import { useState, useEffect, useRef, FormEvent, KeyboardEvent } from "react";
-import { useUser } from "@/provider/UserContextProvider";
+import { useAuth } from "@/provider/user/UserAuthProvider";
 import { createClient } from "@/utils/supabase/client";
 import { MessageRow } from "@/types/chats/Chats.type";
 
@@ -12,7 +12,7 @@ const debounce = (func: Function, delay: number) => {
 };
 
 const useChat = () => {
-  const { user } = useUser();
+  const { user } = useAuth();
   const [messages, setMessages] = useState<MessageRow[]>([]);
   const [inputValue, setInputValue] = useState<string>("");
   const [isModalOpen, setIsModalOpen] = useState<boolean>(false);

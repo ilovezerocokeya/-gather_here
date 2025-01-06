@@ -1,7 +1,7 @@
 "use client";
 
 import React, { useEffect, useState } from "react";
-import { useUser } from "@/provider/UserContextProvider";
+import { useAuth } from "@/provider/user/UserAuthProvider";
 import { fetchLikedPosts } from "@/lib/fetchPosts";
 import PostCardLong from "@/components/Common/Card/PostCard/PostCardLong";
 import ItEventCardShort from "@/components/Common/Card/PostCard/ItEventCardShort";
@@ -12,7 +12,7 @@ import { PostWithUser, ITEvent } from "@/types/posts/Post.type";
 type Tab = "전체" | "스터디" | "프로젝트" | "IT 행사";
 
 const InterestsTap: React.FC = () => {
-  const { user } = useUser();
+  const { user } = useAuth();
   const [selectedTab, setSelectedTab] = useState<Tab>("전체");
   const [posts, setPosts] = useState<(PostWithUser | ITEvent)[]>([]);
   const [loading, setLoading] = useState<boolean>(true);

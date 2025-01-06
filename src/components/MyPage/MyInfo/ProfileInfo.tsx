@@ -2,7 +2,8 @@
 
 import { useEffect, useState } from "react";
 import { createClient } from "@/utils/supabase/client";
-import { useUser } from "@/provider/UserContextProvider";
+import { useUserData } from "@/provider/user/UserDataProvider";
+import { useAuth } from "@/provider/user/UserAuthProvider";
 import { useRouter } from "next/navigation";
 import Toast from "@/components/Common/Toast/Toast";
 import MypageProfileInfo from "@/components/Common/Skeleton/MypageProfileInfo";
@@ -10,7 +11,8 @@ import MypageProfileInfo from "@/components/Common/Skeleton/MypageProfileInfo";
 const ProfileInfo: React.FC = () => {
   const supabase = createClient();
   const router = useRouter();
-  const { user, userData, fetchUserData } = useUser();
+  const { userData, fetchUserData } = useUserData();
+  const { user } = useAuth();
   const [nickname, setNickname] = useState("");
   const [job, setJob] = useState("");
   const [experience, setExperience] = useState("");
@@ -49,7 +51,7 @@ const ProfileInfo: React.FC = () => {
         .from("Users")
         .select("nickname")
         .eq("nickname", nickname)
-        .neq("user_id", user?.id); // user_id가 유효할 때만 체크
+        .neq("user_id", user?.id);
 
       if (error) {
         setNicknameError("닉네임 중복 검사에 실패했습니다.");
@@ -83,6 +85,7 @@ const ProfileInfo: React.FC = () => {
   // 정보 업데이트
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
+
     if (!user?.id || !validateForm()) {
       return;
     }
@@ -90,13 +93,13 @@ const ProfileInfo: React.FC = () => {
     const { error } = await supabase
       .from("Users")
       .update({ nickname, job_title: job, experience })
-      .eq("user_id", user.id); // user_id로 업데이트
+      .eq("user_id", user.id);
 
     if (error) {
       setToastState({ state: "error", message: "업데이트에 실패했습니다." });
     } else {
       setToastState({ state: "success", message: "업데이트 완료되었습니다." });
-      fetchUserData();
+      fetchUserData(user.id);
     }
   };
 
@@ -137,7 +140,6 @@ const ProfileInfo: React.FC = () => {
     </div>
   );
 
-  // 프로필 데이터가 없는 경우 스켈레톤 컴포넌트 렌더링
   if (!user) {
     return <MypageProfileInfo />;
   }
@@ -228,10 +230,19 @@ const ProfileInfo: React.FC = () => {
           <div className="mt-6 mb-12">
             <div className="s:fixed flex s:justify-center s:bottom-0 s:left-0 s:right-0 s:p-4 s:bg-background s:z-10">
               <div className="flex justify-end s:justify-center gap-2 w-full s:max-w-container-s">
-                <button type="button" aria-label="회원 정보 취소" className="shared-button-gray w-[65px] s:w-1/2">
+                <button
+                  type="button"
+                  aria-label="회원 정보 취소"
+                  className="shared-button-gray w-[65px] s:w-1/2"
+                  onClick={handleReset}
+                >
                   취소
                 </button>
-                <button type="submit" aria-label="회원 정보 저장" className="shared-button-green w-[65px] s:w-1/2">
+                <button
+                  type="submit"
+                  aria-label="회원 정보 저장"
+                  className="shared-button-green w-[65px] s:w-1/2"
+                >
                   저장
                 </button>
               </div>

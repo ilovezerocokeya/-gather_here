@@ -1,18 +1,23 @@
 "use client";
-import { useUser } from "@/provider/UserContextProvider";
+import { useUserData } from "@/provider/user/UserDataProvider"; // UserDataProvider로 변경
+import { useLikeStore } from "@/stores/useLikeStore";
 import MemberCard from "@/components/GatherHub/MemberCard";
 import { useEffect, useState } from "react";
 import { createClient } from "@/utils/supabase/client";
 
 // MyPeoplePage 컴포넌트
 const MyPeoplePage: React.FC = () => {
-  const { userData } = useUser(); // 로그인한 사용자 데이터 가져오기
+  const { userData } = useUserData(); // 사용자 데이터 가져오기
   const supabase = createClient(); // Supabase 클라이언트 생성
-  const [likedMembers, setLikedMembers] = useState<any[]>([]); // 좋아요한 멤버들 상태
+  const { likedMembers, syncLikedMembers, toggleLike } = useLikeStore(); // 좋아요 상태와 동기화 함수, 토글 함수 가져오기
   const [loading, setLoading] = useState<boolean>(true); // 로딩 상태
   const [error, setError] = useState<string | null>(null); // 에러 상태
+  const [likedMemberData, setLikedMemberData] = useState<any[]>([]); // 좋아요한 멤버 정보
 
   useEffect(() => {
+    // 좋아요 상태 동기화
+    syncLikedMembers();
+
     // 좋아요한 멤버를 가져오는 함수
     const fetchLikedMembers = async () => {
       if (!userData?.id) {
@@ -42,7 +47,7 @@ const MyPeoplePage: React.FC = () => {
 
         if (!interestsData || interestsData.length === 0) {
           console.log("관심 멤버가 없음");
-          setLikedMembers([]); // 관심 멤버가 없을 경우 빈 배열로 설정
+          setLikedMemberData([]); // 관심 멤버가 없을 경우 빈 배열로 설정
           setLoading(false); // 로딩 중지
           return;
         }
@@ -61,7 +66,7 @@ const MyPeoplePage: React.FC = () => {
           setError("멤버 정보를 불러오는 중 오류가 발생했습니다.");
         } else {
           console.log("좋아요한 멤버 정보 가져오기 성공:", likedMembersData);
-          setLikedMembers(likedMembersData || []); // 멤버 정보가 없으면 빈 배열로 설정
+          setLikedMemberData(likedMembersData || []); // 멤버 정보가 없으면 빈 배열로 설정
         }
       } catch (error) {
         console.error("데이터 불러오는 중 오류 발생:", error);
@@ -71,13 +76,8 @@ const MyPeoplePage: React.FC = () => {
       }
     };
 
-    if (userData) {
-      fetchLikedMembers(); // userData가 준비된 후 함수 호출
-    } else {
-      console.log("userData가 없음");
-      setLoading(false); // userData가 없을 때 로딩 중지
-    }
-  }, [userData, supabase]);
+    fetchLikedMembers();
+  }, [userData, supabase, syncLikedMembers]);
 
   return (
     <div className="my-people-page">
@@ -87,9 +87,9 @@ const MyPeoplePage: React.FC = () => {
         <p>로딩 중...</p>
       ) : error ? (
         <p className="text-red-500">{error}</p> // 에러 메시지 표시
-      ) : likedMembers.length > 0 ? (
+      ) : likedMemberData.length > 0 ? (
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-          {likedMembers.map((member) => (
+          {likedMemberData.map((member) => (
             <MemberCard
               key={member.user_id}
               nickname={member.nickname}
@@ -106,9 +106,9 @@ const MyPeoplePage: React.FC = () => {
               first_link_type={member.first_link_type} // 첫 번째 링크 타입
               second_link={member.second_link} // 두 번째 링크
               second_link_type={member.second_link_type} // 두 번째 링크 타입
-              liked={true} // 이미 좋아요한 멤버
-              toggleLike={() => {}} // 좋아요 토글 기능은 여기서는 사용하지 않음
-              tech_stacks={[]}
+              liked={!!likedMembers[member.user_id]} // 좋아요 상태
+              toggleLike={() => toggleLike(member.user_id)} // 좋아요 토글 연결
+              tech_stacks={[]} // 기술 스택
             />
           ))}
         </div>

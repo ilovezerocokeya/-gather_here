@@ -2,7 +2,7 @@
 import React, { useState, useMemo, useCallback, useEffect } from "react";
 import MemberCard from "@/components/GatherHub/MemberCard";
 import JobDirectory from "@/components/GatherHub/JobDirectory";
-import { useUser } from "@/provider/UserContextProvider";
+import { useUserData } from "@/provider/user/UserDataProvider";
 import { useInfiniteQuery } from "@tanstack/react-query";
 import { throttle } from "lodash";
 import { createClient } from "@/utils/supabase/client";
@@ -48,7 +48,7 @@ const fetchMembers = async ({ pageParam = 1 }) => {
 };
 
 const GatherHubPage: React.FC = () => {
-  const { userData } = useUser(); // 사용자 데이터를 전역적으로 관리하기 위해 UserContext를 사용
+  const { userData } = useUserData(); // 사용자 데이터를 전역적으로 관리하기 위해 UserContext를 사용
   const isHubRegistered = userData?.hubCard || false; // 사용자가 hubCard를 등록했는지 확인
   const [filteredJob, setFilteredJob] = useState<string>("all"); // 직업별 필터링 상태 관리
   const [hasNextPageState, setHasNextPageState] = useState<boolean>(true);

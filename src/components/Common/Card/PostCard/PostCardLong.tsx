@@ -3,7 +3,7 @@ import Image from "next/image";
 import React, { useEffect, useState } from "react";
 import Link from "next/link";
 import dayjs from "dayjs";
-import { useUser } from "@/provider/UserContextProvider";
+import { useAuth } from "@/provider/user/UserAuthProvider";
 import LikeButton from "@/components/MainDetail/LikeButton";
 
 interface PostCardProps {
@@ -12,7 +12,7 @@ interface PostCardProps {
 }
 
 const PostCardLong: React.FC<PostCardProps> = ({ post, onRemoveBookmark }) => {
-  const { user: currentUser } = useUser();
+  const { user: currentUser } = useAuth();
   const [isMounted, setIsMounted] = useState<boolean>(false);
   const deadlineDate = new Date(post.deadline);
   deadlineDate.setHours(0, 0, 0, 0);

@@ -1,7 +1,3 @@
-/**
- * 사용자 데이터 상태를 관리하는 Context 컴포넌트
- * - 사용자 프로필 데이터 및 관련 기능 관리
- */
 "use client";
 
 import React, { createContext, useState, useCallback, ReactNode, useContext } from "react";
@@ -9,7 +5,7 @@ import { createClient } from "@/utils/supabase/client";
 
 // 사용자 데이터를 나타내는 인터페이스
 interface UserData {
-  id: string;
+  user_id: string;
   nickname: string;
   job_title: string;
   experience: string;
@@ -41,9 +37,8 @@ interface UserDataContextType {
 // Context 생성
 const UserDataContext = createContext<UserDataContextType | undefined>(undefined);
 
-// 사용자 데이터를 관리하는 Provider 컴포넌트
 export const UserDataProvider: React.FC<{ children: ReactNode }> = ({ children }) => {
-  const supabase = createClient(); // Supabase 클라이언트 생성
+  const supabase = createClient();
   const [userData, setUserDataState] = useState<UserData | null>(null); // 사용자 데이터 상태
   const [loading, setLoading] = useState<boolean>(false); // 로딩 상태
   const [error, setError] = useState<string | null>(null); // 에러 상태
@@ -56,9 +51,9 @@ export const UserDataProvider: React.FC<{ children: ReactNode }> = ({ children }
       const { data, error } = await supabase
         .from("Users")
         .select(
-          "id, nickname, job_title, experience, description, profile_image_url, blog, hubCard, background_image_url, answer1, answer2, answer3, first_link_type, first_link, second_link_type, second_link, tech_stacks"
+          "user_id, nickname, job_title, experience, description, profile_image_url, blog, hubCard, background_image_url, answer1, answer2, answer3, first_link_type, first_link, second_link_type, second_link, tech_stacks"
         )
-        .eq("id", userId)
+        .eq("user_id", userId)
         .single();
 
       if (error || !data) {
@@ -71,8 +66,8 @@ export const UserDataProvider: React.FC<{ children: ReactNode }> = ({ children }
         throw new Error("반환된 데이터가 예상과 일치하지 않습니다.");
       }
     } catch (err: any) {
-      setError(err.message);
-      console.error("사용자 데이터 가져오는 중 에러 발생:", err);
+      const errorMessage = err instanceof Error ? err.message : "알 수 없는 오류가 발생했습니다.";
+      setError(errorMessage);
       setUserDataState(null);
     } finally {
       setLoading(false);
@@ -82,26 +77,23 @@ export const UserDataProvider: React.FC<{ children: ReactNode }> = ({ children }
   // 사용자 답변을 업데이트하는 함수
   const updateUserAnswers = useCallback(
     async (answers: Partial<UserData>) => {
-      if (!userData || !userData.id) return;
+      if (!userData || !userData.user_id) return;
 
       setError(null);
       try {
         const { error } = await supabase
           .from("Users")
           .update(answers)
-          .eq("id", userData.id);
+          .eq("user_id", userData.user_id);
 
         if (error) {
           throw new Error(error.message);
         }
 
-        setUserDataState((prev) => {
-          if (!prev) return null;
-          return { ...prev, ...answers };
-        });
+        setUserDataState((prev) => (prev ? { ...prev, ...answers } : null));
       } catch (err: any) {
-        setError(err.message);
-        console.error("답변 업데이트 중 에러 발생:", err);
+        const errorMessage = err instanceof Error ? err.message : "알 수 없는 오류가 발생했습니다.";
+        setError(errorMessage);
       }
     },
     [supabase, userData]
@@ -133,14 +125,23 @@ export const useUserData = (): UserDataContextType => {
 };
 
 // 사용자 데이터 타입 검증 함수
-const isUserData = (data: any): data is UserData => {
+export const isUserData = (data: any): data is UserData => {
   return (
-    typeof data.id === "string" &&
+    typeof data.user_id === "string" &&
     typeof data.nickname === "string" &&
     typeof data.job_title === "string" &&
     typeof data.experience === "string" &&
     typeof data.description === "string" &&
     typeof data.profile_image_url === "string" &&
-    typeof data.blog === "string"
+    typeof data.blog === "string" &&
+    (data.hubCard === undefined || typeof data.hubCard === "boolean") &&
+    (data.background_image_url === undefined || typeof data.background_image_url === "string") &&
+    (data.answer1 === undefined || typeof data.answer1 === "string") &&
+    (data.answer2 === undefined || typeof data.answer2 === "string") &&
+    (data.answer3 === undefined || typeof data.answer3 === "string") &&
+    (data.first_link_type === undefined || typeof data.first_link_type === "string") &&
+    (data.first_link === undefined || typeof data.first_link === "string") &&
+    (data.second_link_type === undefined || typeof data.second_link_type === "string") &&
+    (data.second_link === undefined || typeof data.second_link === "string")
   );
 };

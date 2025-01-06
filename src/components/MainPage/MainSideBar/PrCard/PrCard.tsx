@@ -6,7 +6,7 @@ import "slick-carousel/slick/slick.css";
 import "slick-carousel/slick/slick-theme.css";
 import { useInfiniteQuery } from "@tanstack/react-query";
 import Image from "next/image";
-import { useUser } from "@/provider/UserContextProvider";
+import { useLikeStore } from "@/stores/useLikeStore";
 import { createPortal } from "react-dom";
 import Link from "next/link";
 // 기술 스택 목록
@@ -95,8 +95,8 @@ const MemberCard: React.FC<MemberCardProps> = ({
   answer3,
   tech_stacks,
 }) => {
+  const { likedMembers, toggleLike } = useLikeStore(); // useLikeStore로 좋아요 상태 관리
   const [isModalOpen, setIsModalOpen] = useState(false);
-  const { likedMembers, toggleLike } = useUser();
   const liked = likedMembers[nickname] || false;
 
   // 모달 열기 함수

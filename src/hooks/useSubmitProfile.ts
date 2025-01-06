@@ -1,21 +1,17 @@
 import { useState, useEffect } from "react";
 import { createClient } from "@/utils/supabase/client";
 import { FormValues } from "@/components/Signup/Signup03";
-import { useUser } from "@/provider/UserContextProvider"; 
+import { useAuth } from "@/provider/user/UserAuthProvider";
+import { useSignup } from "@/provider/user/UserSignupProvider";
 
 const supabase = createClient();
 
-const useSubmitProfile = (setUserData: (data: any) => void) => {   // useUser 훅을 통해 사용자 관련 정보와 상태 업데이트 함수들을 가져옴
-  const {
-    nextStep,
-    setNickname,
-    setUser,
-    setProfileImageUrl,
-    user,
-    job_title,
-    experience,
-    profile_image_url
-  } = useUser();
+const useSubmitProfile = (setUserData: (data: any) => void) => {
+  // 회원가입 관련 상태 및 함수
+  const { nextStep, setNickname, job_title, experience, profile_image_url, setProfileImageUrl } = useSignup();
+
+  // 사용자 인증 관련 함수
+  const { setUser, user } = useAuth();
   
 
 

@@ -6,7 +6,7 @@ import Image from "next/image";
 import Link from "next/link";
 import DOMPurify from "dompurify";
 import LikeButton from "@/components/MainDetail/LikeButton";
-import { useUser } from "@/provider/UserContextProvider";
+import { useAuth } from "@/provider/user/UserAuthProvider"
 import dayjs from "dayjs";
 
 interface PostCardProps {
@@ -15,7 +15,7 @@ interface PostCardProps {
 }
 
 const PostCardShort: React.FC<PostCardProps> = ({ post }) => {
-  const { user: currentUser } = useUser();
+  const { user: currentUser } = useAuth();
   const [isMounted, setIsMounted] = useState<boolean>(false);
   const deadlineDate = new Date(post.deadline);
   deadlineDate.setHours(0, 0, 0, 0);

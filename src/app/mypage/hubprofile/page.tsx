@@ -2,19 +2,20 @@
 
 import { useState, useEffect } from "react";
 import { createClient } from "@/utils/supabase/client";
-import { useUser } from "@/provider/UserContextProvider";
+import { useAuth } from "@/provider/user/UserAuthProvider";
+import { useUserData } from "@/provider/user/UserDataProvider";
 import SelfIntroduction from "@/components/MyPage/HubInfo/Introductioin";
 import HubProfileForm from "@/components/MyPage/HubInfo/HubProfileInfo";
 import TeamworkQuestions from "@/components/MyPage/HubInfo/TeamQuestions";
 import BackgroundPicture from "@/components/MyPage/HubInfo/BackgroundPicture";
 import Toast from "@/components/Common/Toast/Toast";
-import TechStack from "@/components/MyPage/HubInfo/TechStack"; // TechStack 추가
+import TechStack from "@/components/MyPage/HubInfo/TechStack";
 
 const HubProfile: React.FC = () => {
   const supabase = createClient();
-  const { user, fetchUserData } = useUser();
+  const { user } = useAuth(); 
+  const { fetchUserData } = useUserData();
 
-  // 상태 정의
   const [description, setDescription] = useState("");
   const [blog, setBlog] = useState("");
   const [firstLinkType, setFirstLinkType] = useState("");
@@ -24,10 +25,9 @@ const HubProfile: React.FC = () => {
   const [answer1, setAnswer1] = useState("");
   const [answer2, setAnswer2] = useState("");
   const [answer3, setAnswer3] = useState("");
-  const [techStacks, setTechStacks] = useState<string[]>([]); // TechStack 상태 추가
+  const [techStacks, setTechStacks] = useState<string[]>([]);
   const [toastState, setToastState] = useState({ state: "", message: "" });
 
-  // 페이지가 로드될 때 데이터베이스에서 값을 가져오는 useEffect
   useEffect(() => {
     const fetchUserProfile = async () => {
       if (!user) return;
@@ -38,10 +38,9 @@ const HubProfile: React.FC = () => {
           "description, blog, first_link_type, first_link, second_link_type, second_link, answer1, answer2, answer3, tech_stacks",
         )
         .eq("user_id", user.id)
-        .single(); // 사용자의 모든 데이터를 가져옴
+        .single();
 
       if (data) {
-        // 각 필드에 저장된 값을 상태로 설정
         setDescription(data.description || "");
         setBlog(data.blog || "");
         setFirstLinkType(data.first_link_type || "");
@@ -51,7 +50,7 @@ const HubProfile: React.FC = () => {
         setAnswer1(data.answer1 || "");
         setAnswer2(data.answer2 || "");
         setAnswer3(data.answer3 || "");
-        setTechStacks(data.tech_stacks || []); // TechStack 상태 설정
+        setTechStacks(data.tech_stacks || []);
       }
 
       if (error) {
@@ -60,12 +59,10 @@ const HubProfile: React.FC = () => {
     };
 
     fetchUserProfile();
-  }, [user]);
+  }, [user, supabase]);
 
-  // 저장 버튼을 눌렀을 때 모든 데이터를 한 번에 저장하는 함수
   const handleSave = async () => {
     if (!blog) {
-      // 포트폴리오 링크가 비어 있을 때 토스트 메시지 출력
       setToastState({ state: "error", message: "포트폴리오 링크를 작성해주세요!" });
       return;
     }
@@ -85,29 +82,26 @@ const HubProfile: React.FC = () => {
         answer1,
         answer2,
         answer3,
-        tech_stacks: techStacks, // TechStack 저장
+        tech_stacks: techStacks,
       })
       .eq("user_id", user.id);
 
     if (error) {
-      setToastState({ state: "error", message: "저장에 실패했습니다." });
+      setToastState({ state: "error", message: `저장에 실패했습니다: ${error.message}` });
     } else {
       setToastState({ state: "success", message: "저장되었습니다." });
-      fetchUserData(); // 업데이트 후 사용자 데이터 다시 불러오기
+      if (user && user.id) {
+        fetchUserData(user.id);
+      }
     }
   };
 
   return (
     <section>
       <BackgroundPicture />
-
-      {/* 보더 적용 */}
       <div className="border-b-[1px] border-fillNormal my-6" />
-
       <SelfIntroduction description={description} setDescription={setDescription} />
-      {/* 보더 적용 */}
       <div className="border-b-[1px] border-fillNormal my-6" />
-
       <TeamworkQuestions
         answer1={answer1}
         setAnswer1={setAnswer1}
@@ -116,14 +110,9 @@ const HubProfile: React.FC = () => {
         answer3={answer3}
         setAnswer3={setAnswer3}
       />
-      {/* 보더 적용 */}
       <div className="border-b-[1px] border-fillNormal my-6" />
-
       <TechStack selectedStacks={techStacks} setSelectedStacks={setTechStacks} />
-
-      {/* 보더 적용 */}
       <div className="border-t border-labelAssistive my-6" />
-
       <HubProfileForm
         blog={blog}
         setBlog={setBlog}
@@ -136,10 +125,7 @@ const HubProfile: React.FC = () => {
         secondLink={secondLink}
         setSecondLink={setSecondLink}
       />
-
       <div className="border-b-[1px] border-fillNormal my-6" />
-
-      {/* 저장 버튼 */}
       <div className="mt-6 mb-12">
         <div className="flex justify-center">
           <button onClick={handleSave} aria-label="저장" className="shared-button-green w-[65px]">
@@ -147,7 +133,6 @@ const HubProfile: React.FC = () => {
           </button>
         </div>
       </div>
-
       {toastState.state && (
         <Toast
           state={toastState.state}

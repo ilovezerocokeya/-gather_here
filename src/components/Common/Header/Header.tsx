@@ -12,14 +12,15 @@ import { createClient } from "@/utils/supabase/client";
 
 const supabase = createClient();
 
+
 const Header: React.FC = () => {
-  const { user, resetAuthUser } = useAuth(); // 인증 관련 상태 및 함수
-  const { userData, fetchUserData } = useUserData(); // 사용자 데이터 관련 상태 및 함수
+  const { user, resetAuthUser } = useAuth();
+  const { userData, fetchUserData, loading: userDataLoading, error: userDataError } = useUserData();
   const router = useRouter();
   const [isSearchOpen, setIsSearchOpen] = useState(false);
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [isMypageModalOpen, setIsMypageModalOpen] = useState(false);
-  const { searchWord, setSearchWord, handleSearch } = useSearch(); // 검색 관련 상태 및 함수
+  const { searchWord, setSearchWord, handleSearch } = useSearch();
   const defaultImage = "/assets/header/user.svg";
 
   // 로그아웃 함수

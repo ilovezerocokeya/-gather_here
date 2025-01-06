@@ -3,14 +3,15 @@
 import React, { useEffect } from "react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { useUser } from "@/provider/UserContextProvider";
+import { useAuth } from "@/provider/user/UserAuthProvider";
+import { useUserData } from "@/provider/user/UserDataProvider";
 import Image from "next/image";
 import LeftNavLoader from "@/components/Common/Skeleton/LeftNavLoader";
-import { createClient } from "@/utils/supabase/client";
 
 const LeftNav: React.FC = () => {
   const pathname = usePathname();
-  const { user, userData, setUserData, loading } = useUser();
+  const { user } = useAuth();
+  const { userData, fetchUserData, loading, error } = useUserData();
   const defaultImage = "/assets/header/user.svg";
 
   const getProfileImageUrl = (url: string) => `${url}?${new Date().getTime()}`;
@@ -43,36 +44,10 @@ const LeftNav: React.FC = () => {
   const jobTitleClass = userData ? getJobTitleClass(userData.job_title) : "";
 
   useEffect(() => {
-    const supabase = createClient();
-    const getUserData = async () => {
-      if (user) {
-        const { data, error } = await supabase.from("Users").select("*").eq("user_id", user.id).limit(1).single();
-
-        if (error) {
-          console.error("Users 테이블 데이터 에러:", error);
-        }
-
-        // 데이터가 있을 경우 'userData' 상태를 업데이트
-        if (data) {
-          const updatedUserData = {
-            id: data.user_id ?? "",
-            nickname: data.nickname ?? "",
-            job_title: data.job_title ?? "",
-            experience: data.experience ?? "",
-            profile_image_url: data.profile_image_url ?? "",
-            blog: data.blog ?? "",
-            description: data.description ?? "",
-            background_image_url: data.background_image_url ?? "",
-            answer1: data.answer1 ?? "",
-            answer2: data.answer2 ?? "",
-            answer3: data.answer3 ?? "",
-          };
-          setUserData(updatedUserData);
-        }
-      }
-    };
-    getUserData();
-  }, [user]);
+    if (user?.id) {
+      fetchUserData(user.id);
+    }
+  }, [user, fetchUserData]); 
 
   return (
     <aside className="sticky top-0 p-6 s:p-0 w-[250px] max-h-[360px] flex flex-col items-start gap-3 rounded-[20px] bg-fillStrong text-fontWhite shadow-sm s:hidden">

@@ -34,10 +34,18 @@ const insertNewUser = async (supabase: any, user: SupabaseUser) => {
   const defaultData = {
     nickname: user.user_metadata?.full_name || user.email.split("@")[0] || "사용자",
     email: user.email,
-    profile_image_url: user.user_metadata?.avatar_url || "/logos/hi.png",
+    profile_image_url: user.user_metadata?.avatar_url || "",
     job_title: "",
+    experience: "0",
+    description: "안녕하세요! 반갑습니다😆",
     hubCard: false,
     background_image_url: "/logos/hi.png",
+    answer1: "",
+    answer2: "",
+    answer3: "",
+    blog: "",
+    tech_stacks: [],
+    user_id: user.id,
   };
 
   const { error } = await supabase.from("Users").insert([defaultData]);

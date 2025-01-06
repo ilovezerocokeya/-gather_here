@@ -5,7 +5,8 @@ import { useRouter } from "next/navigation";
 import { createClient } from "@/utils/supabase/client";
 import ProfileLoader from "@/components/Common/Skeleton/ProfileLoader";
 import Image from "next/image";
-import { useUser } from "@/provider/UserContextProvider";
+import { useAuth } from "@/provider/user/UserAuthProvider";
+import { useUserData } from "@/provider/user/UserDataProvider";
 import Toast from "@/components/Common/Toast/Toast";
 import ProfilePicture from "../MyInfo/ProfilePicture";
 
@@ -14,7 +15,8 @@ const BackgroundPicture: React.FC = () => {
   const [backgroundImage, setBackgroundImage] = useState<string | null>(null);
   const [backgroundAlt, setBackgroundAlt] = useState<string>("커버 이미지");
   const [uploading, setUploading] = useState(false);
-  const { user, userData, setUserData } = useUser();
+  const { user } = useAuth();
+  const { userData, setUserData } = useUserData();
   const [toastState, setToastState] = useState({ state: "", message: "" });
   const router = useRouter();
   const defaultImage = "/assets/mypage/image_upload.svg";
@@ -52,7 +54,7 @@ const BackgroundPicture: React.FC = () => {
         setUserData({
           ...userData,
           background_image_url: backgroundImageUrl ?? "",
-          id: userData?.id ?? "",
+          user_id: userData?.user_id ?? "",
           nickname: userData?.nickname ?? "",
           job_title: userData?.job_title ?? "",
           experience: userData?.experience ?? "",

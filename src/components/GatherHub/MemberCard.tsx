@@ -1,7 +1,7 @@
 //MemberCard
 
 "use client";
-import { useUser } from "@/provider/UserContextProvider";
+import { useLikeStore } from "@/stores/useLikeStore";
 import Image from "next/image";
 import Link from "next/link";
 import React, { useEffect, useMemo, useState } from "react";
@@ -52,7 +52,7 @@ const MemberCard: React.FC<MemberCardProps> = ({
   const [isProfileModalOpen, setIsProfileModalOpen] = useState(false);
 
   // 좋아요 상태와 함수 사용
-  const { likedMembers, toggleLike } = useUser();
+  const { likedMembers, toggleLike } = useLikeStore();
   const liked = likedMembers[nickname] || false;
 
   // 선택된 기술 스택 필터링

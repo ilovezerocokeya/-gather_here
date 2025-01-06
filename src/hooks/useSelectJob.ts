@@ -1,10 +1,10 @@
 import { useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { useModal } from '@/provider/ContextProvider';
-import { useUser } from '@/provider/UserContextProvider';
+import { useSignup } from '@/provider/user/UserSignupProvider';
 
 const useSelectJob = () => {
-  const { nextStep, setJob } = useUser();
+  const { nextStep, setJob } = useSignup();
   const [selectedJob, setSelectedJob] = useState<string>('');
   const router = useRouter();
   const { closeModal } = useModal();
