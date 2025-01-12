@@ -18,15 +18,15 @@ export const UserAuthProvider: React.FC<{ children: ReactNode }> = ({ children }
   const supabase = createClient();
 
   // 사용자 인증 상태
-  const [user, setUserState] = useState<User | null>(null);
-  const [isAuthenticated, setIsAuthenticated] = useState<boolean>(false);
-  const [authError, setAuthError] = useState<string | null>(null);
+  const [user, setUserState] = useState<User | null>(null); // 현재 로그인된 사용자 정보
+  const [isAuthenticated, setIsAuthenticated] = useState<boolean>(false); // 인증 여부
+  const [authError, setAuthError] = useState<string | null>(null); // 인증 에러 메시지
 
   // 사용자 인증 정보를 설정하는 함수
   const setAuthUser = useCallback(async (user: User | null) => {
     try {
-      setUserState(user);
-      setIsAuthenticated(!!user);
+      setUserState(user); // 사용자 정보 설정
+      setIsAuthenticated(!!user); // 사용자 인증 여부 설정
     } catch (error) {
       const errorMessage = "사용자 설정 중 오류가 발생했습니다.";
       console.error(errorMessage, error);
@@ -37,10 +37,10 @@ export const UserAuthProvider: React.FC<{ children: ReactNode }> = ({ children }
   // 사용자 인증 상태를 초기화하는 함수 (로그아웃 시 호출)
   const resetAuthUser = useCallback(async () => {
     try {
-      await supabase.auth.signOut();
-      setUserState(null);
-      setIsAuthenticated(false);
-      setAuthError(null); // 에러 상태 초기화
+      await supabase.auth.signOut(); // Supabase 로그아웃 호출
+      setUserState(null); // 사용자 정보 초기화
+      setIsAuthenticated(false); // 인증 여부 초기화
+      setAuthError(null); // 에러 초기화
     } catch (error) {
       const errorMessage = "로그아웃 중 오류가 발생했습니다.";
       console.error(errorMessage, error);
@@ -52,7 +52,7 @@ export const UserAuthProvider: React.FC<{ children: ReactNode }> = ({ children }
   useEffect(() => {
     const checkSession = async () => {
       try {
-        const { data, error } = await supabase.auth.getUser();
+        const { data, error } = await supabase.auth.getUser(); // 현재 사용자 정보 가져오기
 
         if (error) {
           const errorMessage = "세션 가져오는 중 오류가 발생했습니다.";
@@ -62,7 +62,7 @@ export const UserAuthProvider: React.FC<{ children: ReactNode }> = ({ children }
         }
 
         if (data?.user) {
-          await setAuthUser(data.user);
+          await setAuthUser(data.user); // 사용자 정보 설정
         } else {
           console.log("로그인된 사용자가 없습니다.");
         }
@@ -77,7 +77,15 @@ export const UserAuthProvider: React.FC<{ children: ReactNode }> = ({ children }
   }, [setAuthUser, supabase]);
 
   return (
-    <AuthContext.Provider value={{ user, isAuthenticated, setUser: setAuthUser, resetAuthUser, authError }}>
+    <AuthContext.Provider
+      value={{
+        user,
+        isAuthenticated,
+        setUser: setAuthUser,
+        resetAuthUser,
+        authError,
+      }}
+    >
       {children}
     </AuthContext.Provider>
   );
