@@ -7,7 +7,7 @@ import { useUser } from "@/provider/UserContextProvider";
 const experienceLevels = ["1년 미만", "1년", "2년", "3년", "4년", "5년", "6년", "7년", "8년 이상"];
 
 const Signup02: React.FC = () => {
-  const { nextStep, prevStep, setField } = useUser(); 
+  const { nextStep, prevStep, setField } = useUser();
   const [selectedExperience, setSelectedExperience] = useState<string>("");
 
   const handleExperienceSelection = (experience: string) => {
@@ -17,11 +17,14 @@ const Signup02: React.FC = () => {
   };
 
   return (
-    <div className="flex justify-center items-center min-h-screen bg-black bg-opacity-50" style={{ marginTop: '-30px' }}>
+    <div
+      className="flex justify-center items-center min-h-screen bg-black bg-opacity-50"
+      style={{ marginTop: "-30px" }}
+    >
       <div className="s:w-[370px] s:h-[580px] w-[430px] h-[610px] relative bg-background rounded-[20px] p-4 select-none border border-background shadow-lg">
         {prevStep && (
-          <button 
-            onClick={prevStep} 
+          <button
+            onClick={prevStep}
             className="absolute left-9 top-10 text-primary transition-transform duration-300 ease-in-out hover:text-[white] hover:scale-110"
           >
             &larr;
@@ -40,9 +43,7 @@ const Signup02: React.FC = () => {
             </div>
           </div>
         </div>
-        <div className="text-center text-2xl font-medium text-[#ffffff] leading-9 s:mt-18 mt-20">
-          얼마나 하셨나요?
-        </div>
+        <div className="text-center text-2xl font-medium text-[#ffffff] leading-9 s:mt-18 mt-20">얼마나 하셨나요?</div>
         <div className="text-center text-[#9a9a9a] mt-2">
           경력에 맞게 닮고 싶은 시니어, <br /> 챙겨 주고 싶은 주니어를 소개해 드려요.
         </div>
