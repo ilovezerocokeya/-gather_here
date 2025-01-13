@@ -1,16 +1,38 @@
-name: "SSDA Front 이슈 생성"
-description: "SSDA Front Repo에 이슈를 생성하며, 생성된 이슈는 Jira와 연동됩니다."
+name: "@gather_here 이슈 생성"
+description: "@gather_here레포에 이슈를 생성하며, 생성된 이슈는 Jira와 연동됩니다."
 labels: [order]
 title: "이슈 이름을 작성해주세요"
+
 body:
+  - type: dropdown
+    id: issueType
+    attributes:
+      label: "이슈 유형 (Issue Type)"
+      description: "해당하는 이슈 유형을 선택해주세요."
+      options:
+        - "🛠️ refactor: 성능 최적화, 코드 리팩토링, 중복 코드 제거 등의 작업을 포함합니다."
+        - "🐞 bug: 기존 코드에서 발생한 오류나 문제를 수정합니다."
+        - "✨ feat: 새로운 기능이나 주요 변경 사항을 추가합니다."
+        - "🛠️ fix: 사소한 오류, 오타, UI 깨짐과 같은 작은 문제를 수정합니다."
+        - "🧹 chore: 파일 삭제, 문서 추가, 의존성 업데이트, 환경 설정 변경 등의 작업을 포함합니다."
+    validations:
+      required: true
+
   - type: input
     id: parentKey
     attributes:
       label: "상위 작업 Ticket Number"
-      description: "상위 작업의 Ticket Number를 기입해주세요"
-      placeholder: "DIAR-00"
+      description: "상위 작업의 Ticket Number를 기입해주세요 (ex: GH-1)"
     validations:
       required: true
+
+  - type: input
+    id: subIssueKey
+    attributes:
+      label: "하위 이슈 Ticket Number"
+      description: "해당하는 하위 이슈의 Ticket Number를 입력해주세요 (하위 이슈가 없으면 PASS하셔도 됩니다) (ex: GH-18)"
+    validations:
+      required: false
 
   - type: input
     id: description
@@ -34,19 +56,9 @@ body:
     id: tasks
     attributes:
       label: "체크리스트(Tasks)"
-      description: "해당 이슈에 대해 필요한 작업목록을 작성해주세요"
+      description: "해당 이슈에 대해 필요한 작업 목록을 작성해주세요"
       value: |
         - [ ] Task1
         - [ ] Task2
     validations:
       required: true
-
-  - type: textarea
-    id: references
-    attributes:
-      label: "참조(References)"
-      description: "해당 이슈과 관련된 레퍼런스를 참조해주세요"
-      value: |
-        - Reference1
-    validations:
-      required: false
