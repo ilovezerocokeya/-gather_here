@@ -8,6 +8,7 @@ import LoginForm from "@/components/Login/LoginForm";
 import { useUser } from "@/provider/UserContextProvider";
 import useSearch from "@/hooks/useSearch";
 import { createClient } from "@/utils/supabase/client";
+import CommonModal from "../Modal/CommonModal";
 
 const supabase = createClient();
 
@@ -36,6 +37,7 @@ const Header: React.FC = () => {
   // 검색 창 열기/닫기
   const toggleSearch = () => {
     setIsSearchOpen(!isSearchOpen);
+    console.log(isSearchOpen);
   };
 
   // 마이페이지 모달 열기/닫기
@@ -55,6 +57,7 @@ const Header: React.FC = () => {
   };
 
   // 모달이 열렸을 때 Esc 키로 모달 닫기
+  // NOTE: 재활용하기 좋은 것 같은데, 분리하는 건 어떨지?
   useEffect(() => {
     if (isModalOpen) {
       const handleEsc = (event: KeyboardEvent) => {
@@ -135,31 +138,12 @@ const Header: React.FC = () => {
 
         <Suspense>
           <nav className="flex items-center gap-2">
-            {/* 검색 폼 */}
-            <form className="relative s:hidden items-center overflow-hidden" onSubmit={handleSearch}>
-              <label htmlFor="input" className="sr-only">
-                검색창
-              </label>
-              <input
-                type="text"
-                id="input"
-                name="input"
-                placeholder="검색어를 입력해보세요"
-                className="shared-input-thin-gray text-labelAssistive w-[335px]"
-                value={searchWord}
-                onChange={(evt) => setSearchWord(evt.target.value)}
-              />
-              <button className="absolute top-[9px] right-[8px]" type="submit">
-                <Image src="/assets/header/search.svg" width={20} height={20} alt="검색 버튼 아이콘" />
-              </button>
-            </form>
-
             <div className="flex items-center gap-2">
               {/* 검색 버튼 */}
               <button
                 onClick={toggleSearch}
                 type="submit"
-                className="hidden s:flex items-center justify-center w-[36px] h-[36px] rounded-lg bg-fillNeutral hover:bg-fillAssistive pt-1"
+                className="flex items-center justify-center w-[36px] h-[36px] rounded-lg bg-fillNeutral hover:bg-fillAssistive pt-1"
               >
                 <Image src="/assets/header/search.svg" width={22} height={22} alt="검색 버튼 아이콘" />
               </button>
@@ -211,8 +195,8 @@ const Header: React.FC = () => {
         </Suspense>
       </div>
 
-      {/* 검색 모달 */}
-      {isSearchOpen && (
+      {/* 검색 모달, 모바일
+      <CommonModal isOpen={isSearchOpen} onRequestClose={toggleSearch}>
         <Suspense>
           <form
             className="absolute top-0 left-0 w-full bg-background z-50 p-2 flex items-center s:block"
@@ -239,7 +223,29 @@ const Header: React.FC = () => {
             </button>
           </form>
         </Suspense>
-      )}
+      </CommonModal> */}
+
+      <CommonModal isOpen={isSearchOpen} onRequestClose={toggleSearch}>
+        {/* 검색 폼 */}
+        <form className="relative items-center s:w-full" onSubmit={handleSearch}>
+          <label htmlFor="input" className="sr-only">
+            검색창
+          </label>
+          <input
+            type="text"
+            id="input"
+            name="input"
+            placeholder="검색어를 입력해보세요"
+            className="shared-input-thin-gray text-labelAssistive w-[674px] h-[60px] s:w-full "
+            value={searchWord}
+            onChange={(evt) => setSearchWord(evt.target.value)}
+          />
+          <button className="absolute top-[9px] right-[8px]" type="submit">
+            {/* 버튼 누르면 바로 검색 페이지로 이동함. 불편할 것으로 예상해 비활성화 */}
+            <Image src="/assets/header/search.svg" width={20} height={20} alt="검색 버튼 아이콘" />
+          </button>
+        </form>
+      </CommonModal>
 
       {/* 로그인 모달 */}
       {isModalOpen && (
