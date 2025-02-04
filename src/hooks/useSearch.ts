@@ -14,7 +14,7 @@ const useSearch = () => {
   const handleSearch = useCallback(
     (evt: FormEvent<HTMLFormElement>) => {
       evt.preventDefault();
-      router.push(`?search=${encodeURIComponent(searchWord)}`);
+      router.push(`/search/${decodeURIComponent(searchWord)}`);
     },
     [searchWord, router],
   );
