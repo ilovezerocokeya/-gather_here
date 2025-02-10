@@ -1,4 +1,4 @@
-import { createClient } from "@/utils/supabase/client";
+import { supabase } from "@/utils/supabase/client";
 import { PostWithUser, ITEvent } from "@/types/posts/Post.type";
 import { Tables } from "@/types/supabase";
 
@@ -28,7 +28,6 @@ export const fetchPosts = async (
   filters: FetchPostsFilters = {},
   options: FetchPostsOptions = {},
 ): Promise<PostWithUser[]> => {
-  const supabase = createClient();
   const postsPerPage = 5;
 
   const today = new Date();
@@ -85,7 +84,6 @@ export const fetchPosts = async (
 };
 
 export const fetchPostsWithDeadLine = async (days: number, category?: string): Promise<PostWithUser[]> => {
-  const supabase = createClient();
   const today = new Date();
   const futureDate = new Date(today);
   futureDate.setDate(today.getDate() + days);
@@ -116,8 +114,6 @@ export const fetchPostsWithDeadLine = async (days: number, category?: string): P
 };
 
 export const fetchLikedPosts = async (userId: string): Promise<Array<PostWithUser | ITEvent>> => {
-  const supabase = createClient();
-
   const { data: interestsData, error: interestsError } = await supabase
     .from("Interests")
     .select("post_id, category")
@@ -177,7 +173,6 @@ export const fetchEventsPostsWithDeadLine = async (
   days: number,
   category?: string | null,
 ): Promise<Tables<"IT_Events">[]> => {
-  const supabase = createClient();
   const today = new Date();
   const futureDate = new Date(today);
   futureDate.setDate(today.getDate() + days);
@@ -204,7 +199,6 @@ export const fetchEventsPosts = async (
   filters: FetchEventsPostsFilters = {},
   options: FetchEventsPostsOptions = {},
 ): Promise<Tables<"IT_Events">[]> => {
-  const supabase = createClient();
   const postsPerPage = 5;
   const today = new Date().toISOString().split("T")[0];
   const start = (page - 1) * postsPerPage;

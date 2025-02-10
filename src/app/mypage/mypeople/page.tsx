@@ -3,24 +3,23 @@ import { useUserData } from "@/provider/user/UserDataProvider"; // UserDataProvi
 import { useLikeStore } from "@/stores/useLikeStore";
 import MemberCard from "@/components/GatherHub/MemberCard";
 import { useEffect, useState } from "react";
-import { createClient } from "@/utils/supabase/client";
+import { supabase } from "@/utils/supabase/client";
 
 // MyPeoplePage 컴포넌트
 const MyPeoplePage: React.FC = () => {
   const { userData } = useUserData(); // 사용자 데이터 가져오기
-  const supabase = createClient(); // Supabase 클라이언트 생성
-  const { likedMembers, syncLikedMembers, toggleLike } = useLikeStore(); // 좋아요 상태와 동기화 함수, 토글 함수 가져오기
+  const { likedMembers, syncLikesWithServer, toggleLike } = useLikeStore(); // 좋아요 상태와 동기화 함수, 토글 함수 가져오기
   const [loading, setLoading] = useState<boolean>(true); // 로딩 상태
   const [error, setError] = useState<string | null>(null); // 에러 상태
   const [likedMemberData, setLikedMemberData] = useState<any[]>([]); // 좋아요한 멤버 정보
 
   useEffect(() => {
     // 좋아요 상태 동기화
-    syncLikedMembers();
+    syncLikesWithServer();
 
     // 좋아요한 멤버를 가져오는 함수
     const fetchLikedMembers = async () => {
-      if (!userData?.id) {
+      if (!userData?.user_id) {
         console.log("userData가 존재하지 않음");
         setLoading(false); // userData가 없으면 로딩 중지
         return;
@@ -36,7 +35,7 @@ const MyPeoplePage: React.FC = () => {
         const { data: interestsData, error: interestsError } = await supabase
           .from("User_Interests")
           .select("liked_user_id")
-          .eq("user_id", userData.id);
+          .eq("user_id", userData.user_id);
 
         if (interestsError) {
           console.error("좋아요한 멤버 ID를 불러오는 중 오류 발생:", interestsError.message);
@@ -77,7 +76,9 @@ const MyPeoplePage: React.FC = () => {
     };
 
     fetchLikedMembers();
-  }, [userData, supabase, syncLikedMembers]);
+  }, [userData, supabase, syncLikesWithServer]);
+
+  const secureImageUrl = (url: string | null) => (url ? url.replace(/^http:/, "https:") : "/assets/header/user.svg");
 
   return (
     <div className="my-people-page">
@@ -97,7 +98,7 @@ const MyPeoplePage: React.FC = () => {
               experience={member.experience}
               description={member.description}
               background_image_url={member.background_image_url}
-              profile_image_url={member.profile_image_url}
+              profile_image_url={secureImageUrl(member.profile_image_url)} 
               blog={member.blog}
               answer1={member.answer1}
               answer2={member.answer2}

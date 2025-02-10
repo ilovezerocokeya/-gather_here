@@ -14,8 +14,6 @@ const LeftNav: React.FC = () => {
   const { userData, fetchUserData, loading, error } = useUserData();
   const defaultImage = "/assets/header/user.svg";
 
-  const getProfileImageUrl = (url: string) => `${url}?${new Date().getTime()}`;
-
   const jobTitleClassMap: { [key: string]: string } = {
     프론트엔드: "text-primary",
     IOS: "text-accentMaya",
@@ -42,6 +40,8 @@ const LeftNav: React.FC = () => {
   };
 
   const jobTitleClass = userData ? getJobTitleClass(userData.job_title) : "";
+  const secureImageUrl = (url: string | null) =>
+    url ? url.replace(/^http:/, "https:") : "/assets/header/user.svg";
 
   useEffect(() => {
     if (user?.id) {
@@ -57,7 +57,7 @@ const LeftNav: React.FC = () => {
         <div className="flex items-center gap-3 mb-1 pb-5 w-full border-b-[1px] border-labelAssistive">
           <div className="w-12 h-12 rounded-[12px] bg-fillLight flex justify-center items-center relative">
             <Image
-              src={getProfileImageUrl(userData?.profile_image_url || defaultImage)}
+              src={secureImageUrl(userData?.profile_image_url || defaultImage)}
               alt="프로필 이미지"
               fill
               sizes="(max-width: 768px) 100vw, (max-width: 1068px) 100vw"

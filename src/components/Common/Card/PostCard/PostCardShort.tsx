@@ -33,7 +33,8 @@ const PostCardShort: React.FC<PostCardProps> = ({ post }) => {
     };
   }, [post]);
 
-  const getProfileImageUrl = (url: string) => `${url}?${new Date().getTime()}`;
+  const secureImageUrl = (url: string | null) =>
+    url ? url.replace(/^http:/, "https:") : "/assets/header/user.svg";
 
   const jobTitleClassMap: { [key: string]: string } = {
     프론트엔드: "text-primary",
@@ -76,7 +77,7 @@ const PostCardShort: React.FC<PostCardProps> = ({ post }) => {
                 {post.user?.profile_image_url && (
                   <div className="relative w-7 h-7 mr-2">
                     <Image
-                      src={getProfileImageUrl(post.user?.profile_image_url ?? defaultImage)}
+                      src={secureImageUrl(post.user?.profile_image_url)}
                       alt="프로필 사진"
                       fill
                       className="rounded-md object-cover"

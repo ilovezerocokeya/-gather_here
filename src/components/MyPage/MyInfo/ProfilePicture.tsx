@@ -2,7 +2,7 @@
 
 import React, { useState, useEffect, useMemo } from "react";
 import { useRouter } from "next/navigation";
-import { createClient } from "@/utils/supabase/client";
+import { supabase } from "@/utils/supabase/client";
 import ProfileLoader from "@/components/Common/Skeleton/ProfileLoader";
 import Image from "next/image";
 import { useUserData } from "@/provider/user/UserDataProvider";
@@ -13,7 +13,6 @@ import Toast from "@/components/Common/Toast/Toast";
 import MypageProfilePicture from "@/components/Common/Skeleton/MypageProfilePicture";
 
 const ProfilePicture: React.FC = () => {
-  const supabase = createClient();
   const [profileImage, setProfileImage] = useState<string | null>(null);
   const [profileAlt, setProfileAlt] = useState<string>("프로필 이미지");
   const [uploading, setUploading] = useState(false);
@@ -33,6 +32,9 @@ const ProfilePicture: React.FC = () => {
   }, [imageBaseUrl]);
 
   const occupations = ["프론트엔드", "백엔드", "IOS", "안드로이드", "데브옵스", "디자인", "PM", "기획", "마케팅"];
+
+  const secureImageUrl = (url: string | null) =>
+    url ? url.replace(/^http:/, "https:") : null;
 
   const uploadProfileImage = async (file: File | Blob, altText: string) => {
     if (!user || !user.id) {
@@ -113,9 +115,7 @@ const ProfilePicture: React.FC = () => {
     }
   };
 
-  const getProfileImageUrl = (url: string) => {
-    return url ? `${url}?${new Date().getTime()}` : defaultImage;
-  };
+  const getProfileImageUrl = (url: string) => url || defaultImage;
 
   useEffect(() => {
     if (userData && userData.profile_image_url !== profileImage) {

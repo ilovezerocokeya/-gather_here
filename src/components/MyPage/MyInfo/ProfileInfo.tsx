@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { createClient } from "@/utils/supabase/client";
+import { supabase } from "@/utils/supabase/client";
 import { useUserData } from "@/provider/user/UserDataProvider";
 import { useAuth } from "@/provider/user/UserAuthProvider";
 import { useRouter } from "next/navigation";
@@ -9,7 +9,6 @@ import Toast from "@/components/Common/Toast/Toast";
 import MypageProfileInfo from "@/components/Common/Skeleton/MypageProfileInfo";
 
 const ProfileInfo: React.FC = () => {
-  const supabase = createClient();
   const router = useRouter();
   const { userData, fetchUserData } = useUserData();
   const { user } = useAuth();

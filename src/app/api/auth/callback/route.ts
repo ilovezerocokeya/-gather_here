@@ -1,78 +1,51 @@
 import { NextResponse } from "next/server";
-import { createClient } from "@/utils/supabase/server";
+import { createServerSupabaseClient } from "@/utils/supabase/server";
+import { exchangeCodeForSession } from "@/utils/supabase/auth";
+import { fetchUserData, insertNewUser } from "@/utils/supabase/user";
+import { parseError } from "@/utils/supabase/errors";
+import type { SupabaseUser } from "@/utils/supabase/types";
 
-// 사용자 데이터 타입
-interface SupabaseUser {
-  id: string;
-  email: string;
-  user_metadata: {
-    full_name?: string;
-    avatar_url?: string;
-  };
-}
-
-// 세션 교환 함수
-const exchangeCodeForSession = async (supabase: any, code: string) => {
-  const { data, error } = await supabase.auth.exchangeCodeForSession(code);
-  if (error) throw new Error(`세션 교환 실패: ${error.message}`);
-  return data;
-};
-
-// 사용자 데이터 확인 함수
-const fetchUserData = async (supabase: any, userId: string) => {
-  const { data, error } = await supabase
-    .from("Users")
-    .select("*")
-    .eq("user_id", userId)
-    .maybeSingle();
-  if (error) throw new Error(`사용자 데이터 확인 실패: ${error.message}`);
-  return data;
-};
-
-// 새 사용자 데이터 삽입 함수
-const insertNewUser = async (supabase: any, user: SupabaseUser) => {
-  const defaultData = {
-    nickname: user.user_metadata?.full_name || user.email.split("@")[0] || "사용자",
-    email: user.email,
-    profile_image_url: user.user_metadata?.avatar_url || "",
-    job_title: "",
-    experience: "0",
-    description: "안녕하세요! 반갑습니다😆",
-    hubCard: false,
-    background_image_url: "/logos/hi.png",
-    answer1: "",
-    answer2: "",
-    answer3: "",
-    blog: "",
-    tech_stacks: [],
-    user_id: user.id,
-  };
-
-  const { error } = await supabase.from("Users").insert([defaultData]);
-  if (error) throw new Error(`새 사용자 삽입 실패: ${error.message}`);
-};
-
-// GET 핸들러
 export async function GET(request: Request) {
+  const url = new URL(request.url);
+  const code = url.searchParams.get("code");
+
+  if (!code) {
+    return NextResponse.redirect(new URL("/auth/auth-code-error", url.origin));
+  }
+
   try {
-    const { searchParams, origin } = new URL(request.url);
-    const code = searchParams.get("code");
-    if (!code) throw new Error("URL에서 인증 코드를 찾을 수 없습니다.");
-
-    const supabase = createClient();
-
+    const supabase = createServerSupabaseClient();
+    
+    // code를 사용해 세션 교환
     const sessionData = await exchangeCodeForSession(supabase, code);
-    const user = sessionData.user;
-    const userData = await fetchUserData(supabase, user.id);
 
-    if (userData) {
-      return NextResponse.redirect(`${origin}${"/"}`);
-    } else {
-      await insertNewUser(supabase, user);
-      return NextResponse.redirect(`${origin}${"/signup"}`);
+    // SupabaseUser 타입이 아닐 수 있으므로 null 체크
+    const user: SupabaseUser | null = sessionData?.user ?? null;
+    if (!user) {
+      return NextResponse.redirect(new URL("/auth/auth-code-error", url.origin));
     }
-  } catch (error: any) {
-    console.error("에러 발생:", error.message);
-    return NextResponse.redirect("/auth/auth-code-error");
+
+    // 유저 데이터가 이미 있다면 리다이렉트
+    const userData = await fetchUserData(supabase, user.id);
+    if (userData !== null) {
+      return NextResponse.redirect(new URL("/", url.origin));
+    }
+
+    // 신규 사용자면 DB에 삽입
+    await insertNewUser(supabase, user);
+
+    // 회원가입 절차 페이지로 이동
+    return NextResponse.redirect(new URL("/signup", url.origin));
+  } catch (error: unknown) {
+    const { message, stack, code: errorCode } = parseError(error);
+
+    console.error("OAuth Callback Error", {
+      message,
+      stack,
+      code: errorCode,
+      requestUrl: request.url, // 요청 URL 포함
+    });
+
+    return NextResponse.redirect(new URL("/auth/auth-code-error", request.url));
   }
 }

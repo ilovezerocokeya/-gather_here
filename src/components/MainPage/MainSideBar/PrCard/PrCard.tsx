@@ -114,6 +114,9 @@ const MemberCard: React.FC<MemberCardProps> = ({
     return techStacks.filter((stack) => (tech_stacks || []).includes(stack.id));
   }, [tech_stacks]);
 
+  const secureImageUrl = (url: string | null) =>
+    url ? url.replace(/^http:/, "https:") : "/assets/header/user.svg";
+
   return (
     <>
       <div
@@ -127,7 +130,7 @@ const MemberCard: React.FC<MemberCardProps> = ({
               {/* 프로필 이미지 */}
               <div className="relative w-20 h-20">
                 <Image
-                  src={profile_image_url}
+                  src={secureImageUrl(profile_image_url)}
                   alt={nickname}
                   fill
                   sizes="20vw"
@@ -340,7 +343,7 @@ const MemberCard: React.FC<MemberCardProps> = ({
                     <div className="w-[120px] h-[120px] rounded-2xl bg-white border-1 border-background overflow-hidden">
                       <div className="relative w-[120px] h-[120px]">
                         <Image
-                          src={profile_image_url}
+                          src={secureImageUrl(profile_image_url)}
                           alt={nickname}
                           fill
                           sizes="24vw"

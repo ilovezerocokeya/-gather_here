@@ -2,7 +2,7 @@
 
 import React, { useEffect, useState, useRef } from "react";
 import { usePathname, useRouter } from "next/navigation";
-import { createClient } from "@/utils/supabase/client";
+import { supabase } from "@/utils/supabase/client";
 import DOMPurify from "dompurify";
 import Image from "next/image";
 import "react-quill/dist/quill.snow.css";
@@ -12,7 +12,6 @@ import LikeButton from "@/components/MainDetail/LikeButton";
 import ShareButton from "@/components/MainDetail/ShareButton";
 import CommonModal from "@/components/Common/Modal/CommonModal";
 
-const supabase = createClient();
 
 const MainDetailPage = () => {
   const pathname = usePathname();
@@ -144,6 +143,8 @@ const MainDetailPage = () => {
     ],
     ALLOWED_ATTR: ["href", "target", "style", "class"],
   });
+  
+  const secureImageUrl = (url: string | null) => (url ? url.replace(/^http:/, "https:") : "/assets/header/user.svg");
 
   const renderTechStackIcons = (techStack: string[]) => {
     return techStack.map((tech) => (
@@ -192,7 +193,7 @@ const MainDetailPage = () => {
           <div className="flex items-center space-x-2">
             {user?.profile_image_url && (
               <Image
-                src={user.profile_image_url ?? "/assets/header/user.svg"}
+                src={secureImageUrl(user.profile_image_url)}
                 alt={user.nickname}
                 width={28}
                 height={28}

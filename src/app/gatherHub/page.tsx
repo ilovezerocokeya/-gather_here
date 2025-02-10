@@ -5,7 +5,7 @@ import JobDirectory from "@/components/GatherHub/JobDirectory";
 import { useUserData } from "@/provider/user/UserDataProvider";
 import { useInfiniteQuery } from "@tanstack/react-query";
 import { throttle } from "lodash";
-import { createClient } from "@/utils/supabase/client";
+import { supabase } from "@/utils/supabase/client";
 
 // 멤버 카드의 인터페이스 정의
 interface MemberCardProps {
@@ -24,8 +24,6 @@ interface MemberCardProps {
   answer2: string;
   answer3: string;
 }
-
-const supabase = createClient();
 
 // 필터링 로직을 함수로 분리
 const filterMembers = (members: MemberCardProps[], job: string) => {
@@ -139,7 +137,7 @@ const GatherHubPage: React.FC = () => {
       const likedUserId = user.user_id;
 
       // 현재 로그인한 사용자의 ID를 가져옴
-      const currentUserId = userData?.id; // userData가 null일 수 있으므로 안전하게 접근
+      const currentUserId = userData?.user_id; // userData가 null일 수 있으므로 안전하게 접근
 
       if (!currentUserId) {
         console.error("로그인된 사용자 ID를 찾을 수 없습니다.");
@@ -182,8 +180,10 @@ const GatherHubPage: React.FC = () => {
         }));
       }
     },
-    [likedMembers, supabase, userData?.id], // userData.id가 null일 수 있으므로 ?.로 안전하게 접근
+    [likedMembers, supabase, userData?.user_id], // userData.id가 null일 수 있으므로 ?.로 안전하게 접근
   );
+
+  const secureImageUrl = (url: string) => url.replace(/^http:/, "https:");
 
   // 사용자와 서버 멤버 데이터를 결합하여 allMembers 생성
   const allMembers = useMemo(() => {
@@ -197,7 +197,7 @@ const GatherHubPage: React.FC = () => {
               blog: userData.blog || "",
               description: userData.description || "항상 사용자의 입장에서 친절한 화면을 지향합니다.",
               background_image_url: "",
-              profile_image_url: userData.profile_image_url || "",
+              profile_image_url: secureImageUrl(userData.profile_image_url || ""),
               answer1: userData.answer1 || "기본 답변 1",
               answer2: userData.answer2 || "기본 답변 2",
               answer3: userData.answer3 || "기본 답변 3",
@@ -210,7 +210,12 @@ const GatherHubPage: React.FC = () => {
         : [];
 
     // 서버에서 가져온 멤버 데이터를 포함하여 전체 멤버 목록을 반환
-    const serverMembers = data?.pages.flatMap((page) => page.members) || [];
+    const serverMembers = data?.pages.flatMap((page) =>
+      page.members.map((member: MemberCardProps) => ({ 
+        ...member,
+        profile_image_url: secureImageUrl(member.profile_image_url || ""),
+      }))
+    ) || [];
 
     // 중복된 멤버 제거 (닉네임 기준으로 중복 체크)
     const uniqueMembers = Array.from(new Set([...userMember, ...serverMembers].map((m) => m.nickname))).map(

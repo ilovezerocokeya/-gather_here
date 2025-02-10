@@ -8,10 +8,7 @@ import LoginForm from "@/components/Login/LoginForm";
 import { useAuth } from "@/provider/user/UserAuthProvider";
 import { useUserData } from "@/provider/user/UserDataProvider";
 import useSearch from "@/hooks/useSearch";
-import { createClient } from "@/utils/supabase/client";
-
-const supabase = createClient();
-
+import { supabase } from "@/utils/supabase/client";
 
 const Header: React.FC = () => {
   const { user, resetAuthUser } = useAuth();

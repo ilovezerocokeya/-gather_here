@@ -60,6 +60,9 @@ const MemberCard: React.FC<MemberCardProps> = ({
     return techStacks.filter((stack) => (tech_stacks || []).includes(stack.id));
   }, [tech_stacks]);
 
+  const secureImageUrl = (url: string) => 
+    url ? url.replace(/^http:/, "https:") : "/assets/header/user.svg";
+
   // 소셜 링크를 useMemo로 최적화
   const socialLinks = useMemo(() => {
     const links = [{ name: "Portfolio", url: blog, icon: "/Link/link.svg" }];
@@ -204,7 +207,7 @@ const MemberCard: React.FC<MemberCardProps> = ({
         >
           <div className="relative w-[60px] h-[60px]">
             <Image
-              src={profile_image_url}
+              src={secureImageUrl(profile_image_url)}
               alt={nickname}
               fill
               sizes="20vw"
@@ -224,7 +227,7 @@ const MemberCard: React.FC<MemberCardProps> = ({
             >
               <div className="relative">
                 <Image
-                  src={profile_image_url || ""}
+                  src={secureImageUrl(profile_image_url) || ""}
                   alt={nickname}
                   width={500}
                   height={500}
@@ -389,7 +392,7 @@ const MemberCard: React.FC<MemberCardProps> = ({
                   <div className="w-[120px] h-[120px] rounded-2xl bg-white border-1 border-background overflow-hidden">
                     <div className="relative w-[120px] h-[120px]">
                       <Image
-                        src={profile_image_url}
+                        src={secureImageUrl(profile_image_url)}
                         alt={nickname}
                         fill
                         sizes="24vw"

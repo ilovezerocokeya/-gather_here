@@ -1,6 +1,6 @@
 import { useState, useEffect, useRef, FormEvent, KeyboardEvent } from "react";
 import { useAuth } from "@/provider/user/UserAuthProvider";
-import { createClient } from "@/utils/supabase/client";
+import { supabase } from "@/utils/supabase/client";
 import { MessageRow } from "@/types/chats/Chats.type";
 
 const debounce = (func: Function, delay: number) => {
@@ -20,7 +20,6 @@ const useChat = () => {
   const formRef = useRef<HTMLFormElement>(null);
 
   useEffect(() => {
-    const supabase = createClient();
 
     const getAllMessages = async () => {
       const { data: messages, error } = await supabase
@@ -81,7 +80,6 @@ const useChat = () => {
     if (!user) {
       return;
     } else if (formRef.current && inputValue.trim()) {
-      const supabase = createClient();
 
       const { error } = await supabase
         .from("Messages")
@@ -115,7 +113,6 @@ const useChat = () => {
   };
 
   const handleDelete = async (message_id: string) => {
-    const supabase = createClient();
 
     const { error } = await supabase.from("Messages").delete().eq("message_id", message_id);
 

@@ -2,7 +2,7 @@
 
 import React, { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
-import { createClient } from "@/utils/supabase/client";
+import { supabase } from "@/utils/supabase/client";
 import ProfileLoader from "@/components/Common/Skeleton/ProfileLoader";
 import Image from "next/image";
 import { useAuth } from "@/provider/user/UserAuthProvider";
@@ -11,7 +11,6 @@ import Toast from "@/components/Common/Toast/Toast";
 import ProfilePicture from "../MyInfo/ProfilePicture";
 
 const BackgroundPicture: React.FC = () => {
-  const supabase = createClient();
   const [backgroundImage, setBackgroundImage] = useState<string | null>(null);
   const [backgroundAlt, setBackgroundAlt] = useState<string>("커버 이미지");
   const [uploading, setUploading] = useState(false);

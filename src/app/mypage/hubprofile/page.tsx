@@ -1,7 +1,7 @@
 "use client";
 
 import { useState, useEffect } from "react";
-import { createClient } from "@/utils/supabase/client";
+import { supabase } from "@/utils/supabase/client";
 import { useAuth } from "@/provider/user/UserAuthProvider";
 import { useUserData } from "@/provider/user/UserDataProvider";
 import SelfIntroduction from "@/components/MyPage/HubInfo/Introductioin";
@@ -12,10 +12,8 @@ import Toast from "@/components/Common/Toast/Toast";
 import TechStack from "@/components/MyPage/HubInfo/TechStack";
 
 const HubProfile: React.FC = () => {
-  const supabase = createClient();
   const { user } = useAuth(); 
   const { fetchUserData } = useUserData();
-
   const [description, setDescription] = useState("");
   const [blog, setBlog] = useState("");
   const [firstLinkType, setFirstLinkType] = useState("");
