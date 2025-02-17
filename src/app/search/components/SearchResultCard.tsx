@@ -1,12 +1,9 @@
-import { Post } from "@/types/posts/Post.type";
+import { Tables } from "@/types/supabase";
 import dayjs from "dayjs";
 
-const SearchResultCard = ({ post }: { post: Post }) => {
+const SearchResultCard = ({ post }: { post: Tables<"Posts"> }) => {
   return (
-    <li
-      key={post.post_id}
-      className="w-[335px] h-64 p-5 bg-[#141415] rounded-[20px] flex-col justify-center items-center gap-3 inline-flex"
-    >
+    <div className="w-[335px] h-64 p-5 bg-[#141415] rounded-[20px] flex-col justify-center items-center gap-3 inline-flex">
       <div className="self-stretch justify-between items-center inline-flex">
         <div className="justify-start items-center gap-2 flex">
           <div className="px-2 py-1 bg-[#3b3d3f] rounded-full flex-col justify-center items-center inline-flex">
@@ -50,12 +47,12 @@ const SearchResultCard = ({ post }: { post: Post }) => {
                 <div className="text-[#82aaff] text-lg font-medium font-['Pretendard'] leading-[25.20px]">직군</div>
               </div>
             </div>
-            <div className="text-[#f7f7f7] text-lg font-medium font-['Pretendard'] leading-[25.20px]">N명</div>
+            <div className="text-[#f7f7f7] text-lg font-medium font-['Pretendard'] leading-[25.20px]"></div>
           </div>
           <div className="justify-center items-center flex" />
         </div>
       </div>
-    </li>
+    </div>
   );
 };
 
