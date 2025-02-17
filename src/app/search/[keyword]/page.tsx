@@ -18,7 +18,9 @@ const page = async ({ params }: { params: { keyword: string } }) => {
       <div>스터디 / 프로젝트 IT 행사 허브 탭 만들기</div>
       <div>
         {data?.map((post) => (
-          <SearchResultCard post={post} />
+          <li key={post.post_id}>
+            <SearchResultCard post={post} />
+          </li>
         ))}
       </div>
     </>
