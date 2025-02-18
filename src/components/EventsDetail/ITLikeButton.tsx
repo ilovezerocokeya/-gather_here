@@ -1,10 +1,8 @@
 "use client";
 
 import React, { useEffect, useState } from "react";
-import { createClient } from "@/utils/supabase/client";
+import { supabase } from "@/utils/supabase/client";
 import Toast from "@/components/Common/Toast/Toast";
-
-const supabase = createClient();
 
 interface LikeButtonProps {
   eventId: string;

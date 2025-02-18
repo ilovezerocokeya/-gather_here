@@ -8,9 +8,7 @@ import MypageList from "@/components/Common/Skeleton/MypageList";
 import Pagination from "@/components/MyPage/Common/Pagination";
 import Image from "next/image";
 import { useRouter } from "next/navigation";
-import { createClient } from "@/utils/supabase/client";
-
-const supabase = createClient();
+import { supabase } from "@/utils/supabase/client";
 
 type Tab = "전체" | "스터디" | "프로젝트";
 
