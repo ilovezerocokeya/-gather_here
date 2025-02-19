@@ -14,7 +14,7 @@ const getLocalStorageKey = (userId: string) => `likedMembers_${userId}`;
 
 // Zustand Store 생성
 export const useLikeStore = create<LikeStore>((set, get) => ({
-  likedMembers: {}, // 초기 상태는 빈 객체 (로그인 시 서버에서 동기화)
+  likedMembers: {}, // 초기 상태는 빈 객체
 
   // 좋아요 상태 토글 함수
   toggleLike: async (likedUserId, userId) => {
@@ -23,7 +23,7 @@ export const useLikeStore = create<LikeStore>((set, get) => ({
     const currentLikedMembers = get().likedMembers; // 현재 좋아요 상태 가져오기
     const isLiked = !!currentLikedMembers[likedUserId]; // 해당 유저가 좋아요 되어있는지 확인
 
-    // UI 즉시 반영 (낙관적 업데이트)
+    // UI 즉시 반영
     const updatedLikedMembers = { ...currentLikedMembers, [likedUserId]: !isLiked };
     set({ likedMembers: updatedLikedMembers });
 
@@ -52,7 +52,7 @@ export const useLikeStore = create<LikeStore>((set, get) => ({
     }
   },
 
-  // 서버와 좋아요 상태 동기화 (로그인 시 호출)
+  // 서버와 좋아요 상태 동기화
   syncLikesWithServer: async (userId) => {
     if (!userId) return; // 유저 ID가 없으면 실행하지 않음
 

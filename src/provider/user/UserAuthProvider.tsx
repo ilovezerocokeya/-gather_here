@@ -56,7 +56,7 @@ export const UserAuthProvider: React.FC<{ children: ReactNode }> = ({ children }
   // 사용자 로그아웃 및 상태 초기화 함수
   const resetAuthUser = useCallback(async () => {
     try {
-      // Supabase에서 세션을 종료 (쿠키 삭제 포함)
+      // Supabase에서 세션을 종료
       await supabase.auth.signOut();
 
       // 사용자 상태 초기화
@@ -68,7 +68,7 @@ export const UserAuthProvider: React.FC<{ children: ReactNode }> = ({ children }
       // localStorage에서 rememberMe 값 삭제
       localStorage.removeItem("rememberMe");
 
-      // Zustand 상태 초기화 (좋아요 상태 초기화)
+      // Zustand 상태 초기화 
       useLikeStore.setState({ likedMembers: {} });
 
       console.log("사용자가 로그아웃되었습니다.");
