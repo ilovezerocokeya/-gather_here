@@ -3,45 +3,29 @@ import { supabase } from "@/utils/supabase/client";
 
 // 좋아요 상태 인터페이스
 interface LikeStore {
-  likedMembers: { [key: string]: boolean }; // 좋아요 상태를 저장하는 객체
-  toggleLike: (nickname: string, userId: string) => Promise<void>; // 특정 닉네임의 좋아요 상태를 반전하는 함수
-  syncLikesWithServer: (userId: string) => Promise<void>; // 서버와 좋아요 상태 동기화
+  likedMembers: { [key: string]: boolean }; // 현재 좋아요한 유저 목록을 저장
+  toggleLike: (likedUserId: string, userId: string) => Promise<void>; // 특정 유저에 대한 좋아요 상태를 토글하는 함수
+  syncLikesWithServer: (userId: string) => Promise<void>; // 서버에서 최신 좋아요 상태를 가져와 동기화하는 함수
+  reset: (userId: string) => void; // 로그아웃 시 좋아요 상태를 초기화하는 함수
 }
+
+// 유저별 로컬 스토리지 키를 생성하는 함수
+const getLocalStorageKey = (userId: string) => `likedMembers_${userId}`;
 
 // Zustand Store 생성
 export const useLikeStore = create<LikeStore>((set, get) => ({
-  likedMembers: JSON.parse(localStorage.getItem("likedMembers") || "{}"),
+  likedMembers: {}, // 초기 상태는 빈 객체 (로그인 시 서버에서 동기화)
 
-  // 좋아요 상태를 토글하는 함수 (localStorage + Supabase)
-  toggleLike: async (nickname, userId) => {
-    const currentLikedMembers = get().likedMembers;
-    const isLiked = currentLikedMembers[nickname] || false;
+  // 좋아요 상태 토글 함수
+  toggleLike: async (likedUserId, userId) => {
+    if (!userId || !likedUserId) return; // 유저 ID가 없으면 실행하지 않음
+
+    const currentLikedMembers = get().likedMembers; // 현재 좋아요 상태 가져오기
+    const isLiked = !!currentLikedMembers[likedUserId]; // 해당 유저가 좋아요 되어있는지 확인
 
     // UI 즉시 반영 (낙관적 업데이트)
-    const updatedLikedMembers = { ...currentLikedMembers, [nickname]: !isLiked };
+    const updatedLikedMembers = { ...currentLikedMembers, [likedUserId]: !isLiked };
     set({ likedMembers: updatedLikedMembers });
-
-    // 로컬 스토리지 저장
-    localStorage.setItem("likedMembers", JSON.stringify(updatedLikedMembers));
-
-    // 닉네임을 이용해 해당 유저의 user_id 찾기
-    const { data: user, error: userError } = await supabase
-      .from("Users")
-      .select("user_id")
-      .eq("nickname", nickname)
-      .single();
-
-    if (userError || !user?.user_id) {
-      console.error("유저 찾기 오류:", userError);
-      return;
-    }
-
-    const likedUserId = user.user_id;
-
-    if (!userId) {
-      console.error("로그인한 사용자 ID 없음");
-      return;
-    }
 
     try {
       if (!isLiked) {
@@ -57,19 +41,23 @@ export const useLikeStore = create<LikeStore>((set, get) => ({
           .eq("user_id", userId)
           .eq("liked_user_id", likedUserId);
       }
+
+      // 서버 요청 성공 시 로컬 스토리지 업데이트
+      localStorage.setItem(getLocalStorageKey(userId), JSON.stringify(updatedLikedMembers));
     } catch (error) {
       console.error("좋아요 동기화 오류:", error);
-      // 서버 동기화 실패 시 로컬 상태 롤백
+      
+      // 서버 요청 실패 시 로컬 상태 롤백
       set({ likedMembers: currentLikedMembers });
-      localStorage.setItem("likedMembers", JSON.stringify(currentLikedMembers));
     }
   },
 
-  // 서버와 좋아요 상태 동기화
+  // 서버와 좋아요 상태 동기화 (로그인 시 호출)
   syncLikesWithServer: async (userId) => {
-    if (!userId) return;
+    if (!userId) return; // 유저 ID가 없으면 실행하지 않음
 
     try {
+      // 서버에서 유저의 좋아요 목록 가져오기
       const { data, error } = await supabase
         .from("User_Interests")
         .select("liked_user_id")
@@ -80,17 +68,29 @@ export const useLikeStore = create<LikeStore>((set, get) => ({
         return;
       }
 
+      // 서버에서 가져온 데이터를 Zustand 상태로 변환
       const likedMembersMap = data.reduce((acc, item) => {
         acc[item.liked_user_id] = true;
         return acc;
       }, {} as { [key: string]: boolean });
 
+      // Zustand 상태 업데이트
       set({ likedMembers: likedMembersMap });
 
-      // 로컬 스토리지에도 저장 (초기 동기화)
-      localStorage.setItem("likedMembers", JSON.stringify(likedMembersMap));
+      // 로컬 스토리지 업데이트
+      localStorage.setItem(getLocalStorageKey(userId), JSON.stringify(likedMembersMap));
     } catch (error) {
       console.error("서버와 좋아요 동기화 오류:", error);
     }
+  },
+
+  // 좋아요 상태 초기화 (로그아웃 시 호출)
+  reset: (userId) => {
+    set({ likedMembers: {} }); // Zustand 상태 초기화
+
+    // 로컬 스토리지 초기화
+    localStorage.removeItem(getLocalStorageKey(userId));
+
+    console.log("좋아요 상태 초기화됨.");
   },
 }));
