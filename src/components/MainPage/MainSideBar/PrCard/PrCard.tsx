@@ -8,7 +8,10 @@ import { useInfiniteQuery } from "@tanstack/react-query";
 import Image from "next/image";
 import { useLikeStore } from "@/stores/useLikeStore";
 import { createPortal } from "react-dom";
+import { useUserData } from "@/provider/user/UserDataProvider";
+import { supabase } from "@/utils/supabase/client"; 
 import Link from "next/link";
+
 // 기술 스택 목록
 const techStacks = [
   { id: "aws", name: "AWS", image: "/Stacks/AWS.svg" },
@@ -96,6 +99,8 @@ const MemberCard: React.FC<MemberCardProps> = ({
   tech_stacks,
 }) => {
   const { likedMembers, toggleLike } = useLikeStore(); // useLikeStore로 좋아요 상태 관리
+  const { userData } = useUserData(); // 현재 로그인한 사용자 정보 가져오기
+  const currentUserId = userData?.user_id; // user_id 가져오기
   const [isModalOpen, setIsModalOpen] = useState(false);
   const liked = likedMembers[nickname] || false;
 
@@ -169,7 +174,26 @@ const MemberCard: React.FC<MemberCardProps> = ({
             >
               <div className="absolute top-1 right-1 z-10 justify-center items-center gap-2.5 flex">
                 <button
-                  onClick={() => toggleLike(nickname)}
+                  onClick={async () => {
+                    if (!currentUserId) {
+                      console.error("로그인이 필요합니다.");
+                      return;
+                    }
+
+                    const { data: user, error } = await supabase
+                      .from("Users")
+                      .select("user_id")
+                      .eq("nickname", nickname)
+                      .single();
+
+                    if (error || !user?.user_id) {
+                      console.error("유저 ID를 가져오는 중 오류 발생:", error);
+                      return;
+                    }
+
+                    const likedUserId = user.user_id;
+                    toggleLike(likedUserId, currentUserId);
+                  }}
                   className="p-1 rounded-[9px] bg-[#141415] border border-[#2d2d2f] shadow-lg transition-transform duration-200 ease-in-out transform hover:scale-110"
                   style={{ userSelect: "none" }}
                 >
@@ -367,7 +391,26 @@ const MemberCard: React.FC<MemberCardProps> = ({
                   {/* 좋아요 & 1:1채팅 버튼 */}
                   <div className="absolute -top-10 right-0 flex items-center space-x-4 p-6">
                     <button
-                      onClick={() => toggleLike(nickname)}
+                      onClick={async () => {
+                        if (!currentUserId) {
+                          console.error("로그인이 필요합니다.");
+                          return;
+                        }
+
+                        const { data: user, error } = await supabase
+                          .from("Users")
+                          .select("user_id")
+                          .eq("nickname", nickname)
+                          .single();
+
+                        if (error || !user?.user_id) {
+                          console.error("유저 ID를 가져오는 중 오류 발생:", error);
+                          return;
+                        }
+
+                        const likedUserId = user.user_id;
+                        toggleLike(likedUserId, currentUserId);
+                      }}
                       className={`p-3 rounded-xl transition flex items-center space-x-2 ${
                         liked ? "bg-gray-800 text-white" : "bg-[#28282a] text-white"
                       } hover:bg-gray-900`}

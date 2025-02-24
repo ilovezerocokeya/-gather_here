@@ -1,11 +1,11 @@
-//MemberCard
-
 "use client";
 import { useLikeStore } from "@/stores/useLikeStore";
 import Image from "next/image";
 import Link from "next/link";
 import React, { useEffect, useMemo, useState } from "react";
 import { techStacks } from "@/lib/techStacks";
+import { useUserData } from "@/provider/user/UserDataProvider";
+import { supabase } from "@/utils/supabase/client"; 
 import { createPortal } from "react-dom";
 
 // MemberCardProps: 멤버 카드 컴포넌트에서 필요한 속성들을 정의하는 인터페이스
@@ -54,6 +54,30 @@ const MemberCard: React.FC<MemberCardProps> = ({
   // 좋아요 상태와 함수 사용
   const { likedMembers, toggleLike } = useLikeStore();
   const liked = likedMembers[nickname] || false;
+  const { userData } = useUserData(); // 현재 로그인한 사용자 정보 가져오기
+  const currentUserId = userData?.user_id; // user_id 가져오기
+
+  const handleToggleLike = async () => {
+    if (!currentUserId) {
+      console.error("로그인이 필요합니다.");
+      return;
+    }
+  
+    // 닉네임 기반으로 user_id 가져오기
+    const { data: user, error } = await supabase
+      .from("Users")
+      .select("user_id")
+      .eq("nickname", nickname)
+      .single();
+  
+    if (error || !user?.user_id) {
+      console.error("유저 ID를 가져오는 중 오류 발생:", error);
+      return;
+    }
+  
+    const likedUserId = user.user_id;
+    toggleLike(likedUserId, currentUserId); // toggleLike에 userId 전달
+  };
 
   // 선택된 기술 스택 필터링
   const selectedTechStacks = useMemo(() => {
@@ -131,7 +155,7 @@ const MemberCard: React.FC<MemberCardProps> = ({
         {/* 우상단 좋아요 버튼 */}
         <div className="absolute top-3 right-3 z-10 justify-center items-center gap-2.5 flex">
           <button
-            onClick={() => toggleLike(nickname)}
+            onClick={handleToggleLike}
             className="p-1 rounded-[9px] bg-[#141415] border border-[#2d2d2f] shadow-lg transition-transform duration-200 ease-in-out transform hover:scale-110"
             style={{ userSelect: "none" }}
           >
@@ -415,7 +439,7 @@ const MemberCard: React.FC<MemberCardProps> = ({
                 {/* 좋아요 & 1:1채팅 버튼 */}
                 <div className="absolute -top-10 right-0 flex items-center space-x-4 p-6">
                   <button
-                    onClick={() => toggleLike(nickname)}
+                    onClick={handleToggleLike}
                     className={`p-3 rounded-xl transition flex items-center space-x-2 ${
                       liked ? "bg-gray-800 text-white" : "bg-[#28282a] text-white"
                     } hover:bg-gray-900`}
