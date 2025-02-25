@@ -620,45 +620,107 @@ const MemberCard: React.FC<MemberCardProps> = ({
   );
 };
 
+
+// 멤버 타입 정의
+interface MemberType {
+  id: string;
+  nickname: string;
+  job_title: string;
+  experience: string;
+  description: string;
+  profile_image_url: string;
+  background_image_url: string;
+  blog: string;
+  first_link_type: string;
+  first_link: string;
+  second_link_type: string;
+  second_link: string;
+  answer1: string;
+  answer2: string;
+  answer3: string;
+  tech_stacks: string[];
+}
+
 const PrCard: React.FC = () => {
+  // 슬라이더 설정
   const settings = {
-    infinite: true,
-    speed: 600,
-    slidesToShow: 1,
-    slidesToScroll: 1,
-    autoplay: true,
-    autoplaySpeed: 3500,
-    arrows: false,
+    infinite: true, // 무한 루프 활성화
+    speed: 600, // 슬라이드 전환 속도 (ms)
+    slidesToShow: 1, // 한 번에 표시할 슬라이드 개수
+    slidesToScroll: 1, // 한 번에 이동할 슬라이드 개수
+    autoplay: true, // 자동 재생 활성화
+    autoplaySpeed: 3500, // 자동 전환 속도 (ms)
+    arrows: false, // 화살표 버튼 비활성화
   };
 
-  const [slides, setSlides] = useState<any[]>([]);
+  // Zustand 상태 관리에서 좋아요 정보 가져오기
+  const { likedMembers, toggleLike } = useLikeStore();
 
+  // 현재 로그인한 사용자 정보 가져오기
+  const { userData } = useUserData();
+
+  // 좋아요 토글 함수 (닉네임을 기반으로 해당 사용자의 user_id 조회 후 상태 변경)
+  const handleToggleLike = async (nickname: string) => {
+    if (!userData?.user_id) {
+      console.error("로그인이 필요합니다.");
+      return;
+    }
+
+    try {
+      // Supabase에서 닉네임으로 user_id 조회
+      const { data: user, error } = await supabase
+        .from("Users")
+        .select("user_id")
+        .eq("nickname", nickname)
+        .single();
+
+      if (error || !user?.user_id) {
+        console.error("유저 ID를 가져오는 중 오류 발생:", error);
+        return;
+      }
+
+      const likedUserId = user.user_id;
+
+      // 좋아요 상태 변경
+      await toggleLike(likedUserId, userData.user_id);
+    } catch (error) {
+      console.error("좋아요 처리 중 오류 발생:", error);
+    }
+  };
+
+  // React Query를 사용하여 데이터 가져오기 (무한 스크롤 방식)
   const { data, isLoading, isError } = useInfiniteQuery({
-    queryKey: ["members"],
+    queryKey: ["members"], 
     queryFn: fetchMembers,
     getNextPageParam: (lastPage) => lastPage.nextPage,
     initialPageParam: 1,
   });
 
-  useEffect(() => {
-    if (data) {
-      const latestMembers = data.pages.flatMap((page) => page.members).slice(0, 10);
-      setSlides(latestMembers);
-    }
+  // 가져온 멤버 데이터를 슬라이드에 사용할 형태로 변환
+  const slides = useMemo<MemberType[]>(() => {
+    if (!data) return [];
+    return data.pages.flatMap((page) => page.members).slice(0, 10);
   }, [data]);
 
+  // 데이터 로딩 중일 경우 로딩 메시지 표시
   if (isLoading) return <p>Loading...</p>;
+
+  // 데이터 로드 실패 시 에러 메시지 표시
   if (isError) return <p>Error loading data...</p>;
 
   return (
     <div className="w-auto h-auto rounded-2xl my-3" style={{ marginTop: "-10px" }}>
+      {/* 제목 섹션 */}
       <h4 className="flex items-center my-3 text-labelNormal">
         <Image src="/assets/gif/mic.gif" alt="마이크 모양 아이콘" width={20} height={20} className="mr-1" />
         자랑스러운 게더_멤버들을 소개할게요
       </h4>
+
+      {/* 슬라이더 컴포넌트 */}
       <Slider {...settings}>
         {slides.map((member, index) => (
           <div key={index}>
+            {/* 개별 멤버 카드 렌더링 */}
             <MemberCard
               id={member.id}
               nickname={member.nickname}
@@ -668,16 +730,16 @@ const PrCard: React.FC = () => {
               profile_image_url={member.profile_image_url}
               background_image_url={member.background_image_url}
               blog={member.blog}
-              first_link_type={member.first_link_type} // first_link_type 전달
-              first_link={member.first_link} // first_link 전달
-              second_link_type={member.second_link_type} // second_link_type 전달
-              second_link={member.second_link} // second_link 전달
-              liked={false} // liked 값 설정
+              first_link_type={member.first_link_type}
+              first_link={member.first_link}
+              second_link_type={member.second_link_type}
+              second_link={member.second_link}
+              liked={likedMembers[member.nickname] || false}
               answer1={member.answer1}
               answer2={member.answer2}
               answer3={member.answer3}
-              toggleLike={() => {}}
-              tech_stacks={member.tech_stacks || []} // 각 멤버의 tech_stacks 전달
+              toggleLike={handleToggleLike}
+              tech_stacks={member.tech_stacks || []}
             />
           </div>
         ))}

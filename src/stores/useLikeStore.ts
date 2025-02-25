@@ -75,6 +75,5 @@ export const useLikeStore = create<LikeStore>((set, get) => ({
   reset: (userId) => {
     set({ likedMembers: {} });
     localStorage.removeItem(getLocalStorageKey(userId));
-    console.log("좋아요 상태 초기화됨.");
   },
 }));

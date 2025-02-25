@@ -71,7 +71,6 @@ export const UserAuthProvider: React.FC<{ children: ReactNode }> = ({ children }
       // Zustand 상태 초기화 
       useLikeStore.setState({ likedMembers: {} });
 
-      console.log("사용자가 로그아웃되었습니다.");
       router.push("/"); // 홈 화면으로 이동
     } catch (error) {
       console.error("Supabase 로그아웃 실패:", error);

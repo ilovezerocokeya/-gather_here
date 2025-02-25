@@ -94,9 +94,6 @@ const HubProfileForm: React.FC<{
     } else {
       setSecondLinkError("");
     }
-
-    // 모든 유효성 검사를 통과하면 제출 가능
-    console.log("모든 링크가 유효합니다.");
   };
 
   const handleAddFirstLink = () => {

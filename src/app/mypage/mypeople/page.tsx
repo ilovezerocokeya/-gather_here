@@ -20,17 +20,13 @@ const MyPeoplePage: React.FC = () => {
     // 좋아요한 멤버를 가져오는 함수
     const fetchLikedMembers = async () => {
       if (!userData?.user_id) {
-        console.log("userData가 존재하지 않음");
         setLoading(false); // userData가 없으면 로딩 중지
         return;
       }
-
-      console.log("userData가 존재:", userData);
       setLoading(true); // 로딩 시작
       setError(null); // 이전 에러 초기화
 
       try {
-        console.log("좋아요한 멤버 ID 가져오기 시작...");
         // User_Interests 테이블에서 현재 사용자가 좋아요한 유저 ID들을 가져옴
         const { data: interestsData, error: interestsError } = await supabase
           .from("User_Interests")
@@ -45,13 +41,10 @@ const MyPeoplePage: React.FC = () => {
         }
 
         if (!interestsData || interestsData.length === 0) {
-          console.log("관심 멤버가 없음");
           setLikedMemberData([]); // 관심 멤버가 없을 경우 빈 배열로 설정
           setLoading(false); // 로딩 중지
           return;
         }
-
-        console.log("좋아요한 멤버 ID 가져오기 성공:", interestsData);
 
         // 좋아요한 유저 ID들을 이용해 Users 테이블에서 해당 멤버들의 정보 가져오기
         const likedUserIds = interestsData.map((interest) => interest.liked_user_id);
@@ -64,7 +57,6 @@ const MyPeoplePage: React.FC = () => {
           console.error("좋아요한 멤버 정보를 불러오는 중 오류 발생:", membersError.message);
           setError("멤버 정보를 불러오는 중 오류가 발생했습니다.");
         } else {
-          console.log("좋아요한 멤버 정보 가져오기 성공:", likedMembersData);
           setLikedMemberData(likedMembersData || []); // 멤버 정보가 없으면 빈 배열로 설정
         }
       } catch (error) {

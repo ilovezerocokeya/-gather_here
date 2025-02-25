@@ -38,8 +38,6 @@ const Signup03: React.FC = () => {
     handleSubmit(onSubmitForm)(); // handleSubmit과 연결
   };
 
-
-
   useEffect(() => {
     console.log(`
       .d8888888b.                        888    888                                888

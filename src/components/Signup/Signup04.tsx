@@ -17,7 +17,6 @@ const Signup04: React.FC = () => {
     router.replace("/");
   };
   
-  console.log(nickname);
   return (
     <div className="flex justify-center items-center min-h-screen bg-black bg-opacity-50" style={{ marginTop: '-30px' }}>
       <div className="s:w-[370px] s:h-[570px] w-[430px] h-[630px] relative bg-background rounded-[20px] p-4 select-none border border-background shadow-lg">

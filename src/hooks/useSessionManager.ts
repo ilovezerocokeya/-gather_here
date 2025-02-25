@@ -29,17 +29,13 @@ export const useSessionManager = (resetAuthUser: () => Promise<void>, rememberMe
   // 자동 로그인 사용자는 활동 감지를 하지 않음. 대신 55분마다 세션 갱신.
   useEffect(() => {
     if (rememberMe) {
-      console.log("자동 로그인 활성화됨: 세션 유지 중...");
-
       const interval = setInterval(async () => {
         const { data, error } = await supabase.auth.getSession();
 
         if (error || !data.session) {
           console.error("세션 갱신 실패:", error);
           await resetAuthUser(); // 세션 만료 시 로그아웃 처리
-        } else {
-          console.log("세션이 정상 유지됨.");
-        }
+        } 
       }, 55 * 60 * 1000); // 55분마다 세션 갱신 시도
 
       return () => clearInterval(interval);
@@ -48,7 +44,6 @@ export const useSessionManager = (resetAuthUser: () => Promise<void>, rememberMe
 
   // 사용자의 활동이 감지될 때마다 세션 타이머를 리셋하여 1시간 동안 활동이 없을 때만 로그아웃되도록 설정
   const resetSessionTimer = () => {
-    console.log("사용자 활동 감지됨: 세션 연장");
     lastActivityTimeRef.current = Date.now(); // 마지막 활동 시간 업데이트
 
     // 기존 세션 타이머 제거
@@ -62,7 +57,6 @@ export const useSessionManager = (resetAuthUser: () => Promise<void>, rememberMe
 
       // 1시간 동안 추가 활동이 없으면 로그아웃 처리
       if (timeSinceLastActivity >= 60 * 60 * 1000) {
-        console.log("1시간 동안 활동 없음: 자동 로그아웃");
 
         await resetAuthUser();
 
@@ -106,8 +100,6 @@ export const useSessionManager = (resetAuthUser: () => Promise<void>, rememberMe
   useEffect(() => {
     const handleVisibilityChange = () => {
       if (document.hidden) {
-        console.log("탭이 비활성화됨: 로그아웃 감지 시작");
-
         let elapsedInactiveTime = 0;
         let checkDelay = 10 * 60 * 1000; // 초기 감지 간격 10분
 
@@ -119,7 +111,6 @@ export const useSessionManager = (resetAuthUser: () => Promise<void>, rememberMe
 
           const timeSinceLastActivity = Date.now() - lastActivityTimeRef.current;
           if (timeSinceLastActivity >= 60 * 60 * 1000) {
-            console.log("1시간 동안 활동 없음 (비활성 탭 포함): 자동 로그아웃");
 
             await resetAuthUser();
 
@@ -135,7 +126,6 @@ export const useSessionManager = (resetAuthUser: () => Promise<void>, rememberMe
         if (activityCheckIntervalRef.current) {
           clearInterval(activityCheckIntervalRef.current);
           activityCheckIntervalRef.current = null;
-          console.log("탭이 다시 활성화됨: 자동 로그아웃 감지 중지");
         }
       }
     };
