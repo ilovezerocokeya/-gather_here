@@ -1,7 +1,7 @@
 "use client";
 import React from "react";
 import MemberCard from "@/components/GatherHub/MemberCard";
-import { MemberListProps } from "@/lib/memberTypes"; // 인터페이스 가져오기
+import { MemberListProps } from "@/lib/gatherHub";
 import { useLikeStore } from "@/stores/useLikeStore";
 import { useUserData } from "@/provider/user/UserDataProvider";
 

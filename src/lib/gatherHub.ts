@@ -22,7 +22,7 @@ export interface MemberCardProps {
   tech_stacks?: string[];
 }
 
-// useMemberData.ts에서 사용하는 훅 반환 타입
+// useMemberData에서 사용하는 훅 반환 타입
 export interface UseMemberDataReturn {
   filteredMembers: MemberCardProps[];
   isLoading: boolean;
@@ -45,4 +45,30 @@ export interface GatherHubPageClientProps {
 // MemberList 컴포넌트에서 사용하는 Props 타입
 export interface MemberListProps {
   filteredMembers: MemberCardProps[];
+}
+
+// JobDirectory에서 사용하는 Props 타입
+export interface JobDirectoryProps {
+  setFilteredJob: React.Dispatch<React.SetStateAction<string>>;
+  className?: string;
+}
+
+// JobFilter에서 사용하는 Props 타입
+export interface JobFilterProps {
+  selectedJob: string;
+  handleSelectJob: (jobValue: string) => void;
+  jobCategories: { name: string; value: string }[];
+}
+
+// HubRegister에서 사용하는 Props 타입
+export interface HubRegisterProps {
+  isAuthenticated: boolean;
+  isHubRegistered: boolean;
+  openLoginModal: () => void;
+}
+
+// LoginModal에서 사용하는 Props 타입
+export interface LoginModalProps {
+  isModalOpen: boolean;
+  closeModal: () => void;
 }

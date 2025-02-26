@@ -3,11 +3,10 @@ import React, { useEffect } from "react";
 import MemberList from "@/components/GatherHub/MemberList";
 import JobDirectory from "@/components/GatherHub/JobDirectory";
 import { useMemberData } from "@/hooks/useMemberData";
-import { GatherHubPageClientProps } from "@/lib/memberTypes"; 
+import { GatherHubPageClientProps } from "@/lib/gatherHub"; 
 import { throttle } from "lodash";
 
 const GatherHubPageClient: React.FC<GatherHubPageClientProps> = ({ initialData }) => {
-  // useMemberData 훅을 사용하여 필터링된 멤버 리스트 및 상태 값 가져오기
   const {
     filteredMembers,
     isLoading,

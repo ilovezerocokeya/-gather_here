@@ -5,7 +5,7 @@ import { useLikeStore } from "@/stores/useLikeStore";
 import { useUserData } from "@/provider/user/UserDataProvider";
 import { fetchMembers } from "@/utils/fetchMembers";
 import { throttle } from "lodash";
-import { MemberCardProps, UseMemberDataReturn } from "@/lib/memberTypes";
+import { MemberCardProps, UseMemberDataReturn } from "@/lib/gatherHub";
 
 // 초기 데이터를 받아서 무한스크롤 적용
 export const useMemberData = (

@@ -1,4 +1,4 @@
-import { MemberCardProps } from "@/lib/memberTypes";
+import { MemberCardProps } from "@/lib/gatherHub";
 
 // API 응답 데이터 타입 정의
 interface FetchMembersResponse {
