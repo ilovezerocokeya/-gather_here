@@ -10,6 +10,7 @@ import { createPortal } from "react-dom";
 
 // MemberCardProps: 멤버 카드 컴포넌트에서 필요한 속성들을 정의하는 인터페이스
 interface MemberCardProps {
+  user_id: string;
   nickname: string;
   job_title: string;
   experience: string;
@@ -31,6 +32,7 @@ interface MemberCardProps {
 
 // MemberCard: 각 멤버의 정보를 카드 형태로 렌더링하는 컴포넌트
 const MemberCard: React.FC<MemberCardProps> = ({
+  user_id,
   nickname,
   job_title,
   experience,
@@ -51,32 +53,40 @@ const MemberCard: React.FC<MemberCardProps> = ({
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [isProfileModalOpen, setIsProfileModalOpen] = useState(false);
 
-  // 좋아요 상태와 함수 사용
   const { likedMembers, toggleLike } = useLikeStore();
-  const liked = likedMembers[nickname] || false;
-  const { userData } = useUserData(); // 현재 로그인한 사용자 정보 가져오기
-  const currentUserId = userData?.user_id; // user_id 가져오기
+  const { userData } = useUserData();
+  const currentUserId = userData?.user_id;
+  const liked = likedMembers[user_id] || false;
 
   const handleToggleLike = async () => {
     if (!currentUserId) {
-      console.error("로그인이 필요합니다.");
+      console.warn("⚠️ 좋아요 실패: 로그인된 사용자가 없습니다.");
       return;
     }
-  
-    // 닉네임 기반으로 user_id 가져오기
-    const { data: user, error } = await supabase
-      .from("Users")
-      .select("user_id")
-      .eq("nickname", nickname)
-      .single();
-  
-    if (error || !user?.user_id) {
-      console.error("유저 ID를 가져오는 중 오류 발생:", error);
-      return;
+
+    try {
+      const { data: user, error } = await supabase
+        .from("Users")
+        .select("user_id")
+        .eq("nickname", nickname)
+        .single();
+
+      if (error) {
+        console.error("유저 ID 조회 오류:", error);
+        return;
+      }
+
+      if (!user?.user_id) {
+        console.error("유저 ID 조회 실패: 데이터 없음");
+        return;
+      }
+
+      const likedUserId = user.user_id;
+
+      toggleLike(user_id, currentUserId);
+    } catch (err) {
+      console.error("예기치 않은 오류 발생:", err);
     }
-  
-    const likedUserId = user.user_id;
-    toggleLike(likedUserId, currentUserId); // toggleLike에 userId 전달
   };
 
   // 선택된 기술 스택 필터링

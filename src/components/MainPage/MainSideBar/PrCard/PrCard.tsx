@@ -59,7 +59,7 @@ const fetchMembers = async ({ pageParam = 1 }) => {
 
 // MemberCardProps: 멤버 카드 컴포넌트에서 필요한 속성들을 정의하는 인터페이스
 interface MemberCardProps {
-  id: string;
+  user_id: string;
   nickname: string;
   job_title: string;
   experience: string;
@@ -81,7 +81,7 @@ interface MemberCardProps {
 
 // MemberCard: 각 멤버의 정보를 카드 형태로 렌더링하는 컴포넌트
 const MemberCard: React.FC<MemberCardProps> = ({
-  id,
+  user_id,
   nickname,
   job_title,
   experience,
@@ -102,7 +102,7 @@ const MemberCard: React.FC<MemberCardProps> = ({
   const { userData } = useUserData(); // 현재 로그인한 사용자 정보 가져오기
   const currentUserId = userData?.user_id; // user_id 가져오기
   const [isModalOpen, setIsModalOpen] = useState(false);
-  const liked = likedMembers[nickname] || false;
+  const liked = likedMembers[user_id] || false;
 
   // 모달 열기 함수
   const openModal = () => {
@@ -623,7 +623,7 @@ const MemberCard: React.FC<MemberCardProps> = ({
 
 // 멤버 타입 정의
 interface MemberType {
-  id: string;
+  user_id: string;
   nickname: string;
   job_title: string;
   experience: string;
@@ -659,30 +659,16 @@ const PrCard: React.FC = () => {
   // 현재 로그인한 사용자 정보 가져오기
   const { userData } = useUserData();
 
-  // 좋아요 토글 함수 (닉네임을 기반으로 해당 사용자의 user_id 조회 후 상태 변경)
-  const handleToggleLike = async (nickname: string) => {
+  // 좋아요 토글 함수 (user_id 직접 사용)
+  const handleToggleLike = (userId: string) => {
     if (!userData?.user_id) {
       console.error("로그인이 필요합니다.");
       return;
     }
 
     try {
-      // Supabase에서 닉네임으로 user_id 조회
-      const { data: user, error } = await supabase
-        .from("Users")
-        .select("user_id")
-        .eq("nickname", nickname)
-        .single();
-
-      if (error || !user?.user_id) {
-        console.error("유저 ID를 가져오는 중 오류 발생:", error);
-        return;
-      }
-
-      const likedUserId = user.user_id;
-
-      // 좋아요 상태 변경
-      await toggleLike(likedUserId, userData.user_id);
+      // 좋아요 상태 변경 (user_id 직접 사용)
+      toggleLike(userId, userData.user_id);
     } catch (error) {
       console.error("좋아요 처리 중 오류 발생:", error);
     }
@@ -700,7 +686,7 @@ const PrCard: React.FC = () => {
   const slides = useMemo<MemberType[]>(() => {
     if (!data) return [];
     return data.pages.flatMap((page) => page.members).slice(0, 10);
-  }, [data]);
+  }, [data, likedMembers]);
 
   // 데이터 로딩 중일 경우 로딩 메시지 표시
   if (isLoading) return <p>Loading...</p>;
@@ -718,11 +704,11 @@ const PrCard: React.FC = () => {
 
       {/* 슬라이더 컴포넌트 */}
       <Slider {...settings}>
-        {slides.map((member, index) => (
-          <div key={index}>
+        {slides.map((member) => (
+          <div key={member.user_id}>
             {/* 개별 멤버 카드 렌더링 */}
             <MemberCard
-              id={member.id}
+              user_id={member.user_id}
               nickname={member.nickname}
               job_title={member.job_title}
               experience={member.experience}
@@ -734,11 +720,11 @@ const PrCard: React.FC = () => {
               first_link={member.first_link}
               second_link_type={member.second_link_type}
               second_link={member.second_link}
-              liked={likedMembers[member.nickname] || false}
+              liked={likedMembers?.[member.user_id] || false}
               answer1={member.answer1}
               answer2={member.answer2}
               answer3={member.answer3}
-              toggleLike={handleToggleLike}
+              toggleLike={() => handleToggleLike(member.user_id)}
               tech_stacks={member.tech_stacks || []}
             />
           </div>

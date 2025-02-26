@@ -18,7 +18,9 @@ export const useLikeStore = create<LikeStore>((set, get) => ({
 
   // 앱 실행 시 로컬 데이터 불러오기
   hydrate: (userId) => {
-    if (!userId) return;
+    if (!userId) 
+      return;
+
     const storedLikes = JSON.parse(localStorage.getItem(getLocalStorageKey(userId)) || "{}");
     set({ likedMembers: storedLikes });
   },
@@ -30,24 +32,27 @@ export const useLikeStore = create<LikeStore>((set, get) => ({
     const currentLikedMembers = get().likedMembers;
     const isLiked = !!currentLikedMembers[likedUserId];
 
+    // Optimistic UI 적용: 상태를 먼저 변경
+    const updatedLikedMembers = { ...currentLikedMembers, [likedUserId]: !isLiked };
+    set({ likedMembers: updatedLikedMembers });
+    localStorage.setItem(getLocalStorageKey(userId), JSON.stringify(updatedLikedMembers));
+
     try {
-      // Supabase 업데이트 먼저 수행
       if (!isLiked) {
         await supabase.from("User_Interests").insert([
           { user_id: userId, liked_user_id: likedUserId, created_at: new Date().toISOString() }
         ]);
       } else {
-        await supabase.from("User_Interests").delete().eq("user_id", userId).eq("liked_user_id", likedUserId);
+        await supabase.from("User_Interests").delete()
+          .eq("user_id", userId)
+          .eq("liked_user_id", likedUserId);
       }
-
-      // 서버 요청 성공한 경우에만 상태 업데이트
-      const updatedLikedMembers = { ...currentLikedMembers, [likedUserId]: !isLiked };
-      set({ likedMembers: updatedLikedMembers });
-
-      // 로컬 스토리지 업데이트
-      localStorage.setItem(getLocalStorageKey(userId), JSON.stringify(updatedLikedMembers));
     } catch (error) {
       console.error("좋아요 동기화 오류:", error);
+
+      // 2️⃣ 실패 시 상태 롤백
+      set({ likedMembers: currentLikedMembers });
+      localStorage.setItem(getLocalStorageKey(userId), JSON.stringify(currentLikedMembers));
     }
   },
 
@@ -66,6 +71,7 @@ export const useLikeStore = create<LikeStore>((set, get) => ({
 
       set({ likedMembers: likedMembersMap });
       localStorage.setItem(getLocalStorageKey(userId), JSON.stringify(likedMembersMap));
+
     } catch (error) {
       console.error("서버와 좋아요 동기화 오류:", error);
     }
