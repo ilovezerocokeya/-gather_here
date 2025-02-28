@@ -14,9 +14,6 @@ const MyPeoplePage: React.FC = () => {
   const [likedMemberData, setLikedMemberData] = useState<any[]>([]); // 좋아요한 멤버 정보
 
   useEffect(() => {
-    // 좋아요 상태 동기화
-    syncLikesWithServer();
-
     // 좋아요한 멤버를 가져오는 함수
     const fetchLikedMembers = async () => {
       if (!userData?.user_id) {
@@ -25,34 +22,37 @@ const MyPeoplePage: React.FC = () => {
       }
       setLoading(true); // 로딩 시작
       setError(null); // 이전 에러 초기화
-
+  
       try {
-        // User_Interests 테이블에서 현재 사용자가 좋아요한 유저 ID들을 가져옴
+        // 좋아요 상태 동기화
+        await syncLikesWithServer(userData.user_id);
+  
+        // 좋아요한 멤버 ID 가져오기
         const { data: interestsData, error: interestsError } = await supabase
           .from("User_Interests")
           .select("liked_user_id")
           .eq("user_id", userData.user_id);
-
+  
         if (interestsError) {
           console.error("좋아요한 멤버 ID를 불러오는 중 오류 발생:", interestsError.message);
           setError("좋아요한 멤버를 불러오는 중 오류가 발생했습니다.");
           setLoading(false); // 에러 발생 시 로딩 중지
           return;
         }
-
+  
         if (!interestsData || interestsData.length === 0) {
           setLikedMemberData([]); // 관심 멤버가 없을 경우 빈 배열로 설정
           setLoading(false); // 로딩 중지
           return;
         }
-
-        // 좋아요한 유저 ID들을 이용해 Users 테이블에서 해당 멤버들의 정보 가져오기
+  
+        // 좋아요한 멤버 정보 가져오기
         const likedUserIds = interestsData.map((interest) => interest.liked_user_id);
         const { data: likedMembersData, error: membersError } = await supabase
           .from("Users")
           .select("*")
           .in("user_id", likedUserIds);
-
+  
         if (membersError) {
           console.error("좋아요한 멤버 정보를 불러오는 중 오류 발생:", membersError.message);
           setError("멤버 정보를 불러오는 중 오류가 발생했습니다.");
@@ -66,9 +66,9 @@ const MyPeoplePage: React.FC = () => {
         setLoading(false); // 로딩 완료
       }
     };
-
+  
     fetchLikedMembers();
-  }, [userData, supabase, syncLikesWithServer]);
+  }, [userData]);
 
   const secureImageUrl = (url: string | null) => (url ? url.replace(/^http:/, "https:") : "/assets/header/user.svg");
 
@@ -79,29 +79,34 @@ const MyPeoplePage: React.FC = () => {
       {loading ? (
         <p>로딩 중...</p>
       ) : error ? (
-        <p className="text-red-500">{error}</p> // 에러 메시지 표시
+        <p className="text-red-500">{error}</p>
       ) : likedMemberData.length > 0 ? (
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
           {likedMemberData.map((member) => (
             <MemberCard
               key={member.user_id}
+              user_id={member.user_id}
               nickname={member.nickname}
               job_title={member.job_title}
               experience={member.experience}
               description={member.description}
               background_image_url={member.background_image_url}
-              profile_image_url={secureImageUrl(member.profile_image_url)} 
+              profile_image_url={secureImageUrl(member.profile_image_url)}
               blog={member.blog}
               answer1={member.answer1}
               answer2={member.answer2}
               answer3={member.answer3}
-              first_link={member.first_link} // 첫 번째 링크
-              first_link_type={member.first_link_type} // 첫 번째 링크 타입
-              second_link={member.second_link} // 두 번째 링크
-              second_link_type={member.second_link_type} // 두 번째 링크 타입
-              liked={!!likedMembers[member.user_id]} // 좋아요 상태
-              toggleLike={() => toggleLike(member.user_id)} // 좋아요 토글 연결
-              tech_stacks={[]} // 기술 스택
+              first_link={member.first_link}
+              first_link_type={member.first_link_type}
+              second_link={member.second_link}
+              second_link_type={member.second_link_type}
+              liked={!!likedMembers[member.user_id]}
+              toggleLike={() => {
+                if (userData?.user_id) {
+                  toggleLike(member.user_id, userData.user_id);
+                }
+              }}
+              tech_stacks={[]} 
             />
           ))}
         </div>

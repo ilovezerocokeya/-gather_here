@@ -1,6 +1,6 @@
 "use client";
 import React, { useEffect } from "react";
-import MemberList from "@/components/GatherHub/MemberList";
+import MemberList from "./MemberList";
 import JobDirectory from "@/components/GatherHub/JobDirectory";
 import { useMemberData } from "@/hooks/useMemberData";
 import { GatherHubPageClientProps } from "@/lib/gatherHub"; 

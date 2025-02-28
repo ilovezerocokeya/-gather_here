@@ -13,13 +13,65 @@ export interface MemberCardProps {
   first_link?: string;
   second_link_type?: string;
   second_link?: string;
-  description?: string;
+  description: string;
   answer1: string;
   answer2: string;
   answer3: string;
   liked: boolean;
-  toggleLike: () => Promise<void>;
-  tech_stacks?: string[];
+  toggleLike: (userId: string, currentUserId: string) => void;
+  tech_stacks: string[];
+}
+
+// CardUI에서만 필요한 추가 속성
+export interface CardUIProps {
+  nickname: string;
+  job_title: string;
+  experience: string;
+  description: string;
+  background_image_url: string;
+  profile_image_url: string;
+  blog: string;
+  first_link_type?: string;
+  first_link?: string;
+  second_link_type?: string;
+  second_link?: string;
+  liked: boolean;
+  handleToggleLike: () => void;
+  secureImageUrl: (url: string) => string;
+  onOpenModal: () => void;
+  onOpenProfile: () => void;
+}
+
+// CardModal 인터페이스
+export interface CardModalProps {
+  isModalOpen: boolean;
+  closeModal: () => void;
+  nickname: string;
+  job_title: string;
+  experience: string;
+  description: string;
+  profile_image_url: string;
+  background_image_url: string;
+  blog: string;
+  liked: boolean;
+  answer1: string;
+  answer2: string;
+  answer3: string;
+  first_link_type?: string;
+  first_link?: string;
+  second_link_type?: string;
+  second_link?: string;
+  selectedTechStacks: { id: string; name: string; image: string }[];
+  handleToggleLike?: () => void;
+  secureImageUrl: (url: string) => string;
+}
+
+export interface ProfileExtendProps {
+  isOpen: boolean;
+  closeModal: () => void;
+  profileImageUrl: string;
+  nickname: string;
+  secureImageUrl: (url: string) => string;
 }
 
 // useMemberData에서 사용하는 훅 반환 타입

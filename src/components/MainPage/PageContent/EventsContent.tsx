@@ -6,7 +6,7 @@ import dynamic from "next/dynamic";
 import { NextPage } from "next";
 import { Tables } from "@/types/supabase";
 import { fetchEventsPosts, FetchEventsPostsFilters, fetchEventsPostsWithDeadLine } from "@/lib/fetchPosts";
-import EventsInfiniteScrollComponent from "../InfiniteScroll/EventsInfiniteScroll";
+// import EventsInfiniteScrollComponent from "../InfiniteScroll/EventsInfiniteScroll";
 import Calender from "../MainSideBar/Calender/Calender";
 import EventFilterBar from "../FilterBar/EventFilterBar";
 import useSearch from "@/hooks/useSearch";
@@ -121,7 +121,7 @@ const EventsContent: NextPage = () => {
           <Carousel posts={carouselPosts} />
         )}
         <EventFilterBar selectedCategory={selectedCategory} onChange={handleEventFilterChange} />
-        <EventsInfiniteScrollComponent posts={filteredPosts} hasMore={hasMore} loadMorePosts={loadMorePosts} />
+        {/* <EventsInfiniteScrollComponent posts={filteredPosts} hasMore={hasMore} loadMorePosts={loadMorePosts} /> */}
       </div>
     </>
   );

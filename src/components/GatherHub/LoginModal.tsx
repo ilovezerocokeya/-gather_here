@@ -6,22 +6,20 @@ import { LoginModalProps } from '@/lib/gatherHub';
 const LoginForm = dynamic(() => import('../Login/LoginForm'), { ssr: false });
 
 const LoginModal: React.FC<LoginModalProps> = ({ isModalOpen, closeModal }) => {
-    
-  // 모달이 닫힌 상태라면 아무것도 렌더링하지 않음
+  
+  // 모달이 닫혀 있을 경우 렌더링하지 않음
   if (!isModalOpen) return null;
 
   return createPortal(
     <>
-      {/* 모달 배경 (클릭 시 닫힘) */}
       <div className="fixed inset-0 bg-black opacity-80 z-40" onClick={closeModal}></div>
       
-      {/* 로그인 폼이 포함된 모달 창 */}
-      <div className="fixed top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 bg-background rounded-2xl p-4 z-50">
-        {/* 닫기 버튼 */}
-        <button onClick={closeModal} className="text-3xl">&times;</button>
-        
-        {/* 로그인 폼 */}
-        <LoginForm />
+      <div className="fixed top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 bg-background rounded-[20px] p-6 z-50 shadow-xl">
+        <button onClick={closeModal} className="absolute top-2 right-2 text-3xl text-gray-500 hover:text-gray-700">&times;</button>
+        <div className="p-4">
+          <h2 className="text-xl font-bold text-center mb-4">로그인</h2>
+          <LoginForm />
+        </div>
       </div>
     </>,
     document.body

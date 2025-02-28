@@ -6,6 +6,7 @@ import { useLikeStore } from "@/stores/useLikeStore";
 import { useUserData } from "@/provider/user/UserDataProvider";
 
 const MemberList: React.FC<MemberListProps> = ({ filteredMembers }) => {
+  
   const { likedMembers, toggleLike } = useLikeStore(); // zustand에서 좋아요 상태 가져오기
   const { userData } = useUserData(); // 로그인된 사용자 정보 가져오기
 
@@ -27,7 +28,7 @@ const MemberList: React.FC<MemberListProps> = ({ filteredMembers }) => {
               liked={isLiked}
               toggleLike={() => {
                 if (!userData?.user_id) {
-                  console.warn("⚠️ 좋아요 실패: 로그인된 사용자가 없습니다.");
+                  console.warn("좋아요 실패: 로그인된 사용자가 없습니다.");
                   return;
                 }
                 toggleLike(member.user_id, userData.user_id);
