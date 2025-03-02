@@ -12,14 +12,21 @@ const LoginModal: React.FC<LoginModalProps> = ({ isModalOpen, closeModal }) => {
 
   return createPortal(
     <>
-      <div className="fixed inset-0 bg-black opacity-80 z-40" onClick={closeModal}></div>
-      
-      <div className="fixed top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 bg-background rounded-[20px] p-6 z-50 shadow-xl">
-        <button onClick={closeModal} className="absolute top-2 right-2 text-3xl text-gray-500 hover:text-gray-700">&times;</button>
-        <div className="p-4">
-          <h2 className="text-xl font-bold text-center mb-4">로그인</h2>
-          <LoginForm />
-        </div>
+      {/* 모달 배경 */}
+      <div className="fixed inset-0 bg-black bg-opacity-80 z-40" onClick={closeModal}></div>
+
+      {/* 로그인 모달 */}
+      <div className="fixed top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 
+                 bg-background rounded-[20px] p-16 z-50 shadow-xl w-[390px] h-[560px] flex flex-col items-center">
+        {/* 닫기 버튼 */}
+        <button onClick={closeModal} 
+                className="absolute top-6 right-6 text-3xl text-gray-400 hover:text-white transition"
+        >
+          &times;
+        </button>
+
+        {/* 로그인 폼 (배경 스타일 제거된 컴포넌트) */}
+        <LoginForm />
       </div>
     </>,
     document.body

@@ -47,9 +47,9 @@ const LoginForm = () => {
   };
 
   return (
-    <div className="flex flex-col items-center s:w-[330px] s:h-[490px] w-[430px] h-[580px] bg-background rounded-[20px] p-4 select-none">
+    <div className="flex flex-col items-center w-[360px] h-[480px] bg-background rounded-[20px] p-4 select-none">
       {/* 로그인 타이틀 */}
-      <div className="w-full s:pt-8 pt-16 pb-4 text-center text-white text-4xl font-medium leading-9">
+      <div className="w-full pb-4 text-center text-white text-4xl font-medium leading-9">
         @모여라_여기
       </div>
       <div className="w-full pb-8 text-center text-[#9A9A9A] text-l font-normal leading-relaxed">

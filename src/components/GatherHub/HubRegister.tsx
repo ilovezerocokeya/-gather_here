@@ -17,14 +17,32 @@ const HubRegister: React.FC<HubRegisterProps> = ({ isAuthenticated, isHubRegiste
   };
 
   return (
-    <div className="fixed bottom-10 right-5 group">
-      <button className="w-14 h-14 bg-fillStrong text-primary rounded-2xl shadow-lg hover:shadow-xl transition-transform transform hover:scale-110" onClick={handleAddCard}>
-        +
+    <div className="relative group">
+      <button
+        className="fixed bottom-[40px] right-5 sm:right-10 w-12 h-12 sm:w-14 sm:h-14 bg-fillStrong text-primary text-lg 
+                  rounded-2xl shadow-xl hover:shadow-2xl transform transition-all duration-300 ease-out 
+                  hover:scale-110 active:scale-95 hover:animate-bounce hover:bg-fillLight cursor-pointer z-[9999]"
+        onClick={handleAddCard}
+        style={{
+          zIndex: 9999, // 버튼이 항상 최상위로 배치되도록 설정
+          userSelect: 'none',
+        }}
+      >
+        <svg
+          xmlns="http://www.w3.org/2000/svg"
+          fill="none"
+          viewBox="0 0 24 24"
+          strokeWidth={1.5}
+          stroke="currentColor"
+          className="w-6 h-6 sm:w-8 sm:h-8 m-auto text-bright"
+        >
+          <path
+            strokeLinecap="round"
+            strokeLinejoin="round"
+            d="M12 4.5v15m7.5-7.5h-15"
+          />
+        </svg>
       </button>
-      <div className="absolute bottom-16 right-0 w-max px-3 py-2 bg-yellow-500 text-black text-sm rounded-lg opacity-0 group-hover:opacity-100 transition-opacity duration-200 shadow-lg">
-        Hub멤버가 되기 위해 카드를 등록해주세요
-        <div className="absolute bottom-[-8px] right-2 transform -translate-x-1/2 w-3 h-3 bg-yellow-500 rotate-45"></div>
-      </div>
     </div>
   );
 };

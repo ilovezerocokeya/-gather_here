@@ -25,7 +25,7 @@ const CardUI: React.FC<CardUIProps> = ({
 
   return (
     <div
-      className="member-card bg-fillStrong rounded-[20px] shadow-lg relative w-[290px] h-96 flex-col z-30 user-select-none justify-start items-center gap-[78px] inline-flex"
+      className="member-card bg-fillStrong rounded-[20px] shadow-lg relative w-[290px] h-96 flex-col user-select-none justify-start items-center gap-[78px] inline-flex"
       style={{ userSelect: "none" }}
     >
       {/* 좋아요 버튼 */}
@@ -92,11 +92,6 @@ const CardUI: React.FC<CardUIProps> = ({
               style={{ width: "300px", height: "auto" }}
             />
           )}
-            {/* 말풍선 효과 */}
-            <div className="absolute top-[-50px] left-1/2 transform -translate-x-1/2 px-3 py-2 bg-yellow-500 text-black text-sm rounded-lg opacity-0 group-hover:opacity-100 transition-opacity duration-200 shadow-lg">
-              구경하기
-            <div className="absolute bottom-[-8px] left-1/2 transform -translate-x-1/2 w-3 h-3 bg-yellow-500 rotate-45 rounded-sm shadow-lg"></div>
-          </div>
         </div>
       </div>
 

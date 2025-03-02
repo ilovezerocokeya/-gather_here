@@ -48,7 +48,7 @@ const JobDirectory: React.FC<JobDirectoryProps> = ({ setFilteredJob, className }
   const closeLoginModal = () => setIsModalOpen(false);
 
   return (
-     <aside className={`${className} p-1 rounded-lg sticky top-5 user-select-none`} style={{ userSelect: 'none' }}>
+      <aside className={`${className} p-1 rounded-lg relative user-select-none`} style={{ userSelect: 'none' }}>
       {/* 직업 필터링 UI */}
       <JobFilter selectedJob={selectedJob} handleSelectJob={handleSelectJob} jobCategories={jobCategories} />
       

@@ -6,12 +6,11 @@ import { useLikeStore } from "@/stores/useLikeStore";
 import { useUserData } from "@/provider/user/UserDataProvider";
 
 const MemberList: React.FC<MemberListProps> = ({ filteredMembers }) => {
-  
   const { likedMembers, toggleLike } = useLikeStore(); // zustand에서 좋아요 상태 가져오기
   const { userData } = useUserData(); // 로그인된 사용자 정보 가져오기
 
   return (
-    <div className="flex-grow grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-10 ml-8 justify-items-center">
+    <div className="flex-grow grid grid-cols-1 z-10 md:grid-cols-2 lg:grid-cols-3 gap-10 justify-items-center mx-auto">
       {filteredMembers.map((member) => {
         const isLiked = likedMembers[member.user_id] || false; // 좋아요 상태 확인
 
