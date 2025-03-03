@@ -4,6 +4,8 @@ import Image from "next/image";
 import dayjs from "dayjs";
 import LoginForm from "@/components/Login/LoginForm";
 import useChat from "@/hooks/useChat";
+import { secureImageUrl } from "@/utils/imageUtils";
+
 
 const Chat = () => {
   const {
@@ -19,9 +21,6 @@ const Chat = () => {
     handleEnterKeyDown,
     handleDelete,
   } = useChat();
-
-  const secureImageUrl = (url: string | null) =>
-    url ? url.replace(/^http:/, "https:") : "/assets/header/user.svg";
 
   return (
     <>

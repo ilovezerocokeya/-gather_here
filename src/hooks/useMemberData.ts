@@ -26,21 +26,17 @@ export const useMemberData = (
     isError,
     refetch,
   } = useInfiniteQuery({
-    queryKey: ["members"],
+    queryKey: ["members", filteredJob],
     queryFn: ({ pageParam = 1 }) => fetchMembers(pageParam),
-    initialData: {
-      pages: [{ members: initialMembers, nextPage: initialNextPage }],
-      pageParams: [initialNextPage ?? 1],
-    },
     getNextPageParam: (lastPage) => lastPage?.nextPage ?? undefined,
     staleTime: 60000,
-    initialPageParam: initialNextPage ?? 1,
+    initialPageParam: 1,
+    enabled: initialMembers !== undefined, // undefined가 아닐 때만 API 호출
   });
 
-  // zustand에서 좋아요 상태 동기화
+  // Zustand에서 좋아요 상태 동기화
   useEffect(() => {
-    if (!userData?.user_id) 
-    return;
+    if (!userData?.user_id) return;
 
     hydrate(userData.user_id);
     syncLikesWithServer(userData.user_id);
@@ -56,30 +52,30 @@ export const useMemberData = (
       ) {
         fetchNextPage();
       }
-    }, 300); // 300ms로 최적화
+    }, 300);
 
     window.addEventListener("scroll", handleScroll);
     return () => window.removeEventListener("scroll", handleScroll);
   }, [hasNextPage, isFetchingNextPage, fetchNextPage]);
 
-  // 전체 멤버 데이터 구성
+  // 전체 멤버 데이터 구성 
   const allMembers = useMemo(() => {
-    return (
-      data?.pages.flatMap((page) =>
-        page.members.map((member) => ({
-          ...member,
-          liked: likedMembers[member.user_id] || false, // 좋아요 상태 반영
-        }))
-      ) || []
-    );
-  }, [data, likedMembers]);
+    if (!data?.pages) return initialMembers;
+    return data.pages.flatMap((page) => page.members).filter(Boolean);
+  }, [data]);
 
-  // 필터링된 멤버 데이터 반환
+  // 필터링된 멤버 데이터 
   const filteredMembers = useMemo(() => {
-    return filteredJob === "all"
+    const members = filteredJob === "all"
       ? allMembers
-      : allMembers.filter((member) => member.job_title?.toLowerCase() === filteredJob);
-  }, [allMembers, filteredJob]);
+      : allMembers.filter(member => member.job_title?.toLowerCase() === filteredJob);
+  
+    return members.map(member => ({
+      ...member,
+      liked: likedMembers[member.user_id] || false, 
+    }));
+  }, [allMembers, filteredJob, likedMembers]);
+
 
   return {
     filteredMembers,

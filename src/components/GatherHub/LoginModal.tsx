@@ -17,7 +17,7 @@ const LoginModal: React.FC<LoginModalProps> = ({ isModalOpen, closeModal }) => {
 
       {/* 로그인 모달 */}
       <div className="fixed top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 
-                 bg-background rounded-[20px] p-16 z-50 shadow-xl w-[390px] h-[560px] flex flex-col items-center">
+                 bg-background rounded-[20px] p-16 z-50 shadow-xl s:w-[340px] s:h-[450] w-[390px] h-[560px] flex flex-col items-center">
         {/* 닫기 버튼 */}
         <button onClick={closeModal} 
                 className="absolute top-6 right-6 text-3xl text-gray-400 hover:text-white transition"

@@ -2,12 +2,13 @@
 import React, { useState, useMemo } from "react";
 import { useLikeStore } from "@/stores/useLikeStore";
 import { useUserData } from "@/provider/user/UserDataProvider";
-import { supabase } from "@/utils/supabase/client";
 import CardUI from "./CardUI"; 
 import CardModal from "./CardModal";
 import ProfileExtend from "./ProfileExtend"; 
 import { MemberCardProps } from "@/lib/gatherHub";
 import { techStacks } from "@/lib/techStacks";
+import { secureImageUrl } from "@/utils/imageUtils";
+
 
 const MemberCard: React.FC<MemberCardProps> = ({
   user_id,
@@ -41,10 +42,6 @@ const MemberCard: React.FC<MemberCardProps> = ({
 
   // 현재 카드가 좋아요 상태인지 확인
   const liked = likedMembers[user_id] || false;
-
-  // 프로필 이미지 URL이 HTTP라면 HTTPS로 변경하여 보안 처리
-  const secureImageUrl = (url: string) =>
-    url ? url.replace(/^http:/, "https:") : "/assets/header/user.svg";
 
   // 좋아요 버튼 클릭 시 실행되는 함수
   const handleToggleLike = () => {

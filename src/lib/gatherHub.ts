@@ -39,7 +39,7 @@ export interface CardUIProps {
   handleToggleLike: () => void;
   secureImageUrl: (url: string) => string;
   onOpenModal: () => void;
-  onOpenProfile: () => void;
+  onOpenProfile?: () => void;
 }
 
 // CardModal 인터페이스
@@ -123,4 +123,32 @@ export interface HubRegisterProps {
 export interface LoginModalProps {
   isModalOpen: boolean;
   closeModal: () => void;
+}
+
+// fetchMember API 응답 데이터 타입 정의
+export interface FetchMembersResponse {
+  members: MemberCardProps[]; // 가져온 멤버 목록
+  nextPage?: number; // 다음 페이지 번호
+}
+
+// 멤버 타입 정의
+export interface MemberType {
+  user_id: string;
+  nickname: string;
+  job_title: string;
+  experience: string;
+  background_image_url: string;
+  profile_image_url: string;
+  blog: string;
+  first_link_type?: string;
+  first_link?: string;
+  second_link_type?: string;
+  second_link?: string;
+  description: string;
+  answer1: string;
+  answer2: string;
+  answer3: string;
+  liked: boolean;
+  toggleLike: (userId: string, currentUserId: string) => void;
+  tech_stacks: string[];
 }

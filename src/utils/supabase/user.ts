@@ -1,9 +1,7 @@
 import type { SupabaseClient } from "@supabase/supabase-js";
 import type { Database, SupabaseUser } from "./types";
+import { secureImageUrl } from "@/utils/imageUtils";
 
-// HTTP → HTTPS 변환 및 기본 이미지 처리 함수
-const secureImageUrl = (url: string | null) =>
-  url ? url.replace(/^http:/, "https:") : "/assets/header/user.svg";
 
 // 사용자 데이터 조회 함수 (hydration mismatch 방지)
 export async function fetchUserData( 

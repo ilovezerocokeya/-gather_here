@@ -33,9 +33,6 @@ const ProfilePicture: React.FC = () => {
 
   const occupations = ["프론트엔드", "백엔드", "IOS", "안드로이드", "데브옵스", "디자인", "PM", "기획", "마케팅"];
 
-  const secureImageUrl = (url: string | null) =>
-    url ? url.replace(/^http:/, "https:") : null;
-
   const uploadProfileImage = async (file: File | Blob, altText: string) => {
     if (!user || !user.id) {
       console.error("사용자 정보가 없습니다.");

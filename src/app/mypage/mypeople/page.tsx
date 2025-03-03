@@ -4,6 +4,8 @@ import { useLikeStore } from "@/stores/useLikeStore";
 import MemberCard from "@/components/GatherHub/MemberCard";
 import { useEffect, useState } from "react";
 import { supabase } from "@/utils/supabase/client";
+import { secureImageUrl } from "@/utils/imageUtils";
+
 
 // MyPeoplePage 컴포넌트
 const MyPeoplePage: React.FC = () => {
@@ -69,8 +71,6 @@ const MyPeoplePage: React.FC = () => {
   
     fetchLikedMembers();
   }, [userData]);
-
-  const secureImageUrl = (url: string | null) => (url ? url.replace(/^http:/, "https:") : "/assets/header/user.svg");
 
   return (
     <div className="my-people-page">
