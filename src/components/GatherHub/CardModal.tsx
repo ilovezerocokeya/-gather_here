@@ -1,4 +1,4 @@
-import React, { useEffect } from "react";
+import React, { useCallback, useEffect } from "react";
 import { createPortal } from "react-dom";
 import Image from "next/image";
 import Link from "next/link";
@@ -27,12 +27,11 @@ const CardModal: React.FC<CardModalProps> = ({
   selectedTechStacks,
 }) => {
 
-  useEffect(() => {
-    // ESC 키를 눌렀을 때 모달을 닫는 이벤트 핸들러
-    const handleEsc = (event: KeyboardEvent) => {
-      if (event.key === "Escape") closeModal();
-    };
+  const handleEsc = useCallback((event: KeyboardEvent) => {
+    if (event.key === "Escape") closeModal();
+  }, [closeModal]);
 
+  useEffect(() => {
     if (isModalOpen) {
       // 모달이 열려 있을 때 페이지 스크롤을 막음
       document.body.style.overflow = "hidden";
@@ -44,10 +43,10 @@ const CardModal: React.FC<CardModalProps> = ({
 
     return () => {
       // 이벤트 리스너를 정리하여 메모리 누수를 방지
-      window.removeEventListener("keydown", handleEsc);
-      document.body.style.overflow = "auto";
-    };
-  }, [isModalOpen, closeModal]);
+    document.body.style.overflow = "auto";
+    window.removeEventListener("keydown", handleEsc);
+  };
+}, [isModalOpen, handleEsc]);
 
   // 모달이 닫혀 있을 경우 렌더링하지 않음
   if (!isModalOpen) return null;
@@ -83,41 +82,29 @@ const CardModal: React.FC<CardModalProps> = ({
           onClick={() => window.open(blog, "_blank")}
           style={{ userSelect: "none" }}
         >
-          {background_image_url ? (
-            <Image
-              src={background_image_url}
-              alt="배경 이미지"
-              fill
-              sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
-              priority
-              className="absolute inset-0 w-full h-full object-cover object-center"
-            />
-          ) : (
-            <Image
-              src="/logos/hi.png"
-              alt="기본 이미지"
-              fill
-              sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
-              priority
-              className="absolute inset-0 w-full h-full object-cover object-center"
-            />
-          )}
+          <Image
+            src={secureImageUrl(background_image_url) || "/logos/defaultBackgroundImage.svg"}
+            alt="배경 이미지"
+            fill
+            quality={80}
+            priority
+            className="absolute inset-0 w-full h-full object-cover object-center"
+          />
         </div>
 
         {/* 프로필 정보 */}
         <div className="relative">
           <div className="absolute -top-20 flex flex-col items-start p-6">
             <div className="w-[120px] h-[120px] rounded-2xl bg-white border-1 border-background overflow-hidden">
-              <div className="relative w-[120px] h-[120px]">
-                <Image
-                  src={secureImageUrl(profile_image_url)}
-                  alt={nickname}
-                  fill
-                  sizes="24vw"
-                  className="object-cover rounded-2xl shadow-lg"
-                  priority
-                />
-              </div>
+              <Image
+                src={secureImageUrl(profile_image_url)}
+                alt={nickname}
+                width={120}
+                height={120}
+                quality={90}
+                priority                
+                className="object-cover rounded-2xl shadow-lg"
+              />
             </div>
             <div className="mt-5">
               <h2 className="text-xl font-medium text-f7f7f7 font-['Pretendard'] leading-7">{nickname}</h2>
@@ -143,9 +130,10 @@ const CardModal: React.FC<CardModalProps> = ({
               <Image
                 src={liked ? "/assets/bookmark2.svg" : "/assets/bookmark1.svg"}
                 alt="북마크"
-                width={5}
-                height={5}
-                className="w-5 h-5"
+                width={16}
+                height={16}
+                loading="lazy"
+                unoptimized
               />
               <span className={`hidden md:block`}>북마크 저장하기</span>
             </button>
@@ -155,7 +143,7 @@ const CardModal: React.FC<CardModalProps> = ({
               style={{ userSelect: "none", cursor: "not-allowed" }}
               disabled
             >
-              <Image src="/assets/chat.svg" alt="메시지 아이콘" width={20} height={20} className="w-5 h-5" />
+              <Image src="/assets/chat.svg" alt="메시지 아이콘" width={20} height={20} unoptimized />
               <span className="hidden md:block">대화 신청하기</span>
   
               {/* 말풍선 */}
@@ -289,7 +277,12 @@ const CardModal: React.FC<CardModalProps> = ({
             {/* Blog 링크 */}
             <div className="p-1 bg-[#28282a] rounded-[10px] border border-[#2d2d2f] justify-center items-center gap-2.5 flex">
               <Link href={blog || "#"} target="_blank" className="flex justify-center items-center">
-                <Image src="/Link/link.svg" alt="Blog Link" width={24} height={24} className="w-7 h-7" />
+                <Image
+                  src="/Link/link.svg"
+                  alt="링크"
+                  width={24}
+                  height={24}
+                />
               </Link>
             </div>
 
@@ -297,13 +290,13 @@ const CardModal: React.FC<CardModalProps> = ({
             {first_link && (
               <div className="p-1 bg-[#28282a] rounded-[10px] border border-[#2d2d2f] justify-center items-center gap-2.5 flex">
                 <Link href={first_link || "#"} target="_blank" className="flex justify-center items-center">
-                  <Image
-                    src={first_link_type ? `/Link/${first_link_type}.svg` : "/Link/link.svg"} // first_link_type에 따른 아이콘
-                    alt={`${first_link_type} Link`}
-                    width={24}
-                    height={24}
-                    className="w-7 h-7"
-                  />
+                <Image
+                  src={first_link_type ? `/Link/${first_link_type}.svg` : "/Link/link.svg"}
+                  alt={`${first_link_type} Link`}
+                  width={24}
+                  height={24}
+                  unoptimized
+                />
                 </Link>
               </div>
             )}
@@ -313,11 +306,11 @@ const CardModal: React.FC<CardModalProps> = ({
               <div className="p-1 bg-[#28282a] rounded-[10px] border border-[#2d2d2f] justify-center items-center gap-2.5 flex">
                 <Link href={second_link || "#"} target="_blank" className="flex justify-center items-center">
                   <Image
-                    src={second_link_type ? `/Link/${second_link_type}.svg` : "/Link/link.svg"} // second_link_type에 따른 아이콘
+                    src={second_link_type ? `/Link/${second_link_type}.svg` : "/Link/link.svg"}
                     alt={`${second_link_type} Link`}
                     width={24}
                     height={24}
-                    className="w-7 h-7"
+                    unoptimized
                   />
                 </Link>
               </div>

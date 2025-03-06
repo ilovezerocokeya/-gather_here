@@ -1,4 +1,3 @@
-// app/gatherHub/layout.tsx
 import React, { ReactNode } from 'react';
 
 interface GatherHubLayoutProps {

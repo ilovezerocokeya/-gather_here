@@ -38,10 +38,10 @@ const CardUI: React.FC<CardUIProps> = ({
             <Image
               src={liked ? "/assets/bookmark2.svg" : "/assets/bookmark1.svg"}
               alt="좋아요"
-              width={6}
-              height={6}
-              className="w-6 h-6 p-1"
-            />  
+              width={16}
+              height={16}
+              loading= "lazy"
+            /> 
         </button>
       </div>
 
@@ -72,26 +72,15 @@ const CardUI: React.FC<CardUIProps> = ({
           onClick={() => window.open(blog, "_blank")}
           style={{ userSelect: "none" }}
         >
-          {background_image_url ? (
-            <Image
-              src={background_image_url}
-              alt="포트폴리오"
-              width={300}
-              height={40}
-              className="object-cover transition-transform duration-300 ease-in-out hover:scale-105"
-            />
-          ) : (
-            <Image
-              src="/logos/hi.png"
-              alt="기본 이미지"
-              width={300}
-              height={40}
-              priority
-              sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
-              className="object-cover transition-transform duration-300 ease-in-out hover:scale-105"
-              style={{ width: "300px", height: "auto" }}
-            />
-          )}
+          <Image
+            src={background_image_url ? secureImageUrl(background_image_url) : "/logos/defaultBackgroundImage.svg"}
+            alt="포트폴리오"
+            width={300}
+            height={160}
+            quality={80}
+            priority
+            className="object-cover transition-transform duration-300 ease-in-out hover:scale-105"
+          />
         </div>
       </div>
 
@@ -105,10 +94,11 @@ const CardUI: React.FC<CardUIProps> = ({
           <Image
             src={secureImageUrl(profile_image_url)}
             alt={nickname}
-            fill
-            sizes="20vw"
-            className="object-cover rounded-2xl shadow-lg"
+            width={60}
+            height={60}
+            quality={80}
             priority
+            className="object-cover rounded-2xl shadow-lg"
           />
         </div>
       </div>
@@ -118,16 +108,21 @@ const CardUI: React.FC<CardUIProps> = ({
         <div className="self-stretch h-[129px] flex-col justify-start items-start cursor-pointer gap-3 flex" onClick={onOpenModal}>
           <div className="self-stretch justify-between items-center inline-flex">
             <div className="h-[57px] flex-col justify-start items-start gap-2 inline-flex">
+              {/* 사용자의 닉네임 */}
               <div className="text-center text-[#f7f7f7] text-xl font-medium font-['Pretendard'] leading-7">{nickname}</div>
-                <div className="text-primary text-sm font-normal font-['Pretendard'] leading-[21px]">
-                  {job_title}
-                  <span className="text-[#5e5e5e] text-sm font-normal font-['Pretendard'] leading-[21px]">
-                    &nbsp; |&nbsp; {experience}
-                  </span>
-                </div>
-                <div className="self-stretch h-[41px] text-[#919191] text-sm font-normal font-['Pretendard'] leading-[21px]">
-                  {description.length > 30 ? `${description.substring(0, 30)}...` : description}
-                </div>
+              
+              {/* 직업 제목과 경력 */}
+              <div className="text-primary text-sm font-normal font-['Pretendard'] leading-[21px]">
+                {job_title}
+                <span className="text-sm font-normal font-['Pretendard'] leading-[21px]">
+                  &nbsp; |&nbsp; {experience}
+                </span>
+              </div>
+              
+              {/* 자기소개 */}
+              <div className="self-stretch h-[41px] text-[#f7f7f7] text-sm font-normal font-['Pretendard'] leading-[21px]">
+                {description.length > 30 ? `${description.substring(0, 30)}...` : description}
+              </div>
             </div>
           </div>
         </div>
@@ -142,7 +137,7 @@ const CardUI: React.FC<CardUIProps> = ({
               <Link
                 href={blog || "#"} 
                 target="_blank"
-                className="flex flex-col items-center space-y-1 transition-transform duration-300 hover:scale-110 hover:rotate-3"
+                className="flex flex-col items-center space-y-1 transition-transform duration-300 hover:scale-105 hover:rotate-3"
                 style={{ userSelect: "none" }}
               >
                 <Image
@@ -151,6 +146,7 @@ const CardUI: React.FC<CardUIProps> = ({
                   width={24}
                   height={24}
                   className="w-6 h-6"
+                  priority
                 />
               </Link>
             </div>
@@ -171,6 +167,7 @@ const CardUI: React.FC<CardUIProps> = ({
                   width={24}
                   height={24}
                   className="w-6 h-6"
+                  loading= "lazy"
                 />
               </Link>
             </div>
@@ -190,6 +187,7 @@ const CardUI: React.FC<CardUIProps> = ({
                   width={24}
                   height={24}
                   className="w-6 h-6"
+                  loading= "lazy"
                 />
               </Link>
             </div>

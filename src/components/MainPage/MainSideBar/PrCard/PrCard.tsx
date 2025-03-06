@@ -13,8 +13,18 @@ import CardUI from "@/components/GatherHub/CardUI";
 import CardModal from "@/components/GatherHub/CardModal";
 import { techStacks } from "@/lib/techStacks";
 import { secureImageUrl } from "@/utils/imageUtils";
+import Image from "next/image";
+import Head from "next/head";
+import Script from "next/script";
 
 const PrCard: React.FC = () => {
+
+  // SEO 메타 태그
+  const metaTitle = "GatherHub - 개발자 PR 카드";
+  const metaDescription = "프론트엔드 개발자들이 자신의 기술 스택과 경력을 홍보하는 PR 카드 시스템";
+  const metaUrl = "https://gatherhub.com";
+  const metaImage = "https://gatherhub.com/assets/images/gatherhub-thumbnail.jpg";
+
   // 슬라이더 설정
   const settings = {
     infinite: true, // 무한 루프 활성화
@@ -22,8 +32,10 @@ const PrCard: React.FC = () => {
     slidesToShow: 1, // 한 번에 표시할 슬라이드 개수
     slidesToScroll: 1, // 한 번에 이동할 슬라이드 개수
     autoplay: true, // 자동 재생 활성화
-    autoplaySpeed: 3500, // 자동 전환 속도 (ms)
+    autoplaySpeed: 4000, // 자동 전환 속도 (ms)
     arrows: false, // 화살표 버튼 비활성화
+    lazyLoad: "progressive" as const,// 슬라이드 이미지 로딩 최적화
+    pauseOnHover: true, // 사용자 경험 개선
   };
 
   // Zustand 상태 관리에서 좋아요 정보 가져오기
@@ -72,11 +84,54 @@ const PrCard: React.FC = () => {
 
   return (
     <div className="w-auto h-auto rounded-2xl my-3">
+      {/* SEO 메타 태그 추가 */}
+      <Head>
+        <title>{metaTitle}</title>
+        <meta name="description" content={metaDescription} />
+        <meta name="keywords" content="프론트엔드, 개발자, GatherHub, PR 카드, 기술 스택" />
+        <meta property="og:title" content={metaTitle} />
+        <meta property="og:description" content={metaDescription} />
+        <meta property="og:image" content={metaImage} />
+        <meta property="og:url" content={metaUrl} />
+        <meta name="twitter:card" content="summary_large_image" />
+        <meta name="twitter:title" content={metaTitle} />
+        <meta name="twitter:description" content={metaDescription} />
+        <meta name="twitter:image" content={metaImage} />
+      </Head>
+
+      {/* JSON-LD 추가 */}
+      <Script type="application/ld+json" strategy="afterInteractive">
+        {JSON.stringify({
+          "@context": "https://schema.org",
+          "@type": "WebPage",
+          "name": metaTitle,
+          "description": metaDescription,
+          "url": metaUrl,
+          "image": metaImage,
+          "publisher": {
+            "@type": "Organization",
+            "name": "GatherHub",
+            "logo": {
+              "@type": "ImageObject",
+              "url": "https://gatherhub.com/assets/images/logo.png"
+            }
+          }
+        })}
+      </Script>
+
       {/* 섹션 제목 */}
-      <h4 className="flex items-center my-3 text-labelNormal">
-        <img src="/assets/gif/mic.gif" alt="마이크 아이콘" width={20} height={20} className="mr-1" />
+      <h2 className="flex items-center my-3 text-labelNormal">
+        <Image 
+          src="/assets/gif/mic.gif" 
+          alt="마이크 아이콘" 
+          width={20} 
+          height={20} 
+          className="mr-1" 
+          priority
+          fetchPriority="high"
+        />
         자랑스러운 게더_멤버들을 소개할게요
-      </h4>
+      </h2>
 
       {/* 슬라이더 */}
       <div className="flex justify-center">

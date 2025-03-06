@@ -78,7 +78,7 @@ const LoginForm = () => {
             onChange={() => setRememberMe((prev) => !prev)}
             className="sr-only peer"
           />
-          <div className="w-10 h-5 bg-gray-300 peer-focus:ring-2 peer-focus:ring-green-300 rounded-full peer 
+          <div className="w-10 h-5 bg-red-300 peer-focus:ring-2 peer-focus:ring-green-300 rounded-full peer 
                       peer-checked:bg-green-500 peer-checked:after:translate-x-5 
                       after:content-[''] after:absolute after:top-0.5 after:left-[2px] after:bg-white 
                       after:border after:rounded-full after:h-4 after:w-4 after:transition-all"></div>

@@ -1,6 +1,6 @@
 "use client";
 
-import React, { Suspense, useEffect, useState } from "react";
+import React, { Suspense, useCallback, useEffect, useMemo, useRef, useState } from "react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import Image from "next/image";
@@ -38,15 +38,21 @@ const Header: React.FC = () => {
     }
   };
 
+  // 프로필 이미지 URL 최적화
+  const profileImageUrl = useMemo(() => userData?.profile_image_url || defaultImage, [userData?.profile_image_url]);
+
   // 검색 창 열기/닫기
-  const toggleSearch = () => {
-    setIsSearchOpen(!isSearchOpen);
-  };
+  const toggleSearch = useCallback(() => {
+    setIsSearchOpen((prev) => !prev);
+  }, []);
 
   // 마이페이지 모달 열기/닫기
+  const mypageModalRef = useRef(false);
+
   const toggleMypageModal = () => {
-    setIsMypageModalOpen(!isMypageModalOpen);
-  };
+  mypageModalRef.current = !mypageModalRef.current;
+  setIsMypageModalOpen(mypageModalRef.current);
+};
 
   // 로그인 모달 열기
   const handleOpenLoginModal = () => {
@@ -61,27 +67,21 @@ const Header: React.FC = () => {
 
   // 모달이 열렸을 때 Esc 키로 모달 닫기
   useEffect(() => {
-    if (isModalOpen) {
-      const handleEsc = (event: KeyboardEvent) => {
-        if (event.key === "Escape") {
-          handleCloseLoginModal(); // Esc 키를 누르면 모달을 닫음
-        }
-      };
-
-      window.addEventListener("keydown", handleEsc);
-
-      return () => {
-        window.removeEventListener("keydown", handleEsc);
-      };
-    }
-  }, [isModalOpen]); // 모달이 열릴 때만 이벤트 리스너 추가
+    const handleEsc = (event: KeyboardEvent) => {
+      if (event.key === "Escape") {
+        setIsModalOpen(false);
+      }
+    };
+  
+    window.addEventListener("keydown", handleEsc);
+    return () => window.removeEventListener("keydown", handleEsc);
+  }, []);
 
   // 사용자 데이터 가져오기
   useEffect(() => {
-    if (user?.id) {
-      fetchUserData(user.id); // 사용자 데이터를 가져옴
-    }
-  }, [user, fetchUserData]);
+    if (!user?.id) return;
+    fetchUserData(user.id);
+  }, [user?.id]); 
 
   // 게시글 작성 클릭 시 로그인 여부 확인
   const handleClickPost = (evt: React.MouseEvent<HTMLAnchorElement, MouseEvent>) => {
@@ -98,13 +98,10 @@ const Header: React.FC = () => {
     }
   };
 
-  // 프로필 이미지 URL 처리
-  const getProfileImageUrl = (url: string) => `${url}?${new Date().getTime()}`;
-
   return (
     <header className="bg-background shadow-md relative text-fontWhite">
       <div className="w-full mx-auto max-w-container-l m:max-w-container-m s:max-w-container-s s:flex-row flex justify-between items-center py-[14px] s:py-2">
-        <div className="flex items-center s:space-x-4 space-x-12">
+        <div className="flex items-center s:space-x-6 space-x-12">
           <Link href="/" className="flex items-center logo-link">
             <Image
               src="/logos/gatherhere.svg"
@@ -112,28 +109,29 @@ const Header: React.FC = () => {
               width={140}
               height={70}
               priority
+              quality={85}
               className="s:hidden"
-              style={{ objectFit: "contain" }}
             />
+
             <Image
               src="/assets/header/mobile_logo.svg"
               alt="@gather_here 모바일 로고"
-              width={40}
-              height={50}
+              width={30}
+              height={40}
+              quality={85} 
               priority
-              className="hidden s:block"
-              style={{ objectFit: "contain", width: "auto", height: "auto" }}
+            className="hidden s:block"
             />
           </Link>
           <Link href="/gatherHub" className="logo-link">
             <Image
-              src="/logos/hub2.png"
+              src="/logos/gatherHub.svg" 
               alt="@gather_hub 로고"
-              width={120}
+              width={100}
               height={50}
               priority
-              className="s:w-[50px] s:h-[25px]"
-              style={{ width: "auto", height: "auto" }}
+              quality={85} 
+              className="s:w-[70px] s:h-[50px]"
             />
           </Link>
         </div>
@@ -155,7 +153,15 @@ const Header: React.FC = () => {
                 onChange={(evt) => setSearchWord(evt.target.value)}
               />
               <button className="absolute top-[9px] right-[8px]" type="submit">
-                <Image src="/assets/header/search.svg" width={20} height={20} alt="검색 버튼 아이콘" />
+                <Image
+                  src="/assets/header/search.svg"
+                  alt="검색 버튼 아이콘"
+                  width={20}
+                  height={20}
+                  unoptimized 
+                  decoding="async"
+                  style={{ objectFit: "contain", width: "auto", height: "auto" }}
+                />
               </button>
             </form>
 
@@ -166,13 +172,29 @@ const Header: React.FC = () => {
                 type="submit"
                 className="hidden s:flex items-center justify-center w-[36px] h-[36px] rounded-lg bg-fillNeutral hover:bg-fillAssistive pt-1"
               >
-                <Image src="/assets/header/search.svg" width={22} height={22} alt="검색 버튼 아이콘" />
+                <Image 
+                  src="/assets/header/search.svg" 
+                  width={22} 
+                  height={22} 
+                  alt="검색 버튼 아이콘" 
+                  loading="lazy" 
+                  style={{ width: "auto", height: "auto", objectFit: "contain" }} 
+                />
               </button>
 
               {/* 게시글 작성 버튼 */}
               <Link onClick={(evt) => handleClickPost(evt)} href="/post" passHref>
                 <button className="square-header-button-gray">
-                  <Image src="/assets/header/write.svg" width={16} height={16} alt="글쓰기 버튼 아이콘" />
+                  <Image
+                    src="/assets/header/write.svg"
+                    alt="글쓰기 버튼 아이콘"
+                    width={16}
+                    height={16}
+                    unoptimized
+                    decoding="async"
+                    loading="lazy"
+                    style={{ objectFit: "contain", width: "auto", height: "auto" }}
+                  />
                 </button>
               </Link>
 
@@ -188,9 +210,10 @@ const Header: React.FC = () => {
                     <Image
                       src={isMypageModalOpen ? "/assets/header/primary_close.svg" : "/assets/header/mobile_logo.svg"}
                       alt={isMypageModalOpen ? "닫기 버튼 아이콘" : "마이페이지 아이콘"}
-                      priority
                       width={14}
                       height={16}
+                      loading="lazy"
+                      style={{ width: "auto", height: "auto", objectFit: "contain" }}
                     />
                   </button>
 
@@ -199,9 +222,10 @@ const Header: React.FC = () => {
                     <Image
                       src="/assets/header/mobile_logo.svg"
                       alt="마이페이지 아이콘"
-                      priority
                       width={14}
                       height={16}
+                      loading="lazy"
+                      style={{ width: "auto", height: "auto", objectFit: "contain" }}
                     />
                   </Link>
 
@@ -253,7 +277,15 @@ const Header: React.FC = () => {
               onClick={toggleSearch}
               className="absolute right-4 top-1/2 transform -translate-y-1/2"
             >
-              <Image src="/assets/header/close.svg" alt="닫기 버튼" width={16} height={16} />
+              <Image
+                src="/assets/header/close.svg"
+                alt="닫기 버튼"
+                width={16}
+                height={16}
+                unoptimized
+                decoding="async"
+                style={{ objectFit: "contain", width: "auto", height: "auto" }}
+              />
             </button>
           </form>
         </Suspense>
@@ -287,10 +319,10 @@ const Header: React.FC = () => {
               <div className="w-12 h-12 bg-fillNeutral rounded-[12px] flex items-center justify-center overflow-hidden">
                 <div className="relative w-full h-full rounded-[12px]">
                   <Image
-                    src={getProfileImageUrl(userData?.profile_image_url || defaultImage)}
+                    src={profileImageUrl}
                     alt="프로필 이미지"
                     fill
-                    style={{ objectFit: "cover" }}
+                    quality={85}
                     className="rounded-[12px]"
                   />
                 </div>

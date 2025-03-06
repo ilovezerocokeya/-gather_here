@@ -19,6 +19,7 @@ const HubRegister: React.FC<HubRegisterProps> = ({ isAuthenticated, isHubRegiste
   return (
     <div className="relative group">
       <button
+        aria-label="로그인 모달 or 마이페이지 이동 버튼"
         className="fixed bottom-[40px] right-5 sm:right-10 w-12 h-12 sm:w-14 sm:h-14 bg-fillStrong text-primary text-lg 
                   rounded-2xl shadow-xl hover:shadow-2xl transform transition-all duration-300 ease-out 
                   hover:scale-110 active:scale-95 hover:animate-bounce hover:bg-fillLight cursor-pointer z-[9999]"

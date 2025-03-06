@@ -10,7 +10,6 @@ const ProfileExtend: React.FC<ProfileExtendProps> = ({
   nickname,
   secureImageUrl,
 }) => {
-  
   if (!isOpen) return null;
 
   return createPortal(
@@ -21,10 +20,12 @@ const ProfileExtend: React.FC<ProfileExtendProps> = ({
     >
       <div className="relative">
         <Image
-          src={secureImageUrl(profileImageUrl) || ""}
+          src={secureImageUrl(profileImageUrl) || "/assets/header/user.svg"} 
           alt={nickname}
           width={500}
           height={500}
+          quality={90} 
+          priority 
           className="s:w-[340px] s:h-[340px] h-[500px] w-[500px] object-cover rounded-2xl shadow-lg"
         />
         <button

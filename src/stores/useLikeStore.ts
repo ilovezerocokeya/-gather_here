@@ -50,7 +50,7 @@ export const useLikeStore = create<LikeStore>((set, get) => ({
     } catch (error) {
       console.error("좋아요 동기화 오류:", error);
 
-      // 2️⃣ 실패 시 상태 롤백
+      // 실패 시 상태 롤백
       set({ likedMembers: currentLikedMembers });
       localStorage.setItem(getLocalStorageKey(userId), JSON.stringify(currentLikedMembers));
     }
