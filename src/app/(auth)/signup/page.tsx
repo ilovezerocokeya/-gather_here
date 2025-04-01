@@ -27,7 +27,7 @@ const SignupPage = () => {
       }
     };
 
-    checkUser();
+    void checkUser();
   }, [router]);
 
   return <SignupForm />;

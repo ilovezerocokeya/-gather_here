@@ -6,17 +6,10 @@ import { throttle } from "lodash";
 export const useSessionManager = (resetAuthUser: () => Promise<void>, rememberMe: boolean) => {
   const router = useRouter();
   
-  // 마지막 사용자 활동 시간을 저장하는 변수
-  const lastActivityTimeRef = useRef<number>(Date.now());
-
-  // 자동 로그아웃 타이머를 관리하는 변수
-  const sessionTimeoutRef = useRef<NodeJS.Timeout | null>(null);
-
-  // 비활성 탭 체크 타이머를 관리하는 변수
-  const activityCheckIntervalRef = useRef<NodeJS.Timeout | null>(null);
-
-  // 사용자가 앱을 실행한 시점을 기록하는 변수
-  const startTimeRef = useRef<number>(Date.now());
+  const lastActivityTimeRef = useRef<number>(Date.now()); // 마지막 사용자 활동 시간을 저장하는 변수
+  const sessionTimeoutRef = useRef<NodeJS.Timeout | null>(null); // 자동 로그아웃 타이머를 관리하는 변수
+  const activityCheckIntervalRef = useRef<NodeJS.Timeout | null>(null); // 비활성 탭 체크 타이머를 관리하는 변수
+  const startTimeRef = useRef<number>(Date.now()); // 사용자가 앱을 실행한 시점을 기록하는 변수
 
   // 일정 시간 동안의 활동을 기반으로 스로틀링 주기를 결정하는 함수
   const calculateThrottleDelay = (elapsed: number) => {
@@ -29,14 +22,16 @@ export const useSessionManager = (resetAuthUser: () => Promise<void>, rememberMe
   // 자동 로그인 사용자는 활동 감지를 하지 않음. 대신 55분마다 세션 갱신.
   useEffect(() => {
     if (rememberMe) {
-      const interval = setInterval(async () => {
-        const { data, error } = await supabase.auth.getSession();
-
-        if (error || !data.session) {
-          console.error("세션 갱신 실패:", error);
-          await resetAuthUser(); // 세션 만료 시 로그아웃 처리
-        } 
-      }, 55 * 60 * 1000); // 55분마다 세션 갱신 시도
+      const interval = setInterval(() => {
+        void (async () => {
+          const { data, error } = await supabase.auth.getSession();
+          
+          if (error || !data.session) {
+            console.error("세션 갱신 실패:", error);
+            await resetAuthUser(); // 세션 만료 시 로그아웃 처리
+          } 
+        }) ();
+        }, 55 * 60 * 1000); // 55분마다 세션 갱신 시도
 
       return () => clearInterval(interval);
     }
@@ -52,20 +47,20 @@ export const useSessionManager = (resetAuthUser: () => Promise<void>, rememberMe
     }
 
     // 1시간 후 자동 로그아웃 설정
-    sessionTimeoutRef.current = setTimeout(async () => {
-      const timeSinceLastActivity = Date.now() - lastActivityTimeRef.current;
-
-      // 1시간 동안 추가 활동이 없으면 로그아웃 처리
-      if (timeSinceLastActivity >= 60 * 60 * 1000) {
-
-        await resetAuthUser();
-
-        // 로그아웃 후 세션 만료 여부를 최종 확인 후 페이지 이동
-        const { data } = await supabase.auth.getSession();
-        if (!data.session) {
-          router.push("/");
+    sessionTimeoutRef.current = setTimeout(() => {
+      void (async () => {
+        const timeSinceLastActivity = Date.now() - lastActivityTimeRef.current;
+        
+        // 1시간 동안 추가 활동이 없으면 로그아웃 처리
+        if (timeSinceLastActivity >= 60 * 60 * 1000) {
+          await resetAuthUser();
+          // 로그아웃 후 세션 만료 여부를 최종 확인 후 페이지 이동
+          const { data } = await supabase.auth.getSession();
+          if (!data.session) {
+            router.push("/");
+          }
         }
-      }
+      })();
     }, 60 * 60 * 1000); // 1시간 후 로그아웃
   };
 
@@ -103,24 +98,27 @@ export const useSessionManager = (resetAuthUser: () => Promise<void>, rememberMe
         let elapsedInactiveTime = 0;
         let checkDelay = 10 * 60 * 1000; // 초기 감지 간격 10분
 
-        activityCheckIntervalRef.current = setInterval(async () => {
-          elapsedInactiveTime += checkDelay;
+        activityCheckIntervalRef.current = setInterval(() => {
+          void (async () => {
 
-          // 10분 → 30분 → 60분으로 감지 간격 증가
-          checkDelay = calculateThrottleDelay(elapsedInactiveTime) ?? checkDelay;
-
-          const timeSinceLastActivity = Date.now() - lastActivityTimeRef.current;
-          if (timeSinceLastActivity >= 60 * 60 * 1000) {
-
-            await resetAuthUser();
-
-            // 로그아웃 후 세션 만료 여부를 최종 확인 후 페이지 이동
-            const { data } = await supabase.auth.getSession();
-            if (!data.session) {
-              router.push("/");
+            elapsedInactiveTime += checkDelay;
+            
+            // 10분 → 30분 → 60분으로 감지 간격 증가
+            checkDelay = calculateThrottleDelay(elapsedInactiveTime) ?? checkDelay;
+            
+            const timeSinceLastActivity = Date.now() - lastActivityTimeRef.current;
+            if (timeSinceLastActivity >= 60 * 60 * 1000) {
+              
+              await resetAuthUser();
+              
+              // 로그아웃 후 세션 만료 여부를 최종 확인 후 페이지 이동
+              const { data } = await supabase.auth.getSession();
+              if (!data.session) {
+                router.push("/");
+              }
             }
-          }
-        }, checkDelay);
+          })();
+          }, checkDelay);
       } else {
         // 사용자가 다시 탭을 활성화하면 감지 중단
         if (activityCheckIntervalRef.current) {

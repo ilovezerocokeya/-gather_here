@@ -10,7 +10,7 @@ interface UserDataContextType {
   loading: boolean; 
   error: string | null; 
   fetchUserData: (userId: string) => Promise<void>;  // 특정 유저 데이터를 불러오는 함수
-  updateUserAnswers: (answers: Partial<UserData>) => Promise<void>;  // 유저 데이터를 업데이트하는 함수
+  updateUserAnswers: ((answers: Partial<UserData>) => Promise<void>) | undefined;  // 유저 데이터를 업데이트하는 함수
   setUserData: React.Dispatch<React.SetStateAction<UserData | null>>;  // 유저 데이터를 직접 설정하는 상태 업데이트 함수
 }
 
@@ -31,7 +31,10 @@ export const UserDataProvider: React.FC<{ children: ReactNode }> = ({ children }
 
   // 유저 데이터를 업데이트하는 커스텀 훅
   const updateUserAnswers = useMemo(() => {
-    return userData ? useUpdateUserData(userData, setUserData).updateUserAnswers : async () => {};
+    if (userData) {
+      return useUpdateUserData(userData, setUserData).updateUserAnswers;
+    }
+    return undefined;  // userData가 없으면 undefined 반환
   }, [userData, setUserData]);
 
   if (!hydrated || (loading && !userData)) {

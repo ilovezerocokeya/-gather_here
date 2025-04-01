@@ -1,16 +1,17 @@
-import { FetchMembersResponse } from "@/lib/gatherHub";
+import type { FetchMembersResponse, MemberCardProps } from "@/lib/gatherHub";
+
 
 // 환경 변수 검증
-const API_URL = process.env.NEXT_PUBLIC_API_URL;
-if (!API_URL) {
+const BASE_URL = `${process.env.NEXT_PUBLIC_BASE_URL}/api`;
+if (!BASE_URL) {
   throw new Error("환경 변수 NEXT_PUBLIC_API_URL이 설정되지 않았습니다.");
 }
 
 // 멤버 데이터를 서버에서 가져오는 함수
-export const fetchMembers = async (pageParam: number = 1): Promise<FetchMembersResponse> => {
+export const fetchMembers = async (pageParam = 1): Promise<FetchMembersResponse> => {
   try {
     // 지정된 페이지의 멤버 데이터를 가져옴
-    const response = await fetch(`${API_URL}/gatherHub?page=${pageParam}&limit=10`, {
+    const response = await fetch(`${BASE_URL}/gatherHub?page=${pageParam}&limit=10`, {
       next: { revalidate: 60 }, // 1분마다 캐시 갱신 
     });
 
@@ -20,7 +21,7 @@ export const fetchMembers = async (pageParam: number = 1): Promise<FetchMembersR
     }
 
     // 응답 데이터를 JSON으로 변환
-    const data = await response.json();
+    const data = (await response.json()) as { members: MemberCardProps[] };
 
     // 응답 데이터 유효성 검사
     if (!Array.isArray(data.members)) {

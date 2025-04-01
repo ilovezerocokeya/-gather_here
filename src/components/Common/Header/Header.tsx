@@ -13,11 +13,10 @@ import { SearchModalRef } from '@/types/refs/SearchModal';
 
 const Header: React.FC = () => {
   const { user, resetAuthUser } = useAuth();
-  const { userData, fetchUserData, loading: userDataLoading, error: userDataError } = useUserData();
+  const { userData, fetchUserData } = useUserData();
   const router = useRouter();
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [isMypageModalOpen, setIsMypageModalOpen] = useState(false);
-  const defaultImage = '/assets/header/user.svg';
   const modalRef = useRef<SearchModalRef>(null);
 
   // 로그아웃 함수
@@ -33,7 +32,7 @@ const Header: React.FC = () => {
         console.error('알 수 없는 오류 발생:', err);
       }
     } finally {
-      resetAuthUser(); // 사용자 상태 초기화
+      void resetAuthUser(); // 사용자 상태 초기화
       router.push('/'); // 메인 페이지로 이동
     }
   };
@@ -78,7 +77,7 @@ const Header: React.FC = () => {
   // 사용자 데이터 가져오기
   useEffect(() => {
     if (!user?.id) return;
-    fetchUserData(user.id);
+    void fetchUserData(user.id);
   }, [user?.id]); 
 
   // 게시글 작성 클릭 시 로그인 여부 확인
@@ -175,7 +174,10 @@ const Header: React.FC = () => {
                   <Image src="/assets/header/mobile_logo.svg" alt="마이페이지 아이콘" priority width={14} height={16} />
                 </Link>
 
-                <button onClick={signOut} className="shared-button-small-gray-2 ml-2 s:hidden">
+                <button onClick={() => 
+                  void signOut()}  
+                  className="shared-button-small-gray-2 ml-2 s:hidden"
+                >
                   로그아웃
                 </button>
               </div>
@@ -216,7 +218,7 @@ const Header: React.FC = () => {
               <div className="w-12 h-12 bg-fillNeutral rounded-[12px] flex items-center justify-center overflow-hidden">
                 <div className="relative w-full h-full rounded-[12px]">
                   <Image
-                    src={profileImageUrl}
+                    src={userData?.profile_image_url ?? '/defaults/profile.png'}
                     alt="프로필 이미지"
                     fill
                     style={{ objectFit: 'cover' }}
@@ -279,7 +281,8 @@ const Header: React.FC = () => {
               </li>
               <li>
                 <button
-                  onClick={signOut}
+                  onClick={() => 
+                    void signOut()} 
                   className="block w-full text-left text-labelNormal font-base hover:text-fontWhite"
                 >
                   로그아웃

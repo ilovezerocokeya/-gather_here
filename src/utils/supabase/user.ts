@@ -5,12 +5,13 @@ import { secureImageUrl } from "@/utils/imageUtils";
 
 // 사용자 데이터 조회 함수 (hydration mismatch 방지)
 export async function fetchUserData( 
-    supabase: SupabaseClient<Database>, userId: string
+    supabase: SupabaseClient<Database>, 
+    userId: string
 ) {
     try {
       const { data, error } = await supabase
         .from("Users")
-        .select("*")
+        .select("user_id")
         .eq("user_id", userId)
         .maybeSingle();
   
@@ -18,14 +19,11 @@ export async function fetchUserData(
         throw new Error(`사용자 데이터 확인 실패: ${error.message}`);
       }
   
-      return {
-        ...data,
-        profile_image_url: secureImageUrl(data?.profile_image_url ?? null),
-      }
+      return data;
     } catch (err) {
       console.error(err);
-      throw err; // 예외 발생 시 호출한 곳에서 처리 가능
-    }
+      throw err;
+  }
 }
 
 // 새 사용자 데이터 삽입 함수 (hydration mismatch 방지)
@@ -35,9 +33,9 @@ export async function insertNewUser(
 ) {
     const rowData = {
       user_id: user.id,
-      nickname: user.user_metadata?.full_name || user.email?.split("@")[0] || "사용자",
+      nickname: user.user_metadata?.full_name ?? user.email?.split("@")[0] ?? "사용자",
       email: user.email ?? null,
-      profile_image_url: secureImageUrl(user.user_metadata?.avatar_url || null), 
+      profile_image_url: secureImageUrl(user.user_metadata?.avatar_url ?? null), 
       job_title: null,
       experience: "0",
       description: "안녕하세요! 반갑습니다😆",

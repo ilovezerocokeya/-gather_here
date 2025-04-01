@@ -1,4 +1,4 @@
-import { useState, useEffect, useCallback, useMemo } from 'react';
+import { useState, useCallback, useMemo } from 'react';
 import { useAuth } from '@/provider/user/UserAuthProvider';
 import { useUserData } from '@/provider/user/UserDataProvider';
 import JobFilter from './JobFilter';

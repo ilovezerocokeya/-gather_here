@@ -156,7 +156,7 @@ const CardUI: React.FC<CardUIProps> = ({
           <div className="p-1 bg-[#28282a] rounded-[9px] justify-center items-center gap-2.5 flex">
             <div className="w-6 h-6 p-1 justify-center items-center flex">
               <Link
-                href={first_link || "#"}
+                href={first_link ?? "#"}
                 target="_blank"
                 className="flex flex-col items-center space-y-1 transition-transform duration-300 hover:scale-110 hover:rotate-3"
                 style={{ userSelect: "none" }}
@@ -176,7 +176,7 @@ const CardUI: React.FC<CardUIProps> = ({
           <div className="p-1 bg-[#28282a] rounded-[9px] justify-center items-center gap-2.5 flex">
             <div className="w-6 h-6 p-1 justify-center items-center flex">
               <Link
-                href={second_link || "#"}
+                href={second_link ?? "#"}
                 target="_blank"
                 className="flex flex-col items-center space-y-1 transition-transform duration-300 hover:scale-110 hover:rotate-3"
                 style={{ userSelect: "none" }}

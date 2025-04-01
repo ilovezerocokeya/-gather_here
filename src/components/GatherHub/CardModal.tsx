@@ -62,12 +62,12 @@ const CardModal: React.FC<CardModalProps> = ({
   
   return createPortal(
     <div
-      className="fixed inset-0 bg-background opacity-80 flex justify-center items-center z-50"
+      className="fixed inset-0 bg-black bg-opacity-80 flex justify-center items-center z-50 transition-opacity duration-300 ease-in-out"
       onClick={closeModal}
       style={{ userSelect: "none" }}
     >
       <div
-        className="bg-background rounded-3xl shadow-lg s:w-[400px] s:h-[600px] w-[744px] h-[800px] overflow-y-auto transform transition-transform duration-300 ease-in-out scale-95 opacity-0"
+        className="bg-[#141415] rounded-3xl shadow-lg s:w-[400px] s:h-[600px] w-[744px] h-[800px] overflow-y-auto transform transition-transform duration-300 ease-in-out scale-95 opacity-0"
         style={{
           opacity: isModalOpen ? 1 : 0,
           transform: isModalOpen ? "scale(1)" : "scale(0.95)",

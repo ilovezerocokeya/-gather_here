@@ -81,7 +81,7 @@ const MyPeoplePage: React.FC = () => {
       ) : error ? (
         <p className="text-red-500">{error}</p>
       ) : likedMemberData.length > 0 ? (
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-28">
           {likedMemberData.map((member) => (
             <MemberCard
               key={member.user_id}

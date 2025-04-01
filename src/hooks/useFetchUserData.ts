@@ -28,20 +28,23 @@ export const useFetchUserData = () => {
       if (error || !data) {
         throw new Error(error?.message || "사용자 데이터를 가져오는 데 실패했습니다.");
       }
-
+      
+      // data를 UserData 타입으로 안전하게 캐스팅
+      const userData = data as UserData;
 
       // defaultUserData에 존재하는 키만 유지하면서 data의 값을 채움
-      const formattedData: UserData = Object.entries(defaultUserData).reduce(
+      const formattedData: UserData = (Object.entries(defaultUserData) as [keyof UserData, UserData[keyof UserData]][]).reduce(
         (acc, [key, defaultValue]) => {
-          const typedKey = key as keyof UserData;
-          return { ...acc, [typedKey]: data[typedKey] ?? defaultValue };
+          return {
+            ...acc,
+            [key]: userData[key] ?? defaultValue,
+          };
         },
         {} as UserData
       );
 
       setUserData(formattedData); // 가져온 데이터를 상태에 저장
     } catch (err: unknown) {
-
       const errorMessage = err instanceof Error ? err.message : "알 수 없는 오류가 발생했습니다.";
       setError(errorMessage);
       

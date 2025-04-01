@@ -5,20 +5,9 @@ import { useSignup } from "@/provider/user/UserSignupProvider";
 import { useAuth } from "@/provider/user/UserAuthProvider";
 import { useUserData } from "@/provider/user/UserDataProvider";
 import { defaultUserData, UserData } from "@/types/userData"; 
-import type { SupabaseUser } from "@/utils/supabase/types";
 import type { UseFormSetError } from "react-hook-form";
 import { secureImageUrl } from "@/utils/imageUtils";
 
-// SupabaseUser -> UserData 변환 함수
-const mapSupabaseUserToUserData = (supabaseUser: SupabaseUser | null): UserData => ({
-  user_id: supabaseUser?.id ?? "",  
-  nickname: "",
-  job_title: "",
-  experience: "", 
-  profile_image_url: secureImageUrl(supabaseUser?.user_metadata?.avatar_url ?? ""),
-  description: "",
-  blog: "", 
-});
 
 const useSubmitProfile = (setUserData: React.Dispatch<React.SetStateAction<UserData | null>>) => {
   // 회원가입 단계 관련 상태
@@ -47,14 +36,16 @@ const useSubmitProfile = (setUserData: React.Dispatch<React.SetStateAction<UserD
       const { data: { session } } = await supabase.auth.getSession();
   
       if (isMounted && session?.user) {
-        setUser(session.user);
-        if (session.user.user_metadata?.avatar_url) {
-          setProfileImageUrl(session.user.user_metadata.avatar_url);
+        void setUser(session.user);
+        const avatarUrl = session.user.user_metadata?.avatar_url as string | null;
+
+        if (avatarUrl) {
+          setProfileImageUrl(avatarUrl);
         }
       }
     };
   
-    fetchUser();
+    void fetchUser();
   
     return () => {
       isMounted = false; // 언마운트 시 실행 방지
@@ -83,7 +74,7 @@ const useSubmitProfile = (setUserData: React.Dispatch<React.SetStateAction<UserD
 
     try {
       // Supabase에서 사용자 데이터 업데이트
-      const { data: updatedUser, error: updateError } = await supabase
+      const { error: updateError } = await supabase
         .from("Users")
         .update({
           job_title: profileData.job_title,

@@ -7,7 +7,7 @@ import { defaultUserData, UserData } from "@/types/userData";
 
 const useSelectJob = () => {
   const { nextStep } = useSignup(); 
-  const { userData, setUserData } = useUserData();
+  const { setUserData } = useUserData();
   const [selectedJob, setSelectedJob] = useState<string>('');
   const router = useRouter();
   const { closeModal } = useModal();

@@ -27,7 +27,6 @@ return (
         minHeight: '500px',
         paddingTop: '20px',
         paddingBottom: '20px',
-        position: 'sticky',
         top: '20px',
         zIndex: 10, 
       }}

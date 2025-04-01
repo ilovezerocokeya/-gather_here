@@ -79,8 +79,7 @@ export interface UseMemberDataReturn {
   filteredMembers: MemberCardProps[];
   isLoading: boolean;
   isError: boolean;
-  refetch: () => void;
-  fetchNextPage: () => void;
+  fetchNextPage: () => Promise<unknown>;
   hasNextPage: boolean;
   isFetchingNextPage: boolean;
   setFilteredJob: Dispatch<SetStateAction<string>>;

@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useEffect, useRef, useState } from "react"; 
+import React, { useEffect,} from "react"; 
 import { useForm, SubmitHandler } from "react-hook-form";
 import NicknameInput from "@/components/Signup/components/NicknameInput";
 import useCheckNickname from "@/hooks/useCheckNickname";
@@ -20,7 +20,6 @@ const Signup03: React.FC = () => {
   const { setUserData } = useUserData();
   const { register, handleSubmit, watch, formState: { errors }, setError } = useForm<FormValues>(); 
   const watchNickname = watch("nickname"); // 닉네임 필드 감시
-  const formRef = useRef<HTMLFormElement>(null);
   const nicknameAvailable = useCheckNickname(watchNickname); // 닉네임 사용 가능 여부 확인
   const { onSubmit } = useSubmitProfile(setUserData);
   
@@ -33,9 +32,9 @@ const Signup03: React.FC = () => {
     await onSubmit(data, nicknameAvailable, setError); // nicknameAvailable이 항상 boolean이 됨
   };
 
-  const handleConfirmSkip = () => {
+  const handleConfirmSkip = async () => {
     document.body.classList.remove("page-disabled");
-    handleSubmit(onSubmitForm)(); // handleSubmit과 연결
+    await handleSubmit(onSubmitForm)(); // handleSubmit과 연결
   };
 
   useEffect(() => {
@@ -86,20 +85,25 @@ const Signup03: React.FC = () => {
           커뮤니티에서 나를 나타낼 이름을 설정해 주세요. <br /> 기억하기 쉬운 닉네임일수록 좋아요!
         </div>
 
-        <form onSubmit={handleSubmit(handleConfirmSkip)} className="max-h-[380px] s:mt-26 mt-20">
-        <NicknameInput register={register} errors={errors} nicknameAvailable={nicknameAvailable} watch={watch} />
+        <form onSubmit={(e) => { e.preventDefault(); void handleConfirmSkip();}} className="max-h-[380px] s:mt-26 mt-20">
+          <NicknameInput 
+            register={register} 
+            errors={errors} 
+            nicknameAvailable={nicknameAvailable} 
+            watch={watch} 
+          />
           <div className="flex justify-center items-center s:mt-10 mt-12">
-          <button
-            type="submit"
-            className={`s:w-[300px] w-[350px] h-[45px] mt-24 py-3 flex justify-center items-center rounded-2xl transition-transform transform hover:scale-105 active:scale-95 active:bg-gray-800 active:text-gray-200 ${
-              watchNickname && watchNickname.trim() !== "" && nicknameAvailable
-                ? "text-[#C3E88D]"  // 닉네임 사용 가능하면 텍스트 색상 변경
-                : "text-[#FFFFFF]"  // 기본 텍스트 색상
-            } bg-[#343437]`} 
-            disabled={!watchNickname || watchNickname.trim() === "" || !nicknameAvailable} // 조건 만족 안 하면 비활성화
-          >
-            등록하기
-          </button>
+            <button
+              type="submit"
+              className={`s:w-[300px] w-[350px] h-[45px] mt-24 py-3 flex justify-center items-center rounded-2xl transition-transform transform hover:scale-105 active:scale-95 active:bg-gray-800 active:text-gray-200 ${
+                watchNickname && watchNickname.trim() !== "" && nicknameAvailable
+                  ? "text-[#C3E88D]"  // 닉네임 사용 가능하면 텍스트 색상 변경
+                  : "text-[#FFFFFF]"  // 기본 텍스트 색상
+              } bg-[#343437]`} 
+              disabled={!watchNickname || watchNickname.trim() === "" || !nicknameAvailable} // 조건 만족 안 하면 비활성화
+            >
+              등록하기
+            </button>
           </div>
         </form>
       </div>
