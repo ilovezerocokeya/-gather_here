@@ -1,23 +1,14 @@
-import { useSearchParams, useRouter } from "next/navigation";
-import { FormEvent, useState, useEffect, useCallback } from "react";
+import { useRouter } from "next/navigation";
+import { FormEvent, useState } from "react";
 
 const useSearch = () => {
-  const searchParams = useSearchParams();
   const router = useRouter();
   const [searchWord, setSearchWord] = useState("");
 
-  useEffect(() => {
-    const searchParam = searchParams.get("search") || "";
-    setSearchWord(searchParam);
-  }, [searchParams]);
-
-  const handleSearch = useCallback(
-    (evt: FormEvent<HTMLFormElement>) => {
-      evt.preventDefault();
-      router.push(`?search=${encodeURIComponent(searchWord)}`);
-    },
-    [searchWord, router],
-  );
+  const handleSearch = (evt: FormEvent<HTMLFormElement>) => {
+    evt.preventDefault();
+    router.push(`/search/${decodeURIComponent(searchWord)}`);
+  };
 
   return { searchWord, setSearchWord, handleSearch };
 };

@@ -1,24 +1,24 @@
-"use client";
+'use client';
 
-import React, { Suspense, useEffect, useState } from "react";
-import Link from "next/link";
-import { useRouter } from "next/navigation";
-import Image from "next/image";
-import LoginForm from "@/components/Login/LoginForm";
-import { useAuth } from "@/provider/user/UserAuthProvider";
-import { useUserData } from "@/provider/user/UserDataProvider";
-import useSearch from "@/hooks/useSearch";
-import { supabase } from "@/utils/supabase/client";
+import React, { useEffect, useRef, useState } from 'react';
+import Link from 'next/link';
+import { useRouter } from 'next/navigation';
+import Image from 'next/image';
+import LoginForm from '@/components/Login/LoginForm';
+import { useAuth } from '@/provider/user/UserAuthProvider';
+import { useUserData } from '@/provider/user/UserDataProvider';
+import { supabase } from '@/utils/supabase/client';
+import SearchBar from '@/components/Search/SearchBar';
+import { SearchModalRef } from '@/types/refs/SearchModal';
 
 const Header: React.FC = () => {
   const { user, resetAuthUser } = useAuth();
   const { userData, fetchUserData, loading: userDataLoading, error: userDataError } = useUserData();
   const router = useRouter();
-  const [isSearchOpen, setIsSearchOpen] = useState(false);
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [isMypageModalOpen, setIsMypageModalOpen] = useState(false);
-  const { searchWord, setSearchWord, handleSearch } = useSearch();
-  const defaultImage = "/assets/header/user.svg";
+  const defaultImage = '/assets/header/user.svg';
+  const modalRef = useRef<SearchModalRef>(null);
 
   // 로그아웃 함수
   const signOut = async () => {
@@ -28,19 +28,14 @@ const Header: React.FC = () => {
     } catch (err) {
       // 'err'를 명시적으로 Error로 캐스팅
       if (err instanceof Error) {
-        console.error("로그아웃 중 오류:", err.message);
+        console.error('로그아웃 중 오류:', err.message);
       } else {
-        console.error("알 수 없는 오류 발생:", err);
+        console.error('알 수 없는 오류 발생:', err);
       }
     } finally {
       resetAuthUser(); // 사용자 상태 초기화
-      router.push("/"); // 메인 페이지로 이동
+      router.push('/'); // 메인 페이지로 이동
     }
-  };
-
-  // 검색 창 열기/닫기
-  const toggleSearch = () => {
-    setIsSearchOpen(!isSearchOpen);
   };
 
   // 마이페이지 모달 열기/닫기
@@ -60,18 +55,19 @@ const Header: React.FC = () => {
   };
 
   // 모달이 열렸을 때 Esc 키로 모달 닫기
+  // NOTE: 재활용하기 좋은 것 같은데, 분리하는 건 어떨지?
   useEffect(() => {
     if (isModalOpen) {
       const handleEsc = (event: KeyboardEvent) => {
-        if (event.key === "Escape") {
+        if (event.key === 'Escape') {
           handleCloseLoginModal(); // Esc 키를 누르면 모달을 닫음
         }
       };
 
-      window.addEventListener("keydown", handleEsc);
+      window.addEventListener('keydown', handleEsc);
 
       return () => {
-        window.removeEventListener("keydown", handleEsc);
+        window.removeEventListener('keydown', handleEsc);
       };
     }
   }, [isModalOpen]); // 모달이 열릴 때만 이벤트 리스너 추가
@@ -113,7 +109,7 @@ const Header: React.FC = () => {
               height={70}
               priority
               className="s:hidden"
-              style={{ objectFit: "contain" }}
+              style={{ objectFit: 'contain' }}
             />
             <Image
               src="/assets/header/mobile_logo.svg"
@@ -122,7 +118,7 @@ const Header: React.FC = () => {
               height={50}
               priority
               className="hidden s:block"
-              style={{ objectFit: "contain", width: "auto", height: "auto" }}
+              style={{ objectFit: 'contain', width: 'auto', height: 'auto' }}
             />
           </Link>
           <Link href="/gatherHub" className="logo-link">
@@ -133,131 +129,62 @@ const Header: React.FC = () => {
               height={50}
               priority
               className="s:w-[50px] s:h-[25px]"
-              style={{ width: "auto", height: "auto" }}
+              style={{ width: 'auto', height: 'auto' }}
             />
           </Link>
         </div>
 
-        <Suspense>
-          <nav className="flex items-center gap-2">
-            {/* 검색 폼 */}
-            <form className="relative s:hidden items-center overflow-hidden" onSubmit={handleSearch}>
-              <label htmlFor="input" className="sr-only">
-                검색창
-              </label>
-              <input
-                type="text"
-                id="input"
-                name="input"
-                placeholder="검색어를 입력해보세요"
-                className="shared-input-thin-gray text-labelAssistive w-[335px]"
-                value={searchWord}
-                onChange={(evt) => setSearchWord(evt.target.value)}
-              />
-              <button className="absolute top-[9px] right-[8px]" type="submit">
-                <Image src="/assets/header/search.svg" width={20} height={20} alt="검색 버튼 아이콘" />
-              </button>
-            </form>
-
-            <div className="flex items-center gap-2">
-              {/* 검색 버튼 */}
-              <button
-                onClick={toggleSearch}
-                type="submit"
-                className="hidden s:flex items-center justify-center w-[36px] h-[36px] rounded-lg bg-fillNeutral hover:bg-fillAssistive pt-1"
-              >
-                <Image src="/assets/header/search.svg" width={22} height={22} alt="검색 버튼 아이콘" />
-              </button>
-
-              {/* 게시글 작성 버튼 */}
-              <Link onClick={(evt) => handleClickPost(evt)} href="/post" passHref>
-                <button className="square-header-button-gray">
-                  <Image src="/assets/header/write.svg" width={16} height={16} alt="글쓰기 버튼 아이콘" />
-                </button>
-              </Link>
-
-              {/* 로그인 / 마이페이지 버튼 */}
-              {user ? (
-                <div className="flex items-center">
-                  {/* 마이페이지 모달 토글 버튼 */}
-                  <button
-                    onClick={toggleMypageModal}
-                    className="hidden s:flex items-center justify-center w-[32px] h-[32px] rounded-lg bg-fillNeutral hover:bg-fillAssistive z-50"
-                    aria-label={isMypageModalOpen ? "마이페이지 닫기" : "마이페이지 열기"}
-                  >
-                    <Image
-                      src={isMypageModalOpen ? "/assets/header/primary_close.svg" : "/assets/header/mobile_logo.svg"}
-                      alt={isMypageModalOpen ? "닫기 버튼 아이콘" : "마이페이지 아이콘"}
-                      priority
-                      width={14}
-                      height={16}
-                    />
-                  </button>
-
-                  {/* 마이페이지 링크 버튼 */}
-                  <Link href="/mypage" className="square-header-button-gray s:hidden" aria-label="마이페이지로 이동">
-                    <Image
-                      src="/assets/header/mobile_logo.svg"
-                      alt="마이페이지 아이콘"
-                      priority
-                      width={14}
-                      height={16}
-                    />
-                  </Link>
-
-                  {/* 로그아웃 버튼 */}
-                  <button
-                    onClick={signOut}
-                    className="shared-button-small-gray-2 ml-2 s:hidden"
-                    aria-label="로그아웃"
-                  >
-                    로그아웃
-                  </button>
-                </div>
-              ) : (
-                /* 로그인 모달 열기 버튼 */
-                <button
-                  onClick={handleOpenLoginModal}
-                  className="shared-button-small-green"
-                  aria-label="로그인 시작하기"
-                >
-                  시작하기
-                </button>
-              )}
-            </div>
-          </nav>
-        </Suspense>
-      </div>
-
-      {/* 검색 모달 */}
-      {isSearchOpen && (
-        <Suspense>
-          <form
-            className="absolute top-0 left-0 w-full bg-background z-50 p-2 flex items-center s:block"
-            onSubmit={handleSearch}
-          >
-            <label htmlFor="search" className="sr-only">
-              검색창
-            </label>
-            <input
-              type="text"
-              id="search"
-              name="search"
-              placeholder="검색어를 입력해보세요"
-              className="shared-input-thin-gray w-full"
-              value={searchWord}
-              onChange={(evt) => setSearchWord(evt.target.value)}
-            />
+        <nav className="flex items-center gap-2">
+          <div className="flex items-center gap-2">
+            {/* 검색 버튼 */}
             <button
-              type="button"
-              onClick={toggleSearch}
-              className="absolute right-4 top-1/2 transform -translate-y-1/2"
+              onClick={() => modalRef.current?.open()}
+              type="submit"
+              className="flex items-center justify-center w-[36px] h-[36px] rounded-lg bg-fillNeutral hover:bg-fillAssistive pt-1"
             >
-              <Image src="/assets/header/close.svg" alt="닫기 버튼" width={16} height={16} />
+              <Image src="/assets/header/search.svg" width={22} height={22} alt="검색 버튼 아이콘" />
+              {/* 검색 모달 */}
+              <SearchBar ref={modalRef} />
             </button>
-          </form>
-        </Suspense>
-      )}
+            {/* 게시글 작성 버튼 */}
+            <Link onClick={(evt) => handleClickPost(evt)} href="/post" passHref>
+              <button className="square-header-button-gray">
+                <Image src="/assets/header/write.svg" width={16} height={16} alt="글쓰기 버튼 아이콘" />
+              </button>
+            </Link>
+
+            {/* 로그인 / 마이페이지 버튼 */}
+            {user ? (
+              <div className="flex items-center">
+                <button
+                  onClick={toggleMypageModal}
+                  className="hidden s:flex items-center justify-center w-[32px] h-[32px] rounded-lg bg-fillNeutral hover:bg-fillAssistive z-50"
+                >
+                  <Image
+                    src={isMypageModalOpen ? '/assets/header/primary_close.svg' : '/assets/header/mobile_logo.svg'}
+                    alt={isMypageModalOpen ? '닫기 버튼 아이콘' : '마이페이지 아이콘'}
+                    priority
+                    width={14}
+                    height={16}
+                  />
+                </button>
+
+                <Link href="/mypage" className="square-header-button-gray s:hidden">
+                  <Image src="/assets/header/mobile_logo.svg" alt="마이페이지 아이콘" priority width={14} height={16} />
+                </Link>
+
+                <button onClick={signOut} className="shared-button-small-gray-2 ml-2 s:hidden">
+                  로그아웃
+                </button>
+              </div>
+            ) : (
+              <button onClick={handleOpenLoginModal} className="shared-button-small-green">
+                시작하기
+              </button>
+            )}
+          </div>
+        </nav>
+      </div>
 
       {/* 로그인 모달 */}
       {isModalOpen && (
@@ -290,7 +217,7 @@ const Header: React.FC = () => {
                     src={getProfileImageUrl(userData?.profile_image_url || defaultImage)}
                     alt="프로필 이미지"
                     fill
-                    style={{ objectFit: "cover" }}
+                    style={{ objectFit: 'cover' }}
                     className="rounded-[12px]"
                   />
                 </div>
@@ -365,4 +292,3 @@ const Header: React.FC = () => {
 };
 
 export default Header;
-

@@ -51,9 +51,7 @@ const ProfilePicture: React.FC = () => {
         .upload(`profileImages/${FileName}`, file, { upsert: true });
       if (uploadError) throw uploadError;
 
-      const { data: profileImageUrlData } = await supabase.storage
-        .from("images")
-        .getPublicUrl(`profileImages/${FileName}`);
+      const { data: profileImageUrlData } = supabase.storage.from("images").getPublicUrl(`profileImages/${FileName}`);
 
       const profileImageUrl = profileImageUrlData.publicUrl;
 
