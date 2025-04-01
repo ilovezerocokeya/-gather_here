@@ -5,6 +5,7 @@ import JobDirectory from "@/components/GatherHub/JobDirectory";
 import { useMemberData } from "@/hooks/useMemberData";
 import { GatherHubPageClientProps } from "@/lib/gatherHub"; 
 import { throttle } from "lodash";
+import SpinnerLoader from "../Common/Loading/SpinnerLoader";
 
 const GatherHubPageClient: React.FC<GatherHubPageClientProps> = ({ initialData }) => {
   const {
@@ -31,7 +32,13 @@ const GatherHubPageClient: React.FC<GatherHubPageClientProps> = ({ initialData }
   }, [hasNextPage, fetchNextPage]);
 
   // 데이터 로딩 중 화면에 표시할 UI
-  if (isLoading) return <div>Loading...</div>;
+  if (isLoading) {
+    return (
+      <div className="fixed inset-0 bg-black flex justify-center items-center">
+        <SpinnerLoader />
+      </div>
+    );
+  }
 
   // 에러 발생 시 오류 메시지와 재시도 버튼 표시
   if (isError)

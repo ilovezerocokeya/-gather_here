@@ -2,13 +2,12 @@
 
 import React, { useEffect, useState } from "react";
 import { usePathname, useRouter } from "next/navigation";
-import { createClient } from "@/utils/supabase/client";
+import { supabase } from "@/utils/supabase/client";
 import Image from "next/image";
 import LikeButton from "@/components/EventsDetail/ITLikeButton";
 import ShareButton from "@/components/MainDetail/ShareButton";
 import Link from "next/link";
 
-const supabase = createClient();
 
 const EventDetailPage = () => {
   const pathname = usePathname();

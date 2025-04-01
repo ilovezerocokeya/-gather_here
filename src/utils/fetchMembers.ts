@@ -11,7 +11,7 @@ export const fetchMembers = async (pageParam: number = 1): Promise<FetchMembersR
   try {
     // 지정된 페이지의 멤버 데이터를 가져옴
     const response = await fetch(`${API_URL}/gatherHub?page=${pageParam}&limit=10`, {
-      cache: "no-store", // 캐싱 방지
+      next: { revalidate: 60 }, // 1분마다 캐시 갱신 
     });
 
     // HTTP 응답이 정상적이지 않을 경우 에러 발생

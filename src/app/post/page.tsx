@@ -3,7 +3,7 @@
 import React, { useState, ChangeEvent, useEffect } from "react";
 import { useRouter } from "next/navigation";
 import Image from "next/image";
-import { createClient } from "@/utils/supabase/client";
+import { supabase } from "@/utils/supabase/client";
 import useDraft from "@/hooks/useDraft";
 import FormInput from "@/components/MainDetail/FormInput";
 import FormDropdown from "@/components/MainDetail/FormDropdown";
@@ -19,8 +19,6 @@ interface Option {
   value: string;
   label: string;
 }
-
-const supabase = createClient();
 
 const PostPage = () => {
   const [draft, updateDraft, saveDraft] = useDraft();

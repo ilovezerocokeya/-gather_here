@@ -122,7 +122,7 @@ const PrCard: React.FC = () => {
       {/* 섹션 제목 */}
       <h2 className="flex items-center my-3 text-labelNormal">
         <Image 
-          src="/assets/gif/mic.gif" 
+          src="/assets/gif/mic.webp" 
           alt="마이크 아이콘" 
           width={20} 
           height={20} 

@@ -1,4 +1,4 @@
-import React, { useCallback, useEffect } from "react";
+import React, { useCallback, useEffect, useState } from "react";
 import { createPortal } from "react-dom";
 import Image from "next/image";
 import Link from "next/link";
@@ -27,6 +27,13 @@ const CardModal: React.FC<CardModalProps> = ({
   selectedTechStacks,
 }) => {
 
+  const [hasMounted, setHasMounted] = useState(false);
+
+  // hydration mismatch 방지를 위한 마운트 체크
+  useEffect(() => {
+    setHasMounted(true);
+  }, []);
+
   const handleEsc = useCallback((event: KeyboardEvent) => {
     if (event.key === "Escape") closeModal();
   }, [closeModal]);
@@ -49,17 +56,18 @@ const CardModal: React.FC<CardModalProps> = ({
 }, [isModalOpen, handleEsc]);
 
   // 모달이 닫혀 있을 경우 렌더링하지 않음
-  if (!isModalOpen) return null;
+  if (!isModalOpen || !hasMounted) return null;
+
   
   
   return createPortal(
     <div
-      className="fixed inset-0 bg-black bg-opacity-80 flex justify-center items-center z-50 transition-opacity duration-300 ease-in-out"
+      className="fixed inset-0 bg-background opacity-80 flex justify-center items-center z-50"
       onClick={closeModal}
       style={{ userSelect: "none" }}
     >
       <div
-        className="bg-[#141415] rounded-3xl shadow-lg s:w-[400px] s:h-[600px] w-[744px] h-[800px] overflow-y-auto transform transition-transform duration-300 ease-in-out scale-95 opacity-0"
+        className="bg-background rounded-3xl shadow-lg s:w-[400px] s:h-[600px] w-[744px] h-[800px] overflow-y-auto transform transition-transform duration-300 ease-in-out scale-95 opacity-0"
         style={{
           opacity: isModalOpen ? 1 : 0,
           transform: isModalOpen ? "scale(1)" : "scale(0.95)",
@@ -133,25 +141,33 @@ const CardModal: React.FC<CardModalProps> = ({
                 width={16}
                 height={16}
                 loading="lazy"
-                unoptimized
               />
               <span className={`hidden md:block`}>북마크 저장하기</span>
             </button>
-  
-            <button
-              className="bg-[#28282a] text-white px-4 py-3 rounded-xl hover:bg-gray-900 transition flex items-center space-x-2 group"
-              style={{ userSelect: "none", cursor: "not-allowed" }}
-              disabled
-            >
-              <Image src="/assets/chat.svg" alt="메시지 아이콘" width={20} height={20} unoptimized />
-              <span className="hidden md:block">대화 신청하기</span>
-  
-              {/* 말풍선 */}
-              <div className="absolute top-[100%] s:left-[50%] left-[65%] transform -translate-x-1/2 min-w-[140px] px-3 py-2 bg-[orange] text-black text-sm rounded-lg opacity-0 group-hover:opacity-100 transition-opacity duration-300 shadow-lg">
-                현재 개발 중인 <br /> 기능 입니다.
-                <div className="absolute top-[-6px] s:left-[70%] left-1/2 transform -translate-x-1/2 w-3 h-3 bg-[orange] rotate-45"></div>
-              </div>
-            </button>
+
+            <div className="relative group">
+              <button
+                  className="bg-[#28282a] text-white px-4 py-3 rounded-xl hover:bg-gray-900 transition flex items-center space-x-2"
+                  style={{ userSelect: "none", cursor: "not-allowed" }}
+                  disabled
+              >
+                <Image 
+                  src="/assets/chat.svg" 
+                  alt="메시지 아이콘" 
+                  width={20} 
+                  height={20} 
+                />
+                <span className="hidden md:block" suppressHydrationWarning>
+                  대화 신청하기
+                </span>
+              
+                {/* 말풍선 */}
+                <div className="absolute top-[100%] s:left-[50%] left-[65%] transform -translate-x-1/2 min-w-[140px] px-3 py-2 bg-[orange] text-black text-sm rounded-lg opacity-0 group-hover:opacity-100 transition-opacity duration-300 shadow-lg">
+                  현재 개발 중인 <br /> 기능 입니다.
+                  <div className="absolute top-[-6px] s:left-[70%] left-1/2 transform -translate-x-1/2 w-3 h-3 bg-[orange] rotate-45"></div>
+                </div>
+              </button>
+            </div>
           </div>
         </div>
         
@@ -295,7 +311,6 @@ const CardModal: React.FC<CardModalProps> = ({
                   alt={`${first_link_type} Link`}
                   width={24}
                   height={24}
-                  unoptimized
                 />
                 </Link>
               </div>
@@ -310,7 +325,6 @@ const CardModal: React.FC<CardModalProps> = ({
                     alt={`${second_link_type} Link`}
                     width={24}
                     height={24}
-                    unoptimized
                   />
                 </Link>
               </div>

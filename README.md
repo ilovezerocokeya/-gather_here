@@ -322,7 +322,7 @@ gather_here                                                        //
 │  │  │  │  └─ Header.tsx                                          //
 │  │  │  ├─ Loading                                                //
 │  │  │  │  ├─ InitialLoadingWrapper.tsx                           //
-│  │  │  │  ├─ InitialLoadingWrapperLottie.tsx                     //
+│  │  │  │  ├─ SpinnerLoader.tsx                                   //
 │  │  │  │  ├─ LottieAnimation.tsx                                 //
 │  │  │  │  └─ PuzzleAnimation.tsx                                 //
 │  │  │  ├─ Modal                                                  //
@@ -523,7 +523,7 @@ gather_here                                                        //
 const ItEventCardLong: NextPage<EventsCardProps> = ({ post }) => {
   const deadlineDate = new Date(post.date_done);
   const daysLeft = Math.ceil((deadlineDate.getTime() - Date.now()) / (1000 * 60 * 60 * 24));
-  const displayDaysLeft = daysLeft === 0 ? "D-day" : `D-${daysLeft}`;
+  const displayDaysLeft = daysLeft === 0 ? 'D-day' : `D-${daysLeft}`;
 
   return (
     <ul className="flex items-center">
@@ -531,7 +531,7 @@ const ItEventCardLong: NextPage<EventsCardProps> = ({ post }) => {
         <span className="label-secondary rounded-full text-baseS  px-3 py-1.5 mr-1">{displayDaysLeft}</span>
       </li>
       <li className="text-baseS  text-labelNormal ml-2">
-        <time dateTime="YYYY-MM-DD">{dayjs(post.date_start).format("YYYY-MM-DD")}</time>
+        <time dateTime="YYYY-MM-DD">{dayjs(post.date_start).format('YYYY-MM-DD')}</time>
       </li>
     </ul>
   );

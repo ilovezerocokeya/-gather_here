@@ -23,7 +23,7 @@ const Signup04: React.FC = () => {
         <div className="text-center s:mt-1 mt-3">
           <div className="w-full h-65 pt-3 rounded-md mb-4 flex items-center justify-center overflow-hidden">
           <Image
-              src="/logos/welcomeIcon.gif"
+              src="/logos/welcomeIcon.webp"
               alt="Welcome Image"
               width={350}
               height={350}
