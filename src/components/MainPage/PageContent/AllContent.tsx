@@ -60,7 +60,7 @@ const AllContent: React.FC = () => {
         <Calender />
       </div>
       <div className="flex items-center">
-        <Image src="/assets/gif/puzzle.gif" alt="Puzzle Icon" width={20} height={20} className="mb-3" />
+        <Image src="/assets/gif/puzzle.webp" alt="Puzzle Icon" width={20} height={20} className="mb-3" />
         <p className="m-2 mb-4 text-labelNormal">나에게 꼭 맞는 동료들을 찾아보세요</p>
       </div>
       <InfiniteScrollComponent posts={filteredPosts} hasMore={hasMore} loadMorePosts={loadMorePosts} />

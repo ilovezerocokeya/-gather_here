@@ -11,6 +11,8 @@ import "react-quill/dist/quill.core.css";
 import LikeButton from "@/components/MainDetail/LikeButton";
 import ShareButton from "@/components/MainDetail/ShareButton";
 import CommonModal from "@/components/Common/Modal/CommonModal";
+import { secureImageUrl } from "@/utils/imageUtils";
+
 
 
 const MainDetailPage = () => {
@@ -144,8 +146,6 @@ const MainDetailPage = () => {
     ALLOWED_ATTR: ["href", "target", "style", "class"],
   });
   
-  const secureImageUrl = (url: string | null) => (url ? url.replace(/^http:/, "https:") : "/assets/header/user.svg");
-
   const renderTechStackIcons = (techStack: string[]) => {
     return techStack.map((tech) => (
       <div key={tech} className="inline-flex items-center mr-1">

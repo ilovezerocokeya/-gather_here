@@ -84,7 +84,7 @@ const Calender: NextPage = () => {
     <div className="custom_calender mb-6">
       <h4 className="flex text-labelNormal mb-3">
         <Image
-          src="/assets/gif/hot.gif"
+          src="/assets/gif/hot.webp"
           alt="fire Icon"
           width={20}
           height={20}

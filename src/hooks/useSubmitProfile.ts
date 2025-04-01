@@ -7,9 +7,7 @@ import { useUserData } from "@/provider/user/UserDataProvider";
 import { defaultUserData, UserData } from "@/types/userData"; 
 import type { SupabaseUser } from "@/utils/supabase/types";
 import type { UseFormSetError } from "react-hook-form";
-
-const secureImageUrl = (url: string | null) =>
-  url ? url.replace(/^http:/, "https:") : "/assets/header/user.svg";
+import { secureImageUrl } from "@/utils/imageUtils";
 
 // SupabaseUser -> UserData 변환 함수
 const mapSupabaseUserToUserData = (supabaseUser: SupabaseUser | null): UserData => ({

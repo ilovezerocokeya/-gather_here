@@ -22,7 +22,7 @@ export default function NotFound() {
       }}
     >
       <Image
-        src="/logos/404Error.gif"
+        src="/logos/404Error.webp"
         alt="Not Found"
         width={330}
         height={330}

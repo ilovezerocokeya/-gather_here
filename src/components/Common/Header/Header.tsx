@@ -39,9 +39,12 @@ const Header: React.FC = () => {
   };
 
   // 마이페이지 모달 열기/닫기
+  const mypageModalRef = useRef(false);
+
   const toggleMypageModal = () => {
-    setIsMypageModalOpen(!isMypageModalOpen);
-  };
+  mypageModalRef.current = !mypageModalRef.current;
+  setIsMypageModalOpen(mypageModalRef.current);
+};
 
   // 로그인 모달 열기
   const handleOpenLoginModal = () => {
@@ -74,10 +77,9 @@ const Header: React.FC = () => {
 
   // 사용자 데이터 가져오기
   useEffect(() => {
-    if (user?.id) {
-      fetchUserData(user.id); // 사용자 데이터를 가져옴
-    }
-  }, [user, fetchUserData]);
+    if (!user?.id) return;
+    fetchUserData(user.id);
+  }, [user?.id]); 
 
   // 게시글 작성 클릭 시 로그인 여부 확인
   const handleClickPost = (evt: React.MouseEvent<HTMLAnchorElement, MouseEvent>) => {
@@ -94,13 +96,10 @@ const Header: React.FC = () => {
     }
   };
 
-  // 프로필 이미지 URL 처리
-  const getProfileImageUrl = (url: string) => `${url}?${new Date().getTime()}`;
-
   return (
     <header className="bg-background shadow-md relative text-fontWhite">
       <div className="w-full mx-auto max-w-container-l m:max-w-container-m s:max-w-container-s s:flex-row flex justify-between items-center py-[14px] s:py-2">
-        <div className="flex items-center s:space-x-4 space-x-12">
+        <div className="flex items-center s:space-x-6 space-x-12">
           <Link href="/" className="flex items-center logo-link">
             <Image
               src="/logos/gatherhere.svg"
@@ -108,14 +107,17 @@ const Header: React.FC = () => {
               width={140}
               height={70}
               priority
+              quality={85}
               className="s:hidden"
               style={{ objectFit: 'contain' }}
             />
+
             <Image
               src="/assets/header/mobile_logo.svg"
               alt="@gather_here 모바일 로고"
-              width={40}
-              height={50}
+              width={30}
+              height={40}
+              quality={85} 
               priority
               className="hidden s:block"
               style={{ objectFit: 'contain', width: 'auto', height: 'auto' }}
@@ -123,9 +125,9 @@ const Header: React.FC = () => {
           </Link>
           <Link href="/gatherHub" className="logo-link">
             <Image
-              src="/logos/hub2.png"
+              src="/logos/gatherHub.svg" 
               alt="@gather_hub 로고"
-              width={120}
+              width={100}
               height={50}
               priority
               className="s:w-[50px] s:h-[25px]"
@@ -214,7 +216,7 @@ const Header: React.FC = () => {
               <div className="w-12 h-12 bg-fillNeutral rounded-[12px] flex items-center justify-center overflow-hidden">
                 <div className="relative w-full h-full rounded-[12px]">
                   <Image
-                    src={getProfileImageUrl(userData?.profile_image_url || defaultImage)}
+                    src={profileImageUrl}
                     alt="프로필 이미지"
                     fill
                     style={{ objectFit: 'cover' }}

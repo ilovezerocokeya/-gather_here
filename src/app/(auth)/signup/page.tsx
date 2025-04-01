@@ -2,10 +2,9 @@
 
 import { useEffect } from "react";
 import { useRouter } from "next/navigation";
-import { createClient } from "@/utils/supabase/client";
+import { supabase } from "@/utils/supabase/client";
 import SignupForm from "@/components/Signup/SigupForm";
 
-const supabase = createClient();
 
 const SignupPage = () => {
   const router = useRouter();

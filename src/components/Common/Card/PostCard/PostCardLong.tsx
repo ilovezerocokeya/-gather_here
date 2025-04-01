@@ -5,6 +5,8 @@ import Link from "next/link";
 import dayjs from "dayjs";
 import { useAuth } from "@/provider/user/UserAuthProvider";
 import LikeButton from "@/components/MainDetail/LikeButton";
+import { secureImageUrl } from "@/utils/imageUtils";
+
 
 interface PostCardProps {
   post: PostWithUser;
@@ -56,9 +58,6 @@ const PostCardLong: React.FC<PostCardProps> = ({ post, onRemoveBookmark }) => {
       ALLOWED_ATTR: ["href", "target", "style", "class"],
     });
   }
-
-  const secureImageUrl = (url: string | null) =>
-    url ? url.replace(/^http:/, "https:") : "/assets/header/user.svg";
 
   const jobTitleClassMap: { [key: string]: string } = {
     프론트엔드: "text-primary",

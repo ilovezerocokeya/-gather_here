@@ -8,6 +8,8 @@ import DOMPurify from "dompurify";
 import LikeButton from "@/components/MainDetail/LikeButton";
 import { useAuth } from "@/provider/user/UserAuthProvider"
 import dayjs from "dayjs";
+import { secureImageUrl } from "@/utils/imageUtils";
+
 
 interface PostCardProps {
   post: PostWithUser;
@@ -32,9 +34,6 @@ const PostCardShort: React.FC<PostCardProps> = ({ post }) => {
       setIsMounted(false);
     };
   }, [post]);
-
-  const secureImageUrl = (url: string | null) =>
-    url ? url.replace(/^http:/, "https:") : "/assets/header/user.svg";
 
   const jobTitleClassMap: { [key: string]: string } = {
     프론트엔드: "text-primary",

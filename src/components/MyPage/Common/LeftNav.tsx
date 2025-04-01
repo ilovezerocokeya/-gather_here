@@ -7,6 +7,8 @@ import { useAuth } from "@/provider/user/UserAuthProvider";
 import { useUserData } from "@/provider/user/UserDataProvider";
 import Image from "next/image";
 import LeftNavLoader from "@/components/Common/Skeleton/LeftNavLoader";
+import { secureImageUrl } from "@/utils/imageUtils";
+
 
 const LeftNav: React.FC = () => {
   const pathname = usePathname();
@@ -40,8 +42,6 @@ const LeftNav: React.FC = () => {
   };
 
   const jobTitleClass = userData ? getJobTitleClass(userData.job_title) : "";
-  const secureImageUrl = (url: string | null) =>
-    url ? url.replace(/^http:/, "https:") : "/assets/header/user.svg";
 
   useEffect(() => {
     if (user?.id) {

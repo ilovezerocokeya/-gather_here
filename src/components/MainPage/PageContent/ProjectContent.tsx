@@ -147,7 +147,7 @@ const ProjectContent: React.FC<ProjectContentProps> = () => {
   return (
     <div className="w-full">
       <div className="flex items-center">
-        <Image src="/assets/gif/run.gif" alt="Run Icon" width={20} height={20} className="w-5 h-5 mb-2" priority />
+        <Image src="/assets/gif/run.webp" alt="Run Icon" width={20} height={20} className="w-5 h-5 mb-2" priority />
         <p className="m-2 mb-4 text-labelNormal">모집이 곧 종료돼요</p>
       </div>
       {isLoadingCarousel ? (
@@ -160,7 +160,7 @@ const ProjectContent: React.FC<ProjectContentProps> = () => {
         <Carousel posts={carouselPosts} />
       )}
       <div className="flex items-center mt-7">
-        <Image src="/assets/gif/puzzle.gif" alt="Puzzle Icon" width={20} height={20} className="mb-3" />
+        <Image src="/assets/gif/puzzle.webp" alt="Puzzle Icon" width={20} height={20} className="mb-3" />
         <p className="ml-2 mb-3 text-labelNormal">나에게 꼭 맞는 동료들을 찾아보세요</p>
       </div>
       <FilterBar

@@ -1,9 +1,7 @@
 import type { SupabaseClient } from "@supabase/supabase-js";
 import type { Database, SupabaseUser } from "./types";
+import { secureImageUrl } from "@/utils/imageUtils";
 
-// HTTP → HTTPS 변환 및 기본 이미지 처리 함수
-const secureImageUrl = (url: string | null) =>
-  url ? url.replace(/^http:/, "https:") : "/assets/header/user.svg";
 
 // 사용자 데이터 조회 함수 (hydration mismatch 방지)
 export async function fetchUserData( 
@@ -39,12 +37,12 @@ export async function insertNewUser(
       user_id: user.id,
       nickname: user.user_metadata?.full_name || user.email?.split("@")[0] || "사용자",
       email: user.email ?? null,
-      profile_image_url: secureImageUrl(user.user_metadata?.avatar_url || null), // ✅ HTTP → HTTPS 변환 적용
+      profile_image_url: secureImageUrl(user.user_metadata?.avatar_url || null), 
       job_title: null,
       experience: "0",
       description: "안녕하세요! 반갑습니다😆",
       hubCard: false,
-      background_image_url: "/logos/hi.png",
+      background_image_url: "/logos/defaultBackgroundImage.svg",
       answer1: null,
       answer2: null,
       answer3: null,
