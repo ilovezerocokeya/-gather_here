@@ -2,7 +2,8 @@
 import React, { useState, useEffect, useCallback, useMemo } from 'react';
 import dynamic from 'next/dynamic';
 import { useRouter } from 'next/navigation';
-import { useUser } from '@/provider/UserContextProvider';
+import { useAuth } from '@/provider/user/UserAuthProvider';
+import { useUserData } from '@/provider/user/UserDataProvider';
 import { createPortal } from 'react-dom';
 
 // 동적 로딩 설정
@@ -19,8 +20,9 @@ interface JobDirectoryProps {
 const JobDirectory: React.FC<JobDirectoryProps> = ({ setFilteredJob, className }) => {
   const [selectedJob, setSelectedJob] = useState<string>('all');
   const router = useRouter();
-  const { isAuthenticated, userData } = useUser();
-  
+  const { isAuthenticated } = useAuth(); // 사용자 인증 여부
+  const { userData } = useUserData(); // 사용자 데이터
+
   // Hub 등록 여부를 useMemo로 캐싱
   const isHubRegistered = useMemo(() => userData?.hubCard || false, [userData]);
 

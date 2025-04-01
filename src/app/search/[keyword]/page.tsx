@@ -1,14 +1,13 @@
-import { createClient } from "@/utils/supabase/server";
-import SearchResultCard from "../components/SearchResultCard";
-import SearchBar from "@/components/Search/SearchBar";
+import { createServerSupabaseClient } from '@/utils/supabase/server';
+import SearchResultCard from '../components/SearchResultCard';
 
 const page = async ({ params }: { params: { keyword: string } }) => {
-  const supabase = createClient();
+  const supabase = createServerSupabaseClient();
   const keyword = decodeURIComponent(params.keyword);
 
-  let { data, error } = await supabase
-    .from("Posts")
-    .select("*")
+  const { data, error } = await supabase
+    .from('Posts')
+    .select('*')
     .or(`title.ilike.${keyword}, content.ilike.%${keyword}%`);
 
   // NOTE: Next.js 의 error.js 사용해봐도 좋을듯

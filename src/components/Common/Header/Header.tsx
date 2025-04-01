@@ -1,36 +1,42 @@
-"use client";
+'use client';
 
-import React, { useEffect, useRef, useState } from "react";
-import Link from "next/link";
-import { useRouter } from "next/navigation";
-import Image from "next/image";
-import LoginForm from "@/components/Login/LoginForm";
-import { useUser } from "@/provider/UserContextProvider";
-import { createClient } from "@/utils/supabase/client";
-import SearchBar from "@/components/Search/SearchBar";
-import { SearchModalRef } from "@/types/refs/SearchModal";
-
-const supabase = createClient();
+import React, { Suspense, useEffect, useState } from 'react';
+import Link from 'next/link';
+import { useRouter } from 'next/navigation';
+import Image from 'next/image';
+import LoginForm from '@/components/Login/LoginForm';
+import { useAuth } from '@/provider/user/UserAuthProvider';
+import { useUserData } from '@/provider/user/UserDataProvider';
+import { supabase } from '@/utils/supabase/client';
+import SearchBar from '@/components/Search/SearchBar';
+import { SearchModalRef } from '@/types/refs/SearchModal';
 
 const Header: React.FC = () => {
-  const { user, userData, fetchUserData, initializationUser, resetAuthUser } = useUser(); // 사용자 관련 상태 및 함수
+  const { user, resetAuthUser } = useAuth();
+  const { userData, fetchUserData, loading: userDataLoading, error: userDataError } = useUserData();
   const router = useRouter();
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [isMypageModalOpen, setIsMypageModalOpen] = useState(false);
-  const defaultImage = "/assets/header/user.svg";
+  const { searchWord, setSearchWord, handleSearch } = useSearch(); // 검색 관련 상태 및 함수
+  const defaultImage = '/assets/header/user.svg';
   const modalRef = useRef<SearchModalRef>(null);
 
   // 로그아웃 함수
   const signOut = async () => {
-    const { error } = await supabase.auth.signOut();
-    if (error) {
-      console.error("Error logging out:", error);
-      return;
+    try {
+      const { error } = await supabase.auth.signOut();
+      if (error) throw new Error(error.message);
+    } catch (err) {
+      // 'err'를 명시적으로 Error로 캐스팅
+      if (err instanceof Error) {
+        console.error('로그아웃 중 오류:', err.message);
+      } else {
+        console.error('알 수 없는 오류 발생:', err);
+      }
+    } finally {
+      resetAuthUser(); // 사용자 상태 초기화
+      router.push('/'); // 메인 페이지로 이동
     }
-
-    resetAuthUser(); // 사용자 상태 초기화
-    initializationUser(); // 사용자 데이터 초기화
-    router.push("/"); // 메인 페이지로 이동
   };
 
   // 마이페이지 모달 열기/닫기
@@ -54,23 +60,23 @@ const Header: React.FC = () => {
   useEffect(() => {
     if (isModalOpen) {
       const handleEsc = (event: KeyboardEvent) => {
-        if (event.key === "Escape") {
+        if (event.key === 'Escape') {
           handleCloseLoginModal(); // Esc 키를 누르면 모달을 닫음
         }
       };
 
-      window.addEventListener("keydown", handleEsc);
+      window.addEventListener('keydown', handleEsc);
 
       return () => {
-        window.removeEventListener("keydown", handleEsc);
+        window.removeEventListener('keydown', handleEsc);
       };
     }
   }, [isModalOpen]); // 모달이 열릴 때만 이벤트 리스너 추가
 
   // 사용자 데이터 가져오기
   useEffect(() => {
-    if (user) {
-      fetchUserData();
+    if (user?.id) {
+      fetchUserData(user.id); // 사용자 데이터를 가져옴
     }
   }, [user, fetchUserData]);
 
@@ -104,7 +110,7 @@ const Header: React.FC = () => {
               height={70}
               priority
               className="s:hidden"
-              style={{ objectFit: "contain" }}
+              style={{ objectFit: 'contain' }}
             />
             <Image
               src="/assets/header/mobile_logo.svg"
@@ -113,7 +119,7 @@ const Header: React.FC = () => {
               height={50}
               priority
               className="hidden s:block"
-              style={{ objectFit: "contain", width: "auto", height: "auto" }}
+              style={{ objectFit: 'contain', width: 'auto', height: 'auto' }}
             />
           </Link>
           <Link href="/gatherHub" className="logo-link">
@@ -124,7 +130,7 @@ const Header: React.FC = () => {
               height={50}
               priority
               className="s:w-[50px] s:h-[25px]"
-              style={{ width: "auto", height: "auto" }}
+              style={{ width: 'auto', height: 'auto' }}
             />
           </Link>
         </div>
@@ -156,8 +162,8 @@ const Header: React.FC = () => {
                   className="hidden s:flex items-center justify-center w-[32px] h-[32px] rounded-lg bg-fillNeutral hover:bg-fillAssistive z-50"
                 >
                   <Image
-                    src={isMypageModalOpen ? "/assets/header/primary_close.svg" : "/assets/header/mobile_logo.svg"}
-                    alt={isMypageModalOpen ? "닫기 버튼 아이콘" : "마이페이지 아이콘"}
+                    src={isMypageModalOpen ? '/assets/header/primary_close.svg' : '/assets/header/mobile_logo.svg'}
+                    alt={isMypageModalOpen ? '닫기 버튼 아이콘' : '마이페이지 아이콘'}
                     priority
                     width={14}
                     height={16}
@@ -212,7 +218,7 @@ const Header: React.FC = () => {
                     src={getProfileImageUrl(userData?.profile_image_url || defaultImage)}
                     alt="프로필 이미지"
                     fill
-                    style={{ objectFit: "cover" }}
+                    style={{ objectFit: 'cover' }}
                     className="rounded-[12px]"
                   />
                 </div>

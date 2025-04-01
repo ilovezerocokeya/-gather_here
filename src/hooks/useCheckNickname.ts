@@ -1,7 +1,5 @@
 import { useState, useEffect } from "react";
-import { createClient } from "@/utils/supabase/client";
-
-const supabase = createClient();
+import { supabase } from "@/utils/supabase/client";
 
 const useCheckNickname = (nickname: string) => {
   const [nicknameAvailable, setNicknameAvailable] = useState<boolean | null>(null);
