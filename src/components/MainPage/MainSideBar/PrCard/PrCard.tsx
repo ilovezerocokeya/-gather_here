@@ -6,7 +6,7 @@ import "slick-carousel/slick/slick.css";
 import "slick-carousel/slick/slick-theme.css";
 import { useInfiniteQuery } from "@tanstack/react-query";
 import Image from "next/image";
-import { useUser } from "@/provider/UserContextProvider";
+import { useLikeStore } from "@/stores/useLikeStore";
 import { createPortal } from "react-dom";
 import Link from "next/link";
 // 기술 스택 목록
@@ -95,8 +95,8 @@ const MemberCard: React.FC<MemberCardProps> = ({
   answer3,
   tech_stacks,
 }) => {
+  const { likedMembers, toggleLike } = useLikeStore(); // useLikeStore로 좋아요 상태 관리
   const [isModalOpen, setIsModalOpen] = useState(false);
-  const { likedMembers, toggleLike } = useUser();
   const liked = likedMembers[nickname] || false;
 
   // 모달 열기 함수
@@ -114,6 +114,9 @@ const MemberCard: React.FC<MemberCardProps> = ({
     return techStacks.filter((stack) => (tech_stacks || []).includes(stack.id));
   }, [tech_stacks]);
 
+  const secureImageUrl = (url: string | null) =>
+    url ? url.replace(/^http:/, "https:") : "/assets/header/user.svg";
+
   return (
     <>
       <div
@@ -127,7 +130,7 @@ const MemberCard: React.FC<MemberCardProps> = ({
               {/* 프로필 이미지 */}
               <div className="relative w-20 h-20">
                 <Image
-                  src={profile_image_url}
+                  src={secureImageUrl(profile_image_url)}
                   alt={nickname}
                   fill
                   sizes="20vw"
@@ -340,7 +343,7 @@ const MemberCard: React.FC<MemberCardProps> = ({
                     <div className="w-[120px] h-[120px] rounded-2xl bg-white border-1 border-background overflow-hidden">
                       <div className="relative w-[120px] h-[120px]">
                         <Image
-                          src={profile_image_url}
+                          src={secureImageUrl(profile_image_url)}
                           alt={nickname}
                           fill
                           sizes="24vw"

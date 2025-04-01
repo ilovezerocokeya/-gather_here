@@ -1,7 +1,7 @@
 //MemberCard
 
 "use client";
-import { useUser } from "@/provider/UserContextProvider";
+import { useLikeStore } from "@/stores/useLikeStore";
 import Image from "next/image";
 import Link from "next/link";
 import React, { useEffect, useMemo, useState } from "react";
@@ -52,13 +52,16 @@ const MemberCard: React.FC<MemberCardProps> = ({
   const [isProfileModalOpen, setIsProfileModalOpen] = useState(false);
 
   // 좋아요 상태와 함수 사용
-  const { likedMembers, toggleLike } = useUser();
+  const { likedMembers, toggleLike } = useLikeStore();
   const liked = likedMembers[nickname] || false;
 
   // 선택된 기술 스택 필터링
   const selectedTechStacks = useMemo(() => {
     return techStacks.filter((stack) => (tech_stacks || []).includes(stack.id));
   }, [tech_stacks]);
+
+  const secureImageUrl = (url: string) => 
+    url ? url.replace(/^http:/, "https:") : "/assets/header/user.svg";
 
   // 소셜 링크를 useMemo로 최적화
   const socialLinks = useMemo(() => {
@@ -204,7 +207,7 @@ const MemberCard: React.FC<MemberCardProps> = ({
         >
           <div className="relative w-[60px] h-[60px]">
             <Image
-              src={profile_image_url}
+              src={secureImageUrl(profile_image_url)}
               alt={nickname}
               fill
               sizes="20vw"
@@ -224,7 +227,7 @@ const MemberCard: React.FC<MemberCardProps> = ({
             >
               <div className="relative">
                 <Image
-                  src={profile_image_url || ""}
+                  src={secureImageUrl(profile_image_url) || ""}
                   alt={nickname}
                   width={500}
                   height={500}
@@ -389,7 +392,7 @@ const MemberCard: React.FC<MemberCardProps> = ({
                   <div className="w-[120px] h-[120px] rounded-2xl bg-white border-1 border-background overflow-hidden">
                     <div className="relative w-[120px] h-[120px]">
                       <Image
-                        src={profile_image_url}
+                        src={secureImageUrl(profile_image_url)}
                         alt={nickname}
                         fill
                         sizes="24vw"

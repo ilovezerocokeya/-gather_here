@@ -2,21 +2,22 @@
 
 import React, { useState, useEffect, useMemo } from "react";
 import { useRouter } from "next/navigation";
-import { createClient } from "@/utils/supabase/client";
+import { supabase } from "@/utils/supabase/client";
 import ProfileLoader from "@/components/Common/Skeleton/ProfileLoader";
 import Image from "next/image";
-import { useUser } from "@/provider/UserContextProvider";
+import { useUserData } from "@/provider/user/UserDataProvider";
+import { useAuth } from "@/provider/user/UserAuthProvider";
 import CommonModal from "@/components/Common/Modal/CommonModal";
 import LoginForm from "@/components/Login/LoginForm";
 import Toast from "@/components/Common/Toast/Toast";
 import MypageProfilePicture from "@/components/Common/Skeleton/MypageProfilePicture";
 
 const ProfilePicture: React.FC = () => {
-  const supabase = createClient();
   const [profileImage, setProfileImage] = useState<string | null>(null);
   const [profileAlt, setProfileAlt] = useState<string>("프로필 이미지");
   const [uploading, setUploading] = useState(false);
-  const { user, userData, setUserData } = useUser();
+  const { user } = useAuth();
+  const { userData, setUserData } = useUserData();  
   const [showLoginModal, setShowLoginModal] = useState<boolean>(false);
   const [toastState, setToastState] = useState({ state: "", message: "" });
   const imageBaseUrl = process.env.NEXT_PUBLIC_IMAGE_BASE_URL;
@@ -31,6 +32,9 @@ const ProfilePicture: React.FC = () => {
   }, [imageBaseUrl]);
 
   const occupations = ["프론트엔드", "백엔드", "IOS", "안드로이드", "데브옵스", "디자인", "PM", "기획", "마케팅"];
+
+  const secureImageUrl = (url: string | null) =>
+    url ? url.replace(/^http:/, "https:") : null;
 
   const uploadProfileImage = async (file: File | Blob, altText: string) => {
     if (!user || !user.id) {
@@ -64,7 +68,7 @@ const ProfilePicture: React.FC = () => {
         setProfileAlt(altText);
         setUserData({
           ...userData,
-          id: user.id ?? "",
+          user_id: user.id ?? "",
           profile_image_url: profileImageUrl,
           nickname: userData?.nickname ?? "",
           job_title: userData?.job_title ?? "",
@@ -111,9 +115,7 @@ const ProfilePicture: React.FC = () => {
     }
   };
 
-  const getProfileImageUrl = (url: string) => {
-    return url ? `${url}?${new Date().getTime()}` : defaultImage;
-  };
+  const getProfileImageUrl = (url: string) => url || defaultImage;
 
   useEffect(() => {
     if (userData && userData.profile_image_url !== profileImage) {

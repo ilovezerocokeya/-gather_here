@@ -20,6 +20,9 @@ const Chat = () => {
     handleDelete,
   } = useChat();
 
+  const secureImageUrl = (url: string | null) =>
+    url ? url.replace(/^http:/, "https:") : "/assets/header/user.svg";
+
   return (
     <>
       <div className="w-[375px] h-[731px] s:h-screen shadow flex-col justify-start items-start inline-flex">
@@ -66,7 +69,7 @@ const Chat = () => {
                       <div className="relative" style={{ width: "32px", height: "32px" }}>
                         <Image
                           className="rounded-xl"
-                          src={message.Users?.profile_image_url ?? "/assets/header/user.svg"}
+                          src={secureImageUrl(message.Users?.profile_image_url) ?? "/assets/header/user.svg"}
                           alt="Profile image"
                           fill
                           sizes="(max-width: 32px) 100vw, 32px"

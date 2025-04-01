@@ -1,7 +1,7 @@
 "use client";
 
 import React, { useEffect, useState } from "react";
-import { useUser } from "@/provider/UserContextProvider";
+import { useAuth } from "@/provider/user/UserAuthProvider";
 import { Tables } from "@/types/supabase";
 import { NextPage } from "next";
 import Image from "next/image";
@@ -17,7 +17,7 @@ interface EventsCardProps {
 }
 
 const ItEventCardShort: NextPage<EventsCardProps> = ({ post, onRemoveBookmark }) => {
-  const { user: currentUser } = useUser();
+  const { user: currentUser } = useAuth();
   const [isMounted, setIsMounted] = useState<boolean>(false);
   const deadlineDate = new Date(post.date_done);
   deadlineDate.setHours(0, 0, 0, 0);

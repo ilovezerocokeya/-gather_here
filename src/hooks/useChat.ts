@@ -1,6 +1,6 @@
 import { useState, useEffect, useRef, FormEvent, KeyboardEvent } from "react";
-import { useUser } from "@/provider/UserContextProvider";
-import { createClient } from "@/utils/supabase/client";
+import { useAuth } from "@/provider/user/UserAuthProvider";
+import { supabase } from "@/utils/supabase/client";
 import { MessageRow } from "@/types/chats/Chats.type";
 
 const debounce = (func: Function, delay: number) => {
@@ -12,7 +12,7 @@ const debounce = (func: Function, delay: number) => {
 };
 
 const useChat = () => {
-  const { user } = useUser();
+  const { user } = useAuth();
   const [messages, setMessages] = useState<MessageRow[]>([]);
   const [inputValue, setInputValue] = useState<string>("");
   const [isModalOpen, setIsModalOpen] = useState<boolean>(false);
@@ -20,7 +20,6 @@ const useChat = () => {
   const formRef = useRef<HTMLFormElement>(null);
 
   useEffect(() => {
-    const supabase = createClient();
 
     const getAllMessages = async () => {
       const { data: messages, error } = await supabase
@@ -81,7 +80,6 @@ const useChat = () => {
     if (!user) {
       return;
     } else if (formRef.current && inputValue.trim()) {
-      const supabase = createClient();
 
       const { error } = await supabase
         .from("Messages")
@@ -115,7 +113,6 @@ const useChat = () => {
   };
 
   const handleDelete = async (message_id: string) => {
-    const supabase = createClient();
 
     const { error } = await supabase.from("Messages").delete().eq("message_id", message_id);
 
