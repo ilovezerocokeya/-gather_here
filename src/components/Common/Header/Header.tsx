@@ -1,6 +1,6 @@
 'use client';
 
-import React, { Suspense, useEffect, useState } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import Image from 'next/image';
@@ -17,7 +17,6 @@ const Header: React.FC = () => {
   const router = useRouter();
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [isMypageModalOpen, setIsMypageModalOpen] = useState(false);
-  const { searchWord, setSearchWord, handleSearch } = useSearch(); // 검색 관련 상태 및 함수
   const defaultImage = '/assets/header/user.svg';
   const modalRef = useRef<SearchModalRef>(null);
 
