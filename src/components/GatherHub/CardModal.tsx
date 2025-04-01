@@ -178,10 +178,10 @@ const CardModal: React.FC<CardModalProps> = ({
           <div className="h-[29px] p-1 justify-start items-center gap-1 flex">
             <div className="text-[#c4c4c4] text-sm font-medium font-['Pretendard'] leading-[21px]">자기소개</div>
           </div>
-          <div className="s:w-[240px] md:w-[524px] flex-col justify-start items-start inline-flex">
+          <div className="s:w-[240px] md:w-[524px] flex-col justify-start  items-start inline-flex">
             <div className="self-stretch h-[92px] py-1 flex-col justify-center items-center flex">
-              <div className="self-stretch h-[84px] p-3 bg-[#19191a] rounded-xl shadow border border-[#212121] justify-between items-start inline-flex">
-                <div className="text-xs md:text-sm text-gray-300 md:h-auto h-[60px] overflow-y-auto md:overflow-y-visible leading-relaxed md:leading-normal">
+              <div className="self-stretch h-[84px] p-3 bg-[#19191a] rounded-xl overflow-y-auto shadow border border-[#212121] justify-between items-start inline-flex">
+                <div className="text-xs md:text-sm text-gray-300 md:h-auto h-[60px] leading-relaxed md:leading-normal">
                   {description}
                 </div>
                 <div className="w-6 h-6 p-1 justify-center items-center flex">
@@ -210,9 +210,9 @@ const CardModal: React.FC<CardModalProps> = ({
                   1. 팀으로 일할 때 나는 어떤 팀원인지 설명해 주세요.
                 </div>
               </div>
-              <div className="self-stretch h-[92px] py-1 flex-col justify-center items-center flex">
-                <div className="self-stretch h-[84px] p-3 bg-[#19191a] rounded-xl shadow border border-[#212121] justify-between items-start inline-flex">
-                  <div className="text-xs md:text-sm text-gray-300 md:h-auto h-[60px] overflow-y-auto md:overflow-y-visible leading-relaxed md:leading-normal">
+              <div className="self-stretch h-[92px] py-1 flex-col justify-center  items-center flex">
+                <div className="self-stretch h-[84px] p-3 bg-[#19191a] rounded-xl overflow-y-auto  shadow border border-[#212121] justify-between items-start inline-flex">
+                  <div className="text-xs md:text-sm text-gray-300 md:h-auto h-[60px] leading-relaxed md:leading-normal">
                     {answer1}
                   </div>
                   <div className="w-6 h-6 p-1 justify-center items-center flex">
@@ -230,8 +230,8 @@ const CardModal: React.FC<CardModalProps> = ({
                 </div>
               </div>
               <div className="self-stretch h-[92px] py-1 flex-col justify-center items-center flex">
-                <div className="self-stretch h-[84px] p-3 bg-[#19191a] rounded-xl shadow border border-[#212121] justify-between items-start inline-flex">
-                  <div className="text-xs md:text-sm text-gray-300 md:h-auto h-[60px] overflow-y-auto md:overflow-y-visible leading-relaxed md:leading-normal">
+                <div className="self-stretch h-[84px] p-3 bg-[#19191a] rounded-xl overflow-y-auto shadow border border-[#212121] justify-between items-start inline-flex">
+                  <div className="text-xs md:text-sm text-gray-300 md:h-auto h-[60px] leading-relaxed md:leading-normal">
                     {answer2}
                   </div>
                   <div className="w-6 h-6 p-1 justify-center items-center flex">
@@ -242,15 +242,15 @@ const CardModal: React.FC<CardModalProps> = ({
             </div>  
 
             {/* 질문3 */}
-            <div className="self-stretch h-[121px] flex-col justify-start items-start flex">
+            <div className="self-stretch h-[121px] flex-col justify-start overflow-y-auto items-start flex">
               <div className="self-stretch p-1 justify-start items-center gap-2 inline-flex">
                 <div className="text-[#c4c4c4] s:text-xs text-sm font-medium font-['Pretendard'] leading-[21px]">
                   3. 자신이 부족하다고 느낀 부분을 어떻게 보완하거나 학습해왔는지 이야기해 주세요.
                 </div>
               </div>
               <div className="self-stretch h-[92px] py-1 flex-col justify-center items-center flex">
-                <div className="self-stretch h-[84px] p-3 bg-[#19191a] rounded-xl shadow border border-[#212121] justify-between items-start inline-flex">
-                  <div className="text-xs md:text-sm text-gray-300 md:h-auto h-[60px] overflow-y-auto md:overflow-y-visible leading-relaxed md:leading-normal">
+                <div className="self-stretch h-[84px] p-3 bg-[#19191a] rounded-xl overflow-y-auto shadow border border-[#212121] justify-between items-start inline-flex">
+                  <div className="text-xs md:text-sm text-gray-300 md:h-auto h-[60px]  leading-relaxed md:leading-normal">
                     {answer3}
                   </div>
                   <div className="w-6 h-6 p-1 justify-center items-center flex">
