@@ -39,19 +39,30 @@ const CardModal: React.FC<CardModalProps> = ({
   }, [closeModal]);
 
   useEffect(() => {
+     // 모달이 열릴 때 터치 이벤트 막기
+  const preventTouchScroll = (e: TouchEvent) => {
+    e.preventDefault();
+  };
+
     if (isModalOpen) {
       // 모달이 열려 있을 때 페이지 스크롤을 막음
-      document.body.style.overflow = "hidden";
+      document.documentElement.style.overflow = 'hidden';
+      document.body.style.overflow = 'hidden';
+      document.addEventListener("touchmove", preventTouchScroll, { passive: false });
       window.addEventListener("keydown", handleEsc);
     } else {
        // 모달이 닫힐 때 스크롤을 다시 허용
-      document.body.style.overflow = "auto";
+       document.documentElement.style.overflow = '';
+       document.body.style.overflow = '';
+       document.removeEventListener("touchmove", preventTouchScroll);
     }
 
     return () => {
       // 이벤트 리스너를 정리하여 메모리 누수를 방지
-    document.body.style.overflow = "auto";
-    window.removeEventListener("keydown", handleEsc);
+      document.documentElement.style.overflow = '';
+      document.body.style.overflow = '';
+      document.removeEventListener("touchmove", preventTouchScroll);
+      window.removeEventListener("keydown", handleEsc);
   };
 }, [isModalOpen, handleEsc]);
 
@@ -67,7 +78,7 @@ const CardModal: React.FC<CardModalProps> = ({
       style={{ userSelect: "none" }}
     >
       <div
-        className="bg-[#141415] rounded-3xl shadow-lg s:w-[400px] s:h-[600px] w-[744px] h-[800px] overflow-y-auto transform transition-transform duration-300 ease-in-out scale-95 opacity-0"
+        className="bg-[#141415] rounded-3xl shadow-lg s:w-[380px] s:h-[580px] w-[744px] h-[800px] overflow-y-auto transform transition-transform duration-300 ease-in-out scale-95 opacity-0"
         style={{
           opacity: isModalOpen ? 1 : 0,
           transform: isModalOpen ? "scale(1)" : "scale(0.95)",
@@ -77,7 +88,7 @@ const CardModal: React.FC<CardModalProps> = ({
       >
         {/* 닫기 버튼 */}
         <button
-          className="absolute top-2 right-2 text-[#1919a] text-3xl font-bold rounded-full p-4 hover:text-black hover:scale-110 transition-transform duration-200 ease-in-out z-50"
+          className="absolute top-4 right-4 bg-primary text-black text-xl font-bold rounded-full w-8 h-8 flex items-center justify-center shadow-xl hover:bg-white hover:scale-110 transition-transform duration-200 ease-in-out z-50"
           onClick={closeModal}
           style={{ userSelect: "none" }}
         >
@@ -101,18 +112,18 @@ const CardModal: React.FC<CardModalProps> = ({
         </div>
 
         {/* 프로필 정보 */}
-        <div className="relative">
+        <div className="relative flex-shrink-0">
           <div className="absolute -top-20 flex flex-col items-start p-6">
-            <div className="w-[120px] h-[120px] rounded-2xl bg-white border-1 border-background overflow-hidden">
-              <Image
-                src={secureImageUrl(profile_image_url)}
-                alt={nickname}
-                width={120}
-                height={120}
-                quality={90}
-                priority                
-                className="object-cover rounded-2xl shadow-lg"
-              />
+            <div className="w-[120px] h-[120px] rounded-2xl bg-black border-1 border-background overflow-hidden">
+            <Image
+              src={secureImageUrl(profile_image_url)}
+              alt={nickname}
+              width={120}
+              height={120}
+              quality={90}
+              priority
+              className="object-cover w-full h-full rounded-2xl shadow-lg bg-black"
+            />
             </div>
             <div className="mt-5">
               <h2 className="text-xl font-medium text-f7f7f7 font-['Pretendard'] leading-7">{nickname}</h2>
@@ -265,11 +276,12 @@ const CardModal: React.FC<CardModalProps> = ({
             <div className="s:w-[340px] w-[680px] border-t border-gray-500 border-opacity-40 s:mt-[90px] mt-[54px] mx-5"></div>
 
         {/* 기술 스택 */}
-        <div className="h-8 justify-start items-start p-6 gap-5 inline-flex space-x-20">
-          <div className="h-[29px] p-1 justify-start items-center gap-1 flex">
+        <div className="justify-start items-start p-6 gap-5 flex flex-col space-y-4">
+          <div className="h-[29px] p-1 flex items-center gap-1">
             <div className="text-[#c4c4c4] text-sm font-medium font-['Pretendard'] leading-[21px]">기술 스택</div>
           </div>
-          <div className="flex items-center gap-2">
+
+          <div className="grid grid-cols-3 gap-3 w-full">
             {selectedTechStacks.map((stack) => (
               <div key={stack.id} className="px-3 py-2 bg-[#28282a] rounded-full border border-[#2d2d2f] flex items-center gap-2">
                 <Image src={stack.image} alt={stack.name} width={12} height={12} />

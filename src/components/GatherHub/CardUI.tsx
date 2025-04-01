@@ -94,11 +94,11 @@ const CardUI: React.FC<CardUIProps> = ({
           <Image
             src={secureImageUrl(profile_image_url)}
             alt={nickname}
-            width={60}
-            height={60}
-            quality={80}
+            width={120}
+            height={120}
+            quality={90}
             priority
-            className="object-cover rounded-2xl shadow-lg"
+            className="object-cover w-full h-full rounded-2xl shadow-lg bg-black"
           />
         </div>
       </div>
