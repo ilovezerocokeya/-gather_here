@@ -2,17 +2,23 @@
 
 import React, { useState } from "react";
 import ExperienceLevelButton from "./components/ExperienceLevelButton";
-import { useUser } from "@/provider/UserContextProvider";
+import { useSignup } from "@/provider/user/UserSignupProvider";
+import { useUserData } from "@/provider/user/UserDataProvider";
 
 const experienceLevels = ["1년 미만", "1년", "2년", "3년", "4년", "5년", "6년", "7년", "8년 이상"];
 
 const Signup02: React.FC = () => {
-  const { nextStep, prevStep, setField } = useUser();
+
+  const { nextStep, prevStep } = useSignup();
+  const { setUserData } = useUserData(); 
   const [selectedExperience, setSelectedExperience] = useState<string>("");
 
   const handleExperienceSelection = (experience: string) => {
     setSelectedExperience(experience);
-    setField("experience", experience);
+    setUserData((prev) => ({
+      ...prev!,
+      experience,
+    }));
     nextStep();
   };
 

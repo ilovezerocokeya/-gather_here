@@ -6,7 +6,7 @@ import PostCardLong from "@/components/Common/Card/PostCard/PostCardLong";
 import AdCard from "@/components/MainPage/AdCard/AdCard";
 import loadingSpinner from "../../../assets/loadingSpinner.json";
 import { PostWithUser } from "@/types/posts/Post.type";
-import LottieAnimation from "@/components/Common/Loading/LottieAnimation";
+import SpinnerLoader from "@/components/Common/Loading/SpinnerLoader";
 import InitialLoadingWrapper from "@/components/Common/Loading/InitialLoadingWrapper";
 
 interface InfiniteScrollComponentProps {
@@ -27,7 +27,7 @@ const InfiniteScrollComponent: React.FC<InfiniteScrollComponentProps> = ({ posts
           hasMore={hasMore}
           loader={
             <div className="flex justify-center items-center w-full">
-              <LottieAnimation animationData={loadingSpinner} size="50px" />
+               <SpinnerLoader />
             </div>
           }
           endMessage={<p style={{ textAlign: "center", color: "white" }}>모든 포스트를 불러왔습니다</p>}

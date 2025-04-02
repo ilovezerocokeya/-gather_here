@@ -1,8 +1,8 @@
-import { createClient } from "@/utils/supabase/server";
+import { createServerSupabaseClient } from "@/utils/supabase/server";
 import { NextResponse } from "next/server";
 
 export const GET = async () => {
-  const supabase = createClient();
+  const supabase = createServerSupabaseClient();
 
   let { data: IT_Events, error } = await supabase
     .from("IT_Events")

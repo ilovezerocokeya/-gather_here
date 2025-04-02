@@ -3,8 +3,10 @@ import Image from "next/image";
 import React, { useEffect, useState } from "react";
 import Link from "next/link";
 import dayjs from "dayjs";
-import { useUser } from "@/provider/UserContextProvider";
+import { useAuth } from "@/provider/user/UserAuthProvider";
 import LikeButton from "@/components/MainDetail/LikeButton";
+import { secureImageUrl } from "@/utils/imageUtils";
+
 
 interface PostCardProps {
   post: PostWithUser;
@@ -12,7 +14,7 @@ interface PostCardProps {
 }
 
 const PostCardLong: React.FC<PostCardProps> = ({ post, onRemoveBookmark }) => {
-  const { user: currentUser } = useUser();
+  const { user: currentUser } = useAuth();
   const [isMounted, setIsMounted] = useState<boolean>(false);
   const deadlineDate = new Date(post.deadline);
   deadlineDate.setHours(0, 0, 0, 0);
@@ -56,8 +58,6 @@ const PostCardLong: React.FC<PostCardProps> = ({ post, onRemoveBookmark }) => {
       ALLOWED_ATTR: ["href", "target", "style", "class"],
     });
   }
-
-  const getProfileImageUrl = (url: string) => `${url}?${new Date().getTime()}`;
 
   const jobTitleClassMap: { [key: string]: string } = {
     프론트엔드: "text-primary",
@@ -103,7 +103,7 @@ const PostCardLong: React.FC<PostCardProps> = ({ post, onRemoveBookmark }) => {
           {post.user?.profile_image_url && (
             <div className="relative w-7 h-7 mr-2">
               <Image
-                src={getProfileImageUrl(post.user?.profile_image_url ?? defaultImage)}
+                src={secureImageUrl(post.user?.profile_image_url)}
                 alt="프로필 사진"
                 fill
                 className="rounded-md object-cover"

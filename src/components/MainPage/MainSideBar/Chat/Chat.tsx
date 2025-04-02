@@ -4,6 +4,8 @@ import Image from "next/image";
 import dayjs from "dayjs";
 import LoginForm from "@/components/Login/LoginForm";
 import useChat from "@/hooks/useChat";
+import { secureImageUrl } from "@/utils/imageUtils";
+
 
 const Chat = () => {
   const {
@@ -66,7 +68,7 @@ const Chat = () => {
                       <div className="relative" style={{ width: "32px", height: "32px" }}>
                         <Image
                           className="rounded-xl"
-                          src={message.Users?.profile_image_url ?? "/assets/header/user.svg"}
+                          src={secureImageUrl(message.Users?.profile_image_url) ?? "/assets/header/user.svg"}
                           alt="Profile image"
                           fill
                           sizes="(max-width: 32px) 100vw, 32px"

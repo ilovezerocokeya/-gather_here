@@ -2,7 +2,7 @@
 
 import React, { useState, ChangeEvent, useEffect } from "react";
 import { useRouter, usePathname } from "next/navigation";
-import { createClient } from "@/utils/supabase/client";
+import { supabase } from "@/utils/supabase/client";
 import FormInput from "@/components/MainDetail/FormInput";
 import FormDropdown from "@/components/MainDetail/FormDropdown";
 import FormMultiSelect from "@/components/MainDetail/FormMultiSelect";
@@ -16,8 +16,6 @@ interface Option {
   value: string;
   label: string;
 }
-
-const supabase = createClient();
 
 const PostEditPage = () => {
   const router = useRouter();

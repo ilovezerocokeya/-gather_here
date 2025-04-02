@@ -10,7 +10,7 @@ import AlertModal from "./components/AlertModal";
 
 const job_titles = ["프론트엔드", "백엔드", "IOS", "안드로이드", "데브옵스", "기획", "디자인", "마케팅", "PM"];
 
-const jobClasses: { [key: string]: string } = {
+const jobClasses: Record <string, string> = {
   프론트엔드: "button-frontend",
   백엔드: "button-backend",
   IOS: "button-ios",

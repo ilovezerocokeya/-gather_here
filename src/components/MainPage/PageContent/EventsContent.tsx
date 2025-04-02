@@ -6,7 +6,7 @@ import dynamic from "next/dynamic";
 import { NextPage } from "next";
 import { Tables } from "@/types/supabase";
 import { fetchEventsPosts, FetchEventsPostsFilters, fetchEventsPostsWithDeadLine } from "@/lib/fetchPosts";
-import EventsInfiniteScrollComponent from "../InfiniteScroll/EventsInfiniteScroll";
+// import EventsInfiniteScrollComponent from "../InfiniteScroll/EventsInfiniteScroll";
 import Calender from "../MainSideBar/Calender/Calender";
 import EventFilterBar from "../FilterBar/EventFilterBar";
 import useSearch from "@/hooks/useSearch";
@@ -108,7 +108,7 @@ const EventsContent: NextPage = () => {
       </div>
       <div className="w-full mb-4">
         <div className="flex items-center">
-          <Image src="/assets/gif/run.gif" alt="Run Icon" width={20} height={20} className="w-5 h-5" priority />
+          <Image src="/assets/gif/run.webp" alt="Run Icon" width={20} height={20} className="w-5 h-5" priority />
           <p className="m-2 text-labelNormal">모집이 곧 종료돼요</p>
         </div>
         {isLoadingCarousel ? (
@@ -121,7 +121,7 @@ const EventsContent: NextPage = () => {
           <Carousel posts={carouselPosts} />
         )}
         <EventFilterBar selectedCategory={selectedCategory} onChange={handleEventFilterChange} />
-        <EventsInfiniteScrollComponent posts={filteredPosts} hasMore={hasMore} loadMorePosts={loadMorePosts} />
+        {/* <EventsInfiniteScrollComponent posts={filteredPosts} hasMore={hasMore} loadMorePosts={loadMorePosts} /> */}
       </div>
     </>
   );

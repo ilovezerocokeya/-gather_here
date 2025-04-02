@@ -13,8 +13,12 @@ interface ContextProviderProps {
 }
 
 const ModalContext = createContext<ModalContextType>({
-  openModal: () => {},
-  closeModal: () => {},
+  openModal: () => {
+    throw new Error("ModalProvider로 감싸지 않으면 useModal을 사용할 수 없습니다.");
+  },
+  closeModal: () => {
+    throw new Error("ModalProvider로 감싸지 않으면 useModal을 사용할 수 없습니다.");
+  },
 });
 
 export const useModal = () => useContext(ModalContext);
@@ -28,7 +32,7 @@ const ContextProvider: FC<ContextProviderProps> = ({ children }) => {
     Modal.setAppElement("body");
   }, []);
 
-  const openModal = (content: ReactNode, disable: boolean = false) => {
+  const openModal = (content: ReactNode, disable = false) => {
     setModalContent(content);
     setIsModalOpen(true);
     setDisablePage(disable);
@@ -65,3 +69,4 @@ const ContextProvider: FC<ContextProviderProps> = ({ children }) => {
 };
 
 export default ContextProvider;
+

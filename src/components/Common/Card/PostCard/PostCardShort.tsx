@@ -6,8 +6,10 @@ import Image from "next/image";
 import Link from "next/link";
 import DOMPurify from "dompurify";
 import LikeButton from "@/components/MainDetail/LikeButton";
-import { useUser } from "@/provider/UserContextProvider";
+import { useAuth } from "@/provider/user/UserAuthProvider"
 import dayjs from "dayjs";
+import { secureImageUrl } from "@/utils/imageUtils";
+
 
 interface PostCardProps {
   post: PostWithUser;
@@ -15,7 +17,7 @@ interface PostCardProps {
 }
 
 const PostCardShort: React.FC<PostCardProps> = ({ post }) => {
-  const { user: currentUser } = useUser();
+  const { user: currentUser } = useAuth();
   const [isMounted, setIsMounted] = useState<boolean>(false);
   const deadlineDate = new Date(post.deadline);
   deadlineDate.setHours(0, 0, 0, 0);
@@ -32,8 +34,6 @@ const PostCardShort: React.FC<PostCardProps> = ({ post }) => {
       setIsMounted(false);
     };
   }, [post]);
-
-  const getProfileImageUrl = (url: string) => `${url}?${new Date().getTime()}`;
 
   const jobTitleClassMap: { [key: string]: string } = {
     프론트엔드: "text-primary",
@@ -76,7 +76,7 @@ const PostCardShort: React.FC<PostCardProps> = ({ post }) => {
                 {post.user?.profile_image_url && (
                   <div className="relative w-7 h-7 mr-2">
                     <Image
-                      src={getProfileImageUrl(post.user?.profile_image_url ?? defaultImage)}
+                      src={secureImageUrl(post.user?.profile_image_url)}
                       alt="프로필 사진"
                       fill
                       className="rounded-md object-cover"
