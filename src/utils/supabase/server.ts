@@ -1,4 +1,4 @@
-import { createServerClient, type CookieOptions } from '@supabase/ssr';
+import { createServerClient } from '@supabase/ssr';
 import { cookies } from 'next/headers';
 import type { SupabaseClient } from '@supabase/supabase-js';
 import type { Database } from '@/types/supabase';
@@ -20,7 +20,9 @@ export function createServerSupabaseClient(): SupabaseClient<Database> {
       setAll: (cookiesToSet) => {
         try {
           cookiesToSet.forEach(({ name, value, options }) => cookieStore.set(name, value, options));
-        } catch {}
+        } catch (err) {
+          console.error("쿠키 설정 중 오류 발생:", err);
+        }
       },
     },
   });

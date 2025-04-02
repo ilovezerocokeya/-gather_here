@@ -38,7 +38,7 @@ export const GET = async (req: NextRequest) => {
 
     // Supabase 에러 처리
     if (error || countError) {
-      console.error("Supabase Query Error:", error || countError);
+      console.error("Supabase Query Error:", error ?? countError);
       return NextResponse.json({ error: "멤버 데이터를 불러오는 중 오류 발생" }, { status: 500 });
     }
 

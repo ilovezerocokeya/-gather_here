@@ -9,7 +9,7 @@ import Image from "next/image";
 const Signup04: React.FC = () => {
   const router = useRouter();
   const { userData } = useUserData();
-  const nickname = userData?.nickname || "";
+  const nickname = userData?.nickname ?? "";
   const { closeModal } = useModal();
 
   const handleExplore = () => {
@@ -23,7 +23,7 @@ const Signup04: React.FC = () => {
         <div className="text-center s:mt-1 mt-3">
           <div className="w-full h-65 pt-3 rounded-md mb-4 flex items-center justify-center overflow-hidden">
           <Image
-              src="/logos/welcomeIcon.webp"
+              src="/logos/welcome.webp"
               alt="Welcome Image"
               width={350}
               height={350}

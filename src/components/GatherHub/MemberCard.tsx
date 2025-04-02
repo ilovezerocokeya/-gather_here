@@ -50,7 +50,7 @@ const MemberCard: React.FC<MemberCardProps> = ({
       return;
     }
     
-    toggleLike(user_id, currentUserId);
+    void toggleLike(user_id, currentUserId);
   };
 
   // 기술 스택 필터링 (사용자가 선택한 기술 스택과 전체 스택 비교)

@@ -19,10 +19,10 @@ const MemberList: React.FC<MemberListProps> = ({ filteredMembers }) => {
             <MemberCard
               {...member}
               description={member.description || "소개 정보 없음"}
-              first_link_type={member.first_link_type || ""}
-              first_link={member.first_link || ""}
-              second_link_type={member.second_link_type || ""}
-              second_link={member.second_link || ""}
+              first_link_type={member.first_link_type ?? ""}
+              first_link={member.first_link ?? ""}
+              second_link_type={member.second_link_type ?? ""}
+              second_link={member.second_link ?? ""}
               tech_stacks={member.tech_stacks || []} 
               liked={isLiked}
               toggleLike={() => {
@@ -30,7 +30,7 @@ const MemberList: React.FC<MemberListProps> = ({ filteredMembers }) => {
                   console.warn("좋아요 실패: 로그인된 사용자가 없습니다.");
                   return;
                 }
-                toggleLike(member.user_id, userData.user_id);
+                void toggleLike(member.user_id, userData.user_id);
               }} 
             />
           </div>

@@ -31,7 +31,7 @@ export const UserAuthProvider: React.FC<{ children: ReactNode }> = ({ children }
   useEffect(() => {
     try {
       const savedRememberMe = localStorage.getItem("rememberMe");
-      setRememberMe(savedRememberMe ? JSON.parse(savedRememberMe) : false);
+      setRememberMe(savedRememberMe ? (JSON.parse(savedRememberMe) as boolean) : false);
     } catch (error) {
       console.error("rememberMe 상태 로드 오류:", error);
       setRememberMe(false);
@@ -39,7 +39,7 @@ export const UserAuthProvider: React.FC<{ children: ReactNode }> = ({ children }
   }, []);
 
   // 사용자 정보를 설정하는 함수
-  const setAuthUser = useCallback(async (user: User | null, remember: boolean = false) => {
+  const setAuthUser = useCallback(async (user: User | null, remember = false) => {
     setUserState(user);
     setIsAuthenticated(!!user); // user가 존재하면 true, 없으면 false
     setRememberMe(remember);
@@ -49,7 +49,7 @@ export const UserAuthProvider: React.FC<{ children: ReactNode }> = ({ children }
 
     // 로그인 성공 시, 좋아요 상태를 서버와 동기화
     if (user) {
-      useLikeStore.getState().syncLikesWithServer(user.id);
+      await useLikeStore.getState().syncLikesWithServer(user.id);
     }
   }, []);
 
@@ -82,7 +82,7 @@ export const UserAuthProvider: React.FC<{ children: ReactNode }> = ({ children }
 
   // 앱 로드 시, 기존 세션이 있는지 확인
   useEffect(() => {
-    (async () => {
+    void (async () => {
       try {
         // 현재 세션 정보를 가져옴
         const { data, error } = await supabase.auth.getSession();
@@ -95,7 +95,7 @@ export const UserAuthProvider: React.FC<{ children: ReactNode }> = ({ children }
         }
 
         // 유저 정보 설정
-        setAuthUser(data.session.user, rememberMe);
+        await setAuthUser(data.session.user, rememberMe);
       } catch (error) {
         console.error("세션 확인 중 오류 발생:", error);
       }

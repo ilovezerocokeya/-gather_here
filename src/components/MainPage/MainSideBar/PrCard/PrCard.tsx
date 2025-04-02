@@ -144,7 +144,7 @@ const PrCard: React.FC = () => {
                 <CardUI
                   {...member}
                   liked={liked}
-                  handleToggleLike={() => handleToggleLike(member.user_id)}
+                  handleToggleLike={() => void handleToggleLike(member.user_id)}
                   secureImageUrl={secureImageUrl}
                   onOpenModal={() => setSelectedMember(member)}
                 />
@@ -161,7 +161,7 @@ const PrCard: React.FC = () => {
           isModalOpen={!!selectedMember} // 모달이 열려 있는지 확인
           closeModal={() => setSelectedMember(null)} // 모달 닫기 함수
           {...selectedMember} // 선택된 멤버의 정보 전달
-          handleToggleLike={() => handleToggleLike(selectedMember.user_id)}
+          handleToggleLike={() => void handleToggleLike(selectedMember.user_id)}
           secureImageUrl={secureImageUrl}
           selectedTechStacks={techStacks.filter((stack) =>
             selectedMember.tech_stacks?.includes(stack.id)

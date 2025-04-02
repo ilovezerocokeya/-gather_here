@@ -32,7 +32,7 @@ const useCheckNickname = (nickname: string) => {
       setNicknameAvailable(data.length === 0);
     };
 
-    checkNicknameAvailability();
+   void checkNicknameAvailability();
   }, [nickname]);
 
   return nicknameAvailable;

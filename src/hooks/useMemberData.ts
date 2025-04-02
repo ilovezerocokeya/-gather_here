@@ -10,7 +10,6 @@ import { MemberCardProps, UseMemberDataReturn } from "@/lib/gatherHub";
 // 초기 데이터를 받아서 무한스크롤 적용
 export const useMemberData = (
   initialMembers: MemberCardProps[],
-  initialNextPage?: number
 ): UseMemberDataReturn => {
   const { userData } = useUserData();
   const { likedMembers, hydrate, syncLikesWithServer } = useLikeStore();
@@ -24,7 +23,6 @@ export const useMemberData = (
     isLoading,
     isFetchingNextPage,
     isError,
-    refetch,
   } = useInfiniteQuery({
     queryKey: ["members", filteredJob],
     queryFn: ({ pageParam = 1 }) => fetchMembers(pageParam),
@@ -39,7 +37,7 @@ export const useMemberData = (
     if (!userData?.user_id) return;
 
     hydrate(userData.user_id);
-    syncLikesWithServer(userData.user_id);
+    void syncLikesWithServer(userData.user_id);
   }, [userData?.user_id]);
 
   // 무한 스크롤 감지
@@ -50,7 +48,7 @@ export const useMemberData = (
         !isFetchingNextPage &&
         window.innerHeight + window.scrollY >= document.body.offsetHeight - 200
       ) {
-        fetchNextPage();
+        void fetchNextPage();
       }
     }, 300);
 
@@ -81,7 +79,6 @@ export const useMemberData = (
     filteredMembers,
     isLoading,
     isError,
-    refetch,
     fetchNextPage,
     hasNextPage,
     isFetchingNextPage,
