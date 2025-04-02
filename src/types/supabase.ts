@@ -1,6 +1,6 @@
 export type Json = string | number | boolean | null | { [key: string]: Json | undefined } | Json[];
 
-export type Database = {
+export interface Database {
   public: {
     Tables: {
       Channels: {
@@ -327,20 +327,14 @@ export type Database = {
         ];
       };
     };
-    Views: {
-      [_ in never]: never;
-    };
-    Functions: {
-      [_ in never]: never;
-    };
+    Views: Record<never, never>;
+    Functions: Record<never, never>;
     Enums: {
       app_permission: "channels.delete" | "messages.delete";
       app_role: "admin" | "moderator";
       user_status: "ONLINE" | "OFFLINE";
     };
-    CompositeTypes: {
-      [_ in never]: never;
-    };
+    CompositeTypes: Record<never, never>;
   };
 };
 

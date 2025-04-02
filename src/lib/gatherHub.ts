@@ -80,6 +80,7 @@ export interface UseMemberDataReturn {
   isLoading: boolean;
   isError: boolean;
   fetchNextPage: () => Promise<unknown>;
+  refetch: () => Promise<unknown>;
   hasNextPage: boolean;
   isFetchingNextPage: boolean;
   setFilteredJob: Dispatch<SetStateAction<string>>;

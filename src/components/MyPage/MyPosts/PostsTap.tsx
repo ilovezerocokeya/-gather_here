@@ -9,6 +9,8 @@ import Pagination from "@/components/MyPage/Common/Pagination";
 import Image from "next/image";
 import { useRouter } from "next/navigation";
 import { supabase } from "@/utils/supabase/client";
+import { PostWithUser } from "@/types/posts/Post.type";
+
 
 type Tab = "전체" | "스터디" | "프로젝트";
 
@@ -16,7 +18,7 @@ const PostsTap: React.FC = () => {
   const { user } = useAuth();
   const router = useRouter();
   const [selectedTab, setSelectedTab] = useState<Tab>("전체");
-  const [posts, setPosts] = useState<any[]>([]);
+  const [posts, setPosts] = useState<PostWithUser[]>([]);
   const [loading, setLoading] = useState<boolean>(true);
   const [currentPage, setCurrentPage] = useState<number>(1);
   const [totalPages, setTotalPages] = useState<number>(1);
@@ -24,15 +26,18 @@ const PostsTap: React.FC = () => {
   const [postIdToDelete, setPostIdToDelete] = useState<string | null>(null);
   const postsPerPage = 6;
 
+
+  // 게시글 데이터 로딩
   useEffect(() => {
     const loadPosts = async () => {
-      if (user && user.id) {
+      if (user?.id) {
         setLoading(true);
         try {
-          let allPosts: any[] = [];
+          let allPosts: PostWithUser[] = [];
           let page = 1;
           let hasMore = true;
 
+          // 유저 ID 기반 전체 게시글 페이지네이션으로 반복 fetch
           while (hasMore) {
             const userPosts = await fetchPosts(
               page,
@@ -58,38 +63,45 @@ const PostsTap: React.FC = () => {
         }
       }
     };
-    loadPosts();
+    void loadPosts();
   }, [user]);
 
-  const updateTotalPages = (filteredPosts: any[]) => {
+  // 전체 페이지 수 업데이트
+  const updateTotalPages = (filteredPosts: PostWithUser[]) => {
     setTotalPages(Math.ceil(filteredPosts.length / postsPerPage));
   };
 
+  // 탭 클릭 시 선택된 탭과 현재 페이지 초기화
   const handleTabClick = (tab: Tab) => {
     setSelectedTab(tab);
     setCurrentPage(1);
     updateTotalPages(filterPosts(posts, tab));
   };
 
+  // 페이지 번호 변경 핸들러
   const handlePageChange = (page: number) => {
     setCurrentPage(page);
   };
 
-  const filterPosts = (allPosts: any[], tab: Tab) => {
+  // 선택된 탭에 따른 게시글 필터링
+  const filterPosts = (allPosts: PostWithUser[], tab: Tab) => {
     if (tab === "전체") return allPosts;
     return allPosts.filter((post) => post.category === tab);
   };
 
+  // 현재 페이지 기준으로 보여줄 게시글 슬라이싱
   const getCurrentPosts = () => {
     const filteredPosts = filterPosts(posts, selectedTab);
     const startIndex = (currentPage - 1) * postsPerPage;
     return filteredPosts.slice(startIndex, startIndex + postsPerPage);
   };
 
+  // 게시글 수정 페이지로 이동
   const handleEdit = (postId: string) => {
     router.push(`/post/${postId}`);
   };
 
+  // 게시글 삭제 실행
   const handleDelete = async () => {
     if (postIdToDelete) {
       try {
@@ -110,6 +122,7 @@ const PostsTap: React.FC = () => {
     }
   };
 
+  // 삭제 모달 오픈
   const confirmDelete = (postId: string) => {
     setPostIdToDelete(postId);
     setIsModalOpen(true);
@@ -139,7 +152,7 @@ const PostsTap: React.FC = () => {
               >
                 취소할래요
               </button>
-              <button onClick={handleDelete} className="shared-button-green w-1/2" aria-label="게시물 삭제">
+              <button onClick={() => void handleDelete} className="shared-button-green w-1/2" aria-label="게시물 삭제">
                 삭제할래요
               </button>
             </div>

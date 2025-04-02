@@ -22,7 +22,7 @@ const InterestsTap: React.FC = () => {
 
   useEffect(() => {
     const loadPosts = async () => {
-      if (user && user.id) {
+      if (user?.id) {
         setLoading(true);
         try {
           const likedPosts = await fetchLikedPosts(user.id);
@@ -43,7 +43,7 @@ const InterestsTap: React.FC = () => {
         }
       }
     };
-    loadPosts();
+    void loadPosts();
   }, [user, selectedTab]);
 
   const handleTabClick = (tab: Tab) => {
@@ -107,9 +107,9 @@ const InterestsTap: React.FC = () => {
               className="s:w-full h-[261px] mb-4 sm:mb-0"
             >
               {"event_id" in post ? (
-                <ItEventCardShort post={post as ITEvent} onRemoveBookmark={() => handleRemoveBookmark(post.event_id)} />
+                <ItEventCardShort post={post} onRemoveBookmark={() => handleRemoveBookmark(post.event_id)} />
               ) : (
-                <PostCardLong post={post as PostWithUser} onRemoveBookmark={() => handleRemoveBookmark(post.post_id)} />
+                <PostCardLong post={post} onRemoveBookmark={() => handleRemoveBookmark(post.post_id)} />
               )}
             </div>
           ))

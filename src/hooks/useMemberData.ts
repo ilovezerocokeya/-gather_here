@@ -23,6 +23,7 @@ export const useMemberData = (
     isLoading,
     isFetchingNextPage,
     isError,
+    refetch,
   } = useInfiniteQuery({
     queryKey: ["members", filteredJob],
     queryFn: ({ pageParam = 1 }) => fetchMembers(pageParam),
@@ -79,6 +80,7 @@ export const useMemberData = (
     filteredMembers,
     isLoading,
     isError,
+    refetch,
     fetchNextPage,
     hasNextPage,
     isFetchingNextPage,

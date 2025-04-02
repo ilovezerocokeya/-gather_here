@@ -1,4 +1,19 @@
-export const validateDraft = (draft: any) => {
+export interface DraftType {
+  title: string;
+  category: string;
+  place: string;
+  location: string;
+  duration: string;
+  totalMembers: string;
+  personalLink: string;
+  targetPosition: string[];
+  recruitments: string;
+  techStack: string[];
+  deadline: string;
+  content: string;
+}
+
+export const validateDraft = (draft: DraftType): string | null => {
   if (!draft.title.trim()) return "제목을 입력해주세요.";
   if (!draft.category.trim()) return "분류를 선택해주세요.";
   if (!draft.place.trim()) return "진행 방식을 선택해주세요.";

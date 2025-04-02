@@ -16,14 +16,14 @@ const GatherHubPageClient: React.FC<GatherHubPageClientProps> = ({ initialData }
     fetchNextPage,
     hasNextPage,
     setFilteredJob,
-  } = useMemberData(initialData.members, initialData.nextPage);
+  } = useMemberData(initialData.members);
 
   // 무한 스크롤 감지
   useEffect(() => {
     const handleScroll = throttle(() => {
       // 사용자가 페이지 하단 근처로 스크롤할 경우 다음 페이지 데이터 요청
       if (hasNextPage && window.innerHeight + window.scrollY >= document.body.offsetHeight - 200) {
-        fetchNextPage();
+        void fetchNextPage();
       }
     }, 500); // 스크롤 이벤트 최적화 (500ms)
 
@@ -45,7 +45,10 @@ const GatherHubPageClient: React.FC<GatherHubPageClientProps> = ({ initialData }
     return (
       <div className="text-center text-red-500">
         서버 오류: 데이터를 로드 중 문제가 발생했습니다.
-        <button onClick={refetch} className="bg-red-500 text-white p-2 rounded-md mt-4">
+        <button
+          onClick={() => void refetch()}
+          className="bg-red-500 text-white p-2 rounded-md mt-4"
+        >
           다시 시도
         </button>
       </div>

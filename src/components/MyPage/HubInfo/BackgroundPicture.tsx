@@ -1,7 +1,6 @@
 "use client";
 
 import React, { useState, useEffect } from "react";
-import { useRouter } from "next/navigation";
 import { supabase } from "@/utils/supabase/client";
 import ProfileLoader from "@/components/Common/Skeleton/ProfileLoader";
 import Image from "next/image";
@@ -17,11 +16,11 @@ const BackgroundPicture: React.FC = () => {
   const { user } = useAuth();
   const { userData, setUserData } = useUserData();
   const [toastState, setToastState] = useState({ state: "", message: "" });
-  const router = useRouter();
   const defaultImage = "/assets/mypage/image_upload.svg";
 
+  
   const uploadBackgroundImage = async (file: File | Blob, altText: string) => {
-    if (!user || !user.id) {
+    if (!user?.id) {
       console.error("사용자 정보가 없습니다.");
       return;
     }
@@ -30,12 +29,14 @@ const BackgroundPicture: React.FC = () => {
 
     try {
       const FileName = `background_${btoa(user.id)}.png`;
+
       const { error: uploadError } = await supabase.storage
         .from("images")
         .upload(`backgroundImages/${FileName}`, file, { upsert: true });
-      if (uploadError) throw uploadError;
+      
+        if (uploadError) throw new Error(uploadError.message);
 
-      const { data: backgroundImageUrlData } = await supabase.storage
+      const { data: backgroundImageUrlData } = supabase.storage
         .from("images")
         .getPublicUrl(`backgroundImages/${FileName}`);
 
@@ -46,7 +47,7 @@ const BackgroundPicture: React.FC = () => {
           .from("Users")
           .update({ background_image_url: backgroundImageUrl })
           .eq("user_id", user.id);
-        if (updateError) throw updateError;
+          if (updateError) throw new Error(updateError.message);
 
         setBackgroundImage(backgroundImageUrl);
         setBackgroundAlt(altText);
@@ -100,13 +101,10 @@ const BackgroundPicture: React.FC = () => {
 
   useEffect(() => {
     if (userData && userData.background_image_url !== backgroundImage) {
-      setBackgroundImage(userData?.background_image_url || defaultImage);
+      setBackgroundImage(userData?.background_image_url ?? defaultImage);
     }
   }, [userData, backgroundImage]);
 
-  const base64Encode = (str: string) => {
-    return Buffer.from(str).toString("base64");
-  };
 
   return (
     <div>
@@ -155,7 +153,7 @@ const BackgroundPicture: React.FC = () => {
                 id="fileInput"
                 type="file"
                 accept="image/*"
-                onChange={handleFileChange}
+                onChange={(e) => void handleFileChange(e)}
                 style={{ display: "none" }}
               />
             </div>
