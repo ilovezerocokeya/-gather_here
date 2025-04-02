@@ -31,7 +31,7 @@
     "lodash": "^4.17.21",
     "lottie-react": "^2.4.0",
     "lottie-web": "^5.12.2",
-    "next": "14.2.5",
+    "next": "^14.2.25",
     "quill": "^2.0.2",
     "react": "^18",
     "react-dom": "^18",
