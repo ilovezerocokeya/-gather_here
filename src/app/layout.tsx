@@ -6,8 +6,6 @@ import 'react-toastify/dist/ReactToastify.css';
 import type { Metadata } from 'next';
 import { Suspense } from 'react';
 
-// NOTE: 해제할 경우, 불필요하게 에러를 유발함. ReturnType 등으로 타이핑을 해도 계속해서 오류.
-// eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
 const pretendard = localFont({
   src: [
     {
@@ -72,8 +70,6 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    // NOTE: type 지정이 되어있어, className 속성이 나타남에도 지속적으로 오류가 출력됨.
-    // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment, @typescript-eslint/no-unsafe-member-access
     <html lang="ko" className={pretendard.className}>
       <body className="bg-background text-fontWhite">
         <CombinedProviders>
