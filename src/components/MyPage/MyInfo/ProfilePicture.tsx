@@ -178,7 +178,7 @@ const ProfilePicture: React.FC = () => {
                 id="fileInput"
                 type="file"
                 accept="image/*"
-                onChange={() => handleFileChange}
+                onChange={() => handleFileChange()}
                 style={{ display: "none" }}
               />
               <div className="grid grid-cols-5 m:grid-cols-3 gap-2 s:mb-4">
