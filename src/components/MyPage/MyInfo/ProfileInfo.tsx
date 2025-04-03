@@ -145,7 +145,7 @@ const ProfileInfo: React.FC = () => {
 
   return (
     <section>
-      <form className="space-y-6" onSubmit={() => handleSubmit}>
+      <form className="space-y-6" onSubmit={() => handleSubmit()}>
         <fieldset className="p-6 s:p-0">
           <h1 className="text-subtitle font-baseBold text-labelNeutral mb-5">기본 정보</h1>
           <div className="grid grid-cols-2 m:grid-cols-1 gap-10 pb-11 border-b-[1px] border-fillNormal">
