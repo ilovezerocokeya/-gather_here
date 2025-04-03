@@ -39,13 +39,13 @@ const useDraft = () => {
   useEffect(() => {
     const savedDraft = localStorage.getItem("draftPost");
     if (savedDraft) {
-      setDraft(JSON.parse(savedDraft));
+      setDraft(JSON.parse(savedDraft) as DraftPost);
     }
   }, []);
 
-  const updateDraft = (key: keyof DraftPost, value: any) => {
+   const updateDraft = <K extends keyof DraftPost>(key: K, value: DraftPost[K]) => {
     setDraft((prevDraft) => ({ ...prevDraft, [key]: value }));
-  };
+   };
 
   const saveDraft = () => {
     localStorage.setItem("draftPost", JSON.stringify(draft));

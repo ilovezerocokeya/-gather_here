@@ -66,7 +66,7 @@ const ProfileInfo: React.FC = () => {
     };
 
     if (nickname) {
-      checkNicknameValidity();
+      void checkNicknameValidity();
     }
   }, [nickname, supabase, user?.id, userData?.nickname]);
 
@@ -98,7 +98,7 @@ const ProfileInfo: React.FC = () => {
       setToastState({ state: "error", message: "업데이트에 실패했습니다." });
     } else {
       setToastState({ state: "success", message: "업데이트 완료되었습니다." });
-      fetchUserData(user.id);
+      void fetchUserData(user.id);
     }
   };
 
@@ -145,7 +145,7 @@ const ProfileInfo: React.FC = () => {
 
   return (
     <section>
-      <form className="space-y-6" onSubmit={handleSubmit}>
+      <form className="space-y-6" onSubmit={() => handleSubmit()}>
         <fieldset className="p-6 s:p-0">
           <h1 className="text-subtitle font-baseBold text-labelNeutral mb-5">기본 정보</h1>
           <div className="grid grid-cols-2 m:grid-cols-1 gap-10 pb-11 border-b-[1px] border-fillNormal">

@@ -34,7 +34,7 @@ const ProfilePicture: React.FC = () => {
   const occupations = ["프론트엔드", "백엔드", "IOS", "안드로이드", "데브옵스", "디자인", "PM", "기획", "마케팅"];
 
   const uploadProfileImage = async (file: File | Blob, altText: string) => {
-    if (!user || !user.id) {
+    if (!user?.id) {
       console.error("사용자 정보가 없습니다.");
       return;
     }
@@ -57,7 +57,7 @@ const ProfilePicture: React.FC = () => {
           .from("Users")
           .update({ profile_image_url: profileImageUrl })
           .eq("user_id", user.id);
-        if (updateError) throw updateError;
+        if (updateError) throw new Error(updateError.message);
 
         setProfileImage(profileImageUrl);
         setProfileAlt(altText);
@@ -178,7 +178,7 @@ const ProfilePicture: React.FC = () => {
                 id="fileInput"
                 type="file"
                 accept="image/*"
-                onChange={handleFileChange}
+                onChange={() => handleFileChange()}
                 style={{ display: "none" }}
               />
               <div className="grid grid-cols-5 m:grid-cols-3 gap-2 s:mb-4">
@@ -196,7 +196,7 @@ const ProfilePicture: React.FC = () => {
                     <button
                       type="button"
                       className="w-[52px] h-[52px] m:w-[48px] m:h-[48px] rounded-full m:rounded-[9px] overflow-hidden bg-fillNeutral flex items-center justify-center"
-                      onClick={() => handleIconClick(icon, `${occupations[index]} 프로필 이미지`)}
+                      onClick={() => void handleIconClick(icon, `${occupations[index]} 프로필 이미지`)}
                     >
                       <div className="w-full h-full relative">
                         <Image

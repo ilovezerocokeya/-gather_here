@@ -13,10 +13,10 @@ import { secureImageUrl } from "@/utils/imageUtils";
 const LeftNav: React.FC = () => {
   const pathname = usePathname();
   const { user } = useAuth();
-  const { userData, fetchUserData, loading, error } = useUserData();
+  const { userData, fetchUserData, loading } = useUserData();
   const defaultImage = "/assets/header/user.svg";
 
-  const jobTitleClassMap: { [key: string]: string } = {
+  const jobTitleClassMap: Record<string, string> = {
     프론트엔드: "text-primary",
     IOS: "text-accentMaya",
     안드로이드: "text-accentPurple",
@@ -45,7 +45,7 @@ const LeftNav: React.FC = () => {
 
   useEffect(() => {
     if (user?.id) {
-      fetchUserData(user.id);
+      void fetchUserData(user.id);
     }
   }, [user, fetchUserData]); 
 

@@ -1,10 +1,30 @@
 "use client";
-import { useUserData } from "@/provider/user/UserDataProvider"; // UserDataProvider로 변경
+import { useUserData } from "@/provider/user/UserDataProvider"; 
 import { useLikeStore } from "@/stores/useLikeStore";
 import MemberCard from "@/components/GatherHub/MemberCard";
 import { useEffect, useState } from "react";
 import { supabase } from "@/utils/supabase/client";
 import { secureImageUrl } from "@/utils/imageUtils";
+
+
+interface LikedMember {
+  user_id: string;
+  nickname: string | null;
+  job_title: string | null;
+  experience: string | null;
+  description: string | null;
+  background_image_url: string | null;
+  profile_image_url: string | null;
+  blog: string | null;
+  answer1: string | null;
+  answer2: string | null;
+  answer3: string | null;
+  first_link: string | null;
+  first_link_type: string | null;
+  second_link: string | null;
+  second_link_type: string | null;
+  tech_stacks?: string[] | null;
+}
 
 
 // MyPeoplePage 컴포넌트
@@ -13,7 +33,7 @@ const MyPeoplePage: React.FC = () => {
   const { likedMembers, syncLikesWithServer, toggleLike } = useLikeStore(); // 좋아요 상태와 동기화 함수, 토글 함수 가져오기
   const [loading, setLoading] = useState<boolean>(true); // 로딩 상태
   const [error, setError] = useState<string | null>(null); // 에러 상태
-  const [likedMemberData, setLikedMemberData] = useState<any[]>([]); // 좋아요한 멤버 정보
+  const [likedMemberData, setLikedMemberData] = useState<LikedMember[]>([]);
 
   useEffect(() => {
     // 좋아요한 멤버를 가져오는 함수
@@ -59,7 +79,7 @@ const MyPeoplePage: React.FC = () => {
           console.error("좋아요한 멤버 정보를 불러오는 중 오류 발생:", membersError.message);
           setError("멤버 정보를 불러오는 중 오류가 발생했습니다.");
         } else {
-          setLikedMemberData(likedMembersData || []); // 멤버 정보가 없으면 빈 배열로 설정
+          setLikedMemberData((likedMembersData ?? []) as LikedMember[]); // 멤버 정보가 없으면 빈 배열로 설정
         }
       } catch (error) {
         console.error("데이터 불러오는 중 오류 발생:", error);
@@ -69,7 +89,7 @@ const MyPeoplePage: React.FC = () => {
       }
     };
   
-    fetchLikedMembers();
+    void fetchLikedMembers();
   }, [userData]);
 
   return (
@@ -86,27 +106,27 @@ const MyPeoplePage: React.FC = () => {
             <MemberCard
               key={member.user_id}
               user_id={member.user_id}
-              nickname={member.nickname}
-              job_title={member.job_title}
-              experience={member.experience}
-              description={member.description}
-              background_image_url={member.background_image_url}
-              profile_image_url={secureImageUrl(member.profile_image_url)}
-              blog={member.blog}
-              answer1={member.answer1}
-              answer2={member.answer2}
-              answer3={member.answer3}
-              first_link={member.first_link}
-              first_link_type={member.first_link_type}
-              second_link={member.second_link}
-              second_link_type={member.second_link_type}
+              nickname={member.nickname ?? ""}
+              job_title={member.job_title ?? ""}
+              experience={member.experience ?? ""}
+              description={member.description ?? ""}
+              background_image_url={member.background_image_url ?? ""}
+              profile_image_url={secureImageUrl(member.profile_image_url ?? "")}
+              blog={member.blog ?? ""}
+              answer1={member.answer1 ?? ""}
+              answer2={member.answer2 ?? ""}
+              answer3={member.answer3 ?? ""}
+              first_link={member.first_link ?? undefined}
+              first_link_type={member.first_link_type ?? undefined}
+              second_link={member.second_link ?? undefined}
+              second_link_type={member.second_link_type ?? undefined}
               liked={!!likedMembers[member.user_id]}
               toggleLike={() => {
                 if (userData?.user_id) {
-                  toggleLike(member.user_id, userData.user_id);
+                  void toggleLike(member.user_id, userData.user_id);
                 }
               }}
-              tech_stacks={[]} 
+              tech_stacks={member.tech_stacks ?? []}
             />
           ))}
         </div>
