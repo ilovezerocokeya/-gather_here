@@ -152,7 +152,7 @@ const PostsTap: React.FC = () => {
               >
                 취소할래요
               </button>
-              <button onClick={() => void handleDelete} className="shared-button-green w-1/2" aria-label="게시물 삭제">
+              <button onClick={() => void handleDelete()} className="shared-button-green w-1/2" aria-label="게시물 삭제">
                 삭제할래요
               </button>
             </div>
