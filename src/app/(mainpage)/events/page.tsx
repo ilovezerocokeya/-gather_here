@@ -1,12 +1,5 @@
-import EventsContent from "@/components/MainPage/PageContent/EventsContent";
-import { Suspense } from "react";
-
 const EventPage = () => {
-  return (
-    <Suspense>
-      <EventsContent />
-    </Suspense>
-  );
+  return <div>개선 중입니다.</div>;
 };
 
 export default EventPage;

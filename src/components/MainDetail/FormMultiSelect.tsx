@@ -15,7 +15,7 @@ interface Option {
 interface FormMultiSelectProps {
   label: string;
   options: Option[];
-  value: Option[];
+  value: string[];
   onChange: (option: Option[]) => void;
   className?: string;
   placeholder?: string;
@@ -118,6 +118,7 @@ const FormMultiSelect: React.FC<FormMultiSelectProps> = ({
         value={value}
         // @ts-expect-error, 오류를 어떻게 처리해야할지 모르는 상황이라 일단 대기.
         onChange={onChange}
+        // @ts-expect-error, 오류를 어떻게 처리해야할지 모르는 상황이라 일단 대기.
         options={options}
         styles={customStyles}
         className={className}

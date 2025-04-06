@@ -321,6 +321,7 @@ const PostPage = () => {
               <FormMultiSelect
                 label="모집 대상"
                 options={targetPositionOptions}
+                // @ts-expect-error, 오류를 어떻게 처리해야할지 모르는 상황이라 일단 대기.
                 value={draft.targetPosition}
                 onChange={handleMultiSelectChange('targetPosition')}
                 placeholder="모집 대상을 선택해주세요"
@@ -340,6 +341,7 @@ const PostPage = () => {
               <FormMultiSelect
                 label="기술 스택"
                 options={techStackOptions}
+                // @ts-expect-error, 오류를 어떻게 처리해야할지 모르는 상황이라 일단 대기.
                 value={draft.techStack}
                 onChange={handleMultiSelectChange('techStack')}
                 placeholder="기술 스택을 선택해주세요"

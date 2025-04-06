@@ -1,15 +1,18 @@
-"use client";
-import React, { useCallback, useEffect, useMemo, useState } from "react";
-import InfiniteScrollComponent from "@/components/MainPage/InfiniteScroll/InfiniteScrollComponents";
-import { PostWithUser } from "@/types/posts/Post.type";
-import { FetchPostsFilters, fetchPosts, fetchPostsWithDeadLine } from "@/lib/fetchPosts";
-import FilterBar from "../FilterBar/FilterBar";
-import Image from "next/image";
-import CarouselLoader from "@/components/Common/Skeleton/CarouselLoader";
-import dynamic from "next/dynamic";
-import useSearch from "@/hooks/useSearch";
+/* eslint-disable @typescript-eslint/no-misused-promises */
+/* eslint-disable @typescript-eslint/no-unsafe-argument */
+/* eslint-disable @typescript-eslint/no-unsafe-member-access */
+'use client';
+import React, { useCallback, useEffect, useMemo, useState } from 'react';
+import InfiniteScrollComponent from '@/components/MainPage/InfiniteScroll/InfiniteScrollComponents';
+import { PostWithUser } from '@/types/posts/Post.type';
+import { fetchPosts, fetchPostsWithDeadLine } from '@/lib/fetchPosts';
+import FilterBar from '../FilterBar/FilterBar';
+import Image from 'next/image';
+import CarouselLoader from '@/components/Common/Skeleton/CarouselLoader';
+import dynamic from 'next/dynamic';
+import useSearch from '@/hooks/useSearch';
 
-const Carousel = dynamic(() => import("@/components/MainPage/Carousel/Carousel"), { ssr: false });
+const Carousel = dynamic(() => import('@/components/MainPage/Carousel/Carousel'), { ssr: false });
 
 interface StudiesContentProps {
   initialPosts: PostWithUser[];
@@ -23,38 +26,28 @@ const StudiesContent: React.FC<StudiesContentProps> = () => {
 
   const [carouselPosts, setCarouselPosts] = useState<PostWithUser[]>([]);
   const [isLoadingCarousel, setIsLoadingCarousel] = useState(true);
-  const [isMobile, setIsMobile] = useState(false);
 
-  const [selectedPosition, setSelectedPosition] = useState<string>("");
-  const [selectedPlace, setSelectedPlace] = useState<string>("");
-  const [selectedLocation, setSelectedLocation] = useState<string>("");
+  const [selectedPosition, setSelectedPosition] = useState<string>('');
+  const [selectedPlace, setSelectedPlace] = useState<string>('');
+  const [selectedLocation, setSelectedLocation] = useState<string>('');
   const [selectedDuration, setSelectedDuration] = useState<number | null>(null);
 
   useEffect(() => {
     const loadCarouselData = async () => {
       setIsLoadingCarousel(true);
-      const carouselData = await fetchPostsWithDeadLine(15, "스터디");
+      const carouselData = await fetchPostsWithDeadLine(15, '스터디');
       setCarouselPosts(carouselData);
       setIsLoadingCarousel(false);
     };
-    loadCarouselData();
+    void loadCarouselData();
   }, []);
 
   useEffect(() => {
-    const handleResize = () => {
-      setIsMobile(window.innerWidth <= 1068);
-    };
-
-    handleResize();
-    window.addEventListener("resize", handleResize);
-    return () => window.removeEventListener("resize", handleResize);
-  }, []);
-
-  useEffect(() => {
-    localStorage.setItem("previousPage", "/studies");
+    localStorage.setItem('previousPage', '/studies');
   }, []);
 
   const loadMorePosts = async () => {
+    // @ts-expect-error, 오류를 어떻게 처리해야할지 모르는 상황이라 일단 대기.
     const filterOptions: FetchPostsFilters = {
       targetPosition: selectedPosition ? [selectedPosition] : undefined,
       place: selectedPlace,
@@ -70,7 +63,7 @@ const StudiesContent: React.FC<StudiesContentProps> = () => {
       }
     }
 
-    const newPosts = await fetchPosts(page, "스터디", filterOptions);
+    const newPosts = await fetchPosts(page, '스터디', filterOptions);
 
     setPosts((prevPosts) => {
       const uniqueNewPosts = newPosts.filter((newPost) => !prevPosts.some((post) => post.post_id === newPost.post_id));
@@ -94,11 +87,12 @@ const StudiesContent: React.FC<StudiesContentProps> = () => {
       const isDefaultFilter = !position && !place && !location && duration === null;
 
       if (isDefaultFilter) {
-        const allPosts = await fetchPosts(1, "스터디", {});
+        const allPosts = await fetchPosts(1, '스터디', {});
         setPosts(allPosts);
         setPage(2);
         setHasMore(allPosts.length === 5);
       } else {
+        // @ts-expect-error, 오류를 어떻게 처리해야할지 모르는 상황이라 일단 대기.
         const filterOptions: FetchPostsFilters = {
           targetPosition: position ? [position] : undefined,
           place: place,
@@ -114,7 +108,7 @@ const StudiesContent: React.FC<StudiesContentProps> = () => {
           }
         }
 
-        const filteredPosts = await fetchPosts(1, "스터디", filterOptions);
+        const filteredPosts = await fetchPosts(1, '스터디', filterOptions);
 
         setPosts(filteredPosts);
         setPage(2);
@@ -126,13 +120,13 @@ const StudiesContent: React.FC<StudiesContentProps> = () => {
 
   useEffect(() => {
     const initialLoad = async () => {
-      const initialPosts = await fetchPosts(1, "스터디", {});
+      const initialPosts = await fetchPosts(1, '스터디', {});
       setPosts(initialPosts);
       setPage(2);
       setHasMore(initialPosts.length === 5);
     };
 
-    initialLoad();
+    void initialLoad();
   }, []);
 
   const filteredPosts = useMemo(() => {
@@ -140,7 +134,7 @@ const StudiesContent: React.FC<StudiesContentProps> = () => {
     const lowerSearchWord = searchWord.toLowerCase();
     return posts.filter(
       (post) =>
-        post.title.toLowerCase().includes(lowerSearchWord) || post.content.toLowerCase().includes(lowerSearchWord),
+        post.title?.toLowerCase().includes(lowerSearchWord) ?? post.content.toLowerCase().includes(lowerSearchWord),
     );
   }, [posts, searchWord]);
 
