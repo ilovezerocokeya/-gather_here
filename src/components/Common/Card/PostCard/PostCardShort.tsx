@@ -6,9 +6,9 @@ import Image from 'next/image';
 import Link from 'next/link';
 import DOMPurify from 'dompurify';
 import LikeButton from '@/components/MainDetail/LikeButton';
-import { useAuth } from '@/provider/user/UserAuthProvider';
 import dayjs from 'dayjs';
 import { secureImageUrl } from '@/utils/imageUtils';
+import { useUserData } from '@/provider/user/UserDataProvider';
 
 interface PostCardProps {
   post: PostWithUser;
@@ -16,7 +16,7 @@ interface PostCardProps {
 }
 
 const PostCardShort: React.FC<PostCardProps> = ({ post }) => {
-  const { user: currentUser } = useAuth();
+  const { userData } = useUserData();
   const [isMounted, setIsMounted] = useState<boolean>(false);
   const deadlineDate = new Date(post.deadline);
   deadlineDate.setHours(0, 0, 0, 0);
@@ -61,7 +61,7 @@ const PostCardShort: React.FC<PostCardProps> = ({ post }) => {
               </li>
             </ul>
           ) : null}
-          <LikeButton postId={post.post_id} currentUser={currentUser} category={post.category} />
+          <LikeButton postId={post.post_id} currentUser={userData} category={post.category} />
         </div>
         <Link href={`/maindetail/${post.post_id}`}>
           <h2 className="text-left text-subtitle font-semibold truncate mt-3 text-labelStrong">{post.title}</h2>

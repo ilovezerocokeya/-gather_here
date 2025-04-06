@@ -5,10 +5,10 @@ import Image from 'next/image';
 import React, { useEffect, useState } from 'react';
 import Link from 'next/link';
 import dayjs from 'dayjs';
-import { useAuth } from '@/provider/user/UserAuthProvider';
 import LikeButton from '@/components/MainDetail/LikeButton';
 import { secureImageUrl } from '@/utils/imageUtils';
 import DOMPurify from 'dompurify';
+import { useUserData } from '@/provider/user/UserDataProvider';
 
 interface PostCardProps {
   post: PostWithUser;
@@ -16,7 +16,7 @@ interface PostCardProps {
 }
 
 const PostCardLong: React.FC<PostCardProps> = ({ post, onRemoveBookmark }) => {
-  const { user: currentUser } = useAuth();
+  const { userData } = useUserData();
   const [isMounted, setIsMounted] = useState<boolean>(false);
   const deadlineDate = new Date(post.deadline);
   deadlineDate.setHours(0, 0, 0, 0);
@@ -87,7 +87,7 @@ const PostCardLong: React.FC<PostCardProps> = ({ post, onRemoveBookmark }) => {
             <li className="absolute right-0">
               <LikeButton
                 postId={post.post_id}
-                currentUser={currentUser}
+                currentUser={userData}
                 category={post.category}
                 onRemoveBookmark={onRemoveBookmark}
               />

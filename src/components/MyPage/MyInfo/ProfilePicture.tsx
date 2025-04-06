@@ -1,41 +1,41 @@
-"use client";
+'use client';
 
-import React, { useState, useEffect, useMemo } from "react";
-import { useRouter } from "next/navigation";
-import { supabase } from "@/utils/supabase/client";
-import ProfileLoader from "@/components/Common/Skeleton/ProfileLoader";
-import Image from "next/image";
-import { useUserData } from "@/provider/user/UserDataProvider";
-import { useAuth } from "@/provider/user/UserAuthProvider";
-import CommonModal from "@/components/Common/Modal/CommonModal";
-import LoginForm from "@/components/Login/LoginForm";
-import Toast from "@/components/Common/Toast/Toast";
-import MypageProfilePicture from "@/components/Common/Skeleton/MypageProfilePicture";
+import React, { useState, useEffect, useMemo } from 'react';
+import { useRouter } from 'next/navigation';
+import { supabase } from '@/utils/supabase/client';
+import ProfileLoader from '@/components/Common/Skeleton/ProfileLoader';
+import Image from 'next/image';
+import { useUserData } from '@/provider/user/UserDataProvider';
+import { useAuth } from '@/provider/user/UserAuthProvider';
+import CommonModal from '@/components/Common/Modal/CommonModal';
+import LoginForm from '@/components/Login/LoginForm';
+import Toast from '@/components/Common/Toast/Toast';
+import MypageProfilePicture from '@/components/Common/Skeleton/MypageProfilePicture';
 
 const ProfilePicture: React.FC = () => {
   const [profileImage, setProfileImage] = useState<string | null>(null);
-  const [profileAlt, setProfileAlt] = useState<string>("프로필 이미지");
+  const [profileAlt, setProfileAlt] = useState<string>('프로필 이미지');
   const [uploading, setUploading] = useState(false);
   const { user } = useAuth();
-  const { userData, setUserData } = useUserData();  
+  const { userData, setUserData } = useUserData();
   const [showLoginModal, setShowLoginModal] = useState<boolean>(false);
-  const [toastState, setToastState] = useState({ state: "", message: "" });
+  const [toastState, setToastState] = useState({ state: '', message: '' });
   const imageBaseUrl = process.env.NEXT_PUBLIC_IMAGE_BASE_URL;
   const router = useRouter();
-  const defaultImage = "/assets/header/user.svg";
+  const defaultImage = '/assets/header/user.svg';
 
   const iconImages = useMemo(() => {
     return Array.from(
       { length: 9 },
-      (_, index) => `${imageBaseUrl}/profileicon_dark_${String(index + 1).padStart(2, "0")}.png`,
+      (_, index) => `${imageBaseUrl}/profileicon_dark_${String(index + 1).padStart(2, '0')}.png`,
     );
   }, [imageBaseUrl]);
 
-  const occupations = ["프론트엔드", "백엔드", "IOS", "안드로이드", "데브옵스", "디자인", "PM", "기획", "마케팅"];
+  const occupations = ['프론트엔드', '백엔드', 'IOS', '안드로이드', '데브옵스', '디자인', 'PM', '기획', '마케팅'];
 
   const uploadProfileImage = async (file: File | Blob, altText: string) => {
     if (!user?.id) {
-      console.error("사용자 정보가 없습니다.");
+      console.error('사용자 정보가 없습니다.');
       return;
     }
 
@@ -44,43 +44,43 @@ const ProfilePicture: React.FC = () => {
     try {
       const FileName = `profile_${base64Encode(user.id)}.png`;
       const { error: uploadError } = await supabase.storage
-        .from("images")
+        .from('images')
         .upload(`profileImages/${FileName}`, file, { upsert: true });
       if (uploadError) throw uploadError;
 
-      const { data: profileImageUrlData } = supabase.storage.from("images").getPublicUrl(`profileImages/${FileName}`);
+      const { data: profileImageUrlData } = supabase.storage.from('images').getPublicUrl(`profileImages/${FileName}`);
 
       const profileImageUrl = profileImageUrlData.publicUrl;
 
       if (profileImageUrl) {
         const { error: updateError } = await supabase
-          .from("Users")
+          .from('Users')
           .update({ profile_image_url: profileImageUrl })
-          .eq("user_id", user.id);
+          .eq('user_id', user.id);
         if (updateError) throw new Error(updateError.message);
 
         setProfileImage(profileImageUrl);
         setProfileAlt(altText);
         setUserData({
           ...userData,
-          user_id: user.id ?? "",
+          user_id: user.id ?? '',
           profile_image_url: profileImageUrl,
-          nickname: userData?.nickname ?? "",
-          job_title: userData?.job_title ?? "",
-          experience: userData?.experience ?? "",
-          blog: userData?.blog ?? "",
-          description: userData?.description ?? "",
-          answer1: userData?.answer1 ?? "",
-          answer2: userData?.answer2 ?? "",
-          answer3: userData?.answer3 ?? "",
+          nickname: userData?.nickname ?? '',
+          job_title: userData?.job_title ?? '',
+          experience: userData?.experience ?? '',
+          blog: userData?.blog ?? '',
+          description: userData?.description ?? '',
+          answer1: userData?.answer1 ?? '',
+          answer2: userData?.answer2 ?? '',
+          answer3: userData?.answer3 ?? '',
         });
-        setToastState({ state: "success", message: "업데이트 완료되었습니다" });
+        setToastState({ state: 'success', message: '업데이트 완료되었습니다' });
       } else {
-        throw new Error("프로필 이미지 URL을 얻지 못했습니다.");
+        throw new Error('프로필 이미지 URL을 얻지 못했습니다.');
       }
     } catch (error) {
-      console.error("프로필 이미지 업데이트 중 오류 발생:", error);
-      setToastState({ state: "error", message: "업데이트에 실패했습니다." });
+      console.error('프로필 이미지 업데이트 중 오류 발생:', error);
+      setToastState({ state: 'error', message: '업데이트에 실패했습니다.' });
     } finally {
       setUploading(false);
     }
@@ -88,7 +88,7 @@ const ProfilePicture: React.FC = () => {
 
   const handleFileChange = async (event: React.ChangeEvent<HTMLInputElement>) => {
     const file = event.target.files?.[0];
-    if (file) await uploadProfileImage(file, "프로필 이미지");
+    if (file) await uploadProfileImage(file, '프로필 이미지');
   };
 
   const handleIconClick = async (iconUrl: string, altText: string) => {
@@ -99,12 +99,12 @@ const ProfilePicture: React.FC = () => {
 
   const handleImageError = () => {
     setProfileImage(null);
-    setProfileAlt("프로필 이미지");
+    setProfileAlt('프로필 이미지');
   };
 
   const handleFileUploadClick = (event: React.MouseEvent<HTMLButtonElement>) => {
     event.preventDefault();
-    const fileInput = document.getElementById("fileInput") as HTMLInputElement;
+    const fileInput = document.getElementById('fileInput') as HTMLInputElement;
     if (fileInput) {
       fileInput.click();
     }
@@ -119,7 +119,7 @@ const ProfilePicture: React.FC = () => {
   }, [userData, profileImage]);
 
   const base64Encode = (str: string) => {
-    return Buffer.from(str).toString("base64");
+    return Buffer.from(str).toString('base64');
   };
 
   return (
@@ -130,7 +130,7 @@ const ProfilePicture: React.FC = () => {
             isOpen={showLoginModal}
             onRequestClose={() => {
               setShowLoginModal(false);
-              router.push("/");
+              router.push('/');
             }}
           >
             <LoginForm />
@@ -147,7 +147,7 @@ const ProfilePicture: React.FC = () => {
                     alt={profileAlt}
                     fill
                     sizes="(max-width: 768px) 100vw, (max-width: 1068px) 50vw, 33vw"
-                    style={{ objectFit: "cover" }}
+                    style={{ objectFit: 'cover' }}
                     className="rounded-[20px]"
                     onError={handleImageError}
                     priority
@@ -178,8 +178,8 @@ const ProfilePicture: React.FC = () => {
                 id="fileInput"
                 type="file"
                 accept="image/*"
-                onChange={() => handleFileChange()}
-                style={{ display: "none" }}
+                onChange={(evt) => void handleFileChange(evt)}
+                style={{ display: 'none' }}
               />
               <div className="grid grid-cols-5 m:grid-cols-3 gap-2 s:mb-4">
                 <div className="relative m:hidden">
@@ -204,7 +204,7 @@ const ProfilePicture: React.FC = () => {
                           alt={`${occupations[index]} 프로필 이미지`}
                           fill
                           sizes="(max-width: 768px) 100vw, (max-width: 1068px) 100vw"
-                          style={{ objectFit: "cover" }}
+                          style={{ objectFit: 'cover' }}
                           className="rounded-full m:rounded-[9px]"
                         />
                         <div className="absolute inset-0 flex items-center justify-center bg-black bg-opacity-50 opacity-0 group-hover:opacity-100 transition-opacity z-10">
@@ -219,11 +219,11 @@ const ProfilePicture: React.FC = () => {
                     </button>
                     <div
                       className={`absolute z-20 whitespace-nowrap py-1 px-2 min-h-6 ${
-                        index < 4 ? "bottom-full mb-2" : "top-full mt-2"
+                        index < 4 ? 'bottom-full mb-2' : 'top-full mt-2'
                       } left-1/2 transform -translate-x-1/2 ${
-                        index === 0 ? "s:-translate-x-1/4" : ""
+                        index === 0 ? 's:-translate-x-1/4' : ''
                       } bg-fillStrong text-fontWhite text-xs rounded opacity-0 group-hover:opacity-100 transition-opacity duration-300 ${
-                        index < 4 ? "bottom-full mb-2" : "top-full mt-2"
+                        index < 4 ? 'bottom-full mb-2' : 'top-full mt-2'
                       } m:top-full m:mt-2`}
                     >
                       {occupations[index]}
@@ -237,7 +237,7 @@ const ProfilePicture: React.FC = () => {
             <Toast
               state={toastState.state}
               message={toastState.message}
-              onClear={() => setToastState({ state: "", message: "" })}
+              onClear={() => setToastState({ state: '', message: '' })}
             />
           )}
         </>

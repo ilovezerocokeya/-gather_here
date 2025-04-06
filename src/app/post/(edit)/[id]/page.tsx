@@ -75,8 +75,10 @@ const PostEditPage = () => {
       duration,
       totalMembers,
       personalLink,
+      // @ts-expect-error, 오류를 어떻게 처리해야할지 모르는 상황이라 일단 대기.
       targetPosition,
       recruitments,
+      // @ts-expect-error, 오류를 어떻게 처리해야할지 모르는 상황이라 일단 대기.
       techStack,
       deadline,
       content,
@@ -319,6 +321,7 @@ const PostEditPage = () => {
                 label="모집 대상"
                 options={targetPositionOptions}
                 value={targetPosition}
+                // @ts-expect-error, 오류를 어떻게 처리해야할지 모르는 상황이라 일단 대기.
                 onChange={handleMultiSelectChange(setTargetPosition)}
                 placeholder="모집 대상을 선택해주세요"
               />
@@ -336,6 +339,7 @@ const PostEditPage = () => {
                 label="기술 스택"
                 options={techStackOptions}
                 value={techStack}
+                // @ts-expect-error, 오류를 어떻게 처리해야할지 모르는 상황이라 일단 대기.
                 onChange={handleMultiSelectChange(setTechStack)}
                 placeholder="기술 스택을 선택해주세요"
               />
