@@ -1,30 +1,30 @@
-"use client";
+'use client';
 
-import { useEffect, useState } from "react";
-import { supabase } from "@/utils/supabase/client";
-import { useUserData } from "@/provider/user/UserDataProvider";
-import { useAuth } from "@/provider/user/UserAuthProvider";
-import { useRouter } from "next/navigation";
-import Toast from "@/components/Common/Toast/Toast";
-import MypageProfileInfo from "@/components/Common/Skeleton/MypageProfileInfo";
+import { useEffect, useState } from 'react';
+import { supabase } from '@/utils/supabase/client';
+import { useUserData } from '@/provider/user/UserDataProvider';
+import { useAuth } from '@/provider/user/UserAuthProvider';
+import { useRouter } from 'next/navigation';
+import Toast from '@/components/Common/Toast/Toast';
+import MypageProfileInfo from '@/components/Common/Skeleton/MypageProfileInfo';
 
 const ProfileInfo: React.FC = () => {
   const router = useRouter();
   const { userData, fetchUserData } = useUserData();
   const { user } = useAuth();
-  const [nickname, setNickname] = useState("");
-  const [job, setJob] = useState("");
-  const [experience, setExperience] = useState("");
-  const [nicknameError, setNicknameError] = useState("");
+  const [nickname, setNickname] = useState('');
+  const [job, setJob] = useState('');
+  const [experience, setExperience] = useState('');
+  const [nicknameError, setNicknameError] = useState('');
   const [isCancelModalOpen, setIsCancelModalOpen] = useState(false);
-  const [toastState, setToastState] = useState({ state: "", message: "" });
+  const [toastState, setToastState] = useState({ state: '', message: '' });
 
   // userData 변경 시 상태 초기화
   useEffect(() => {
     if (userData) {
-      setNickname(userData.nickname ?? "");
-      setJob(userData.job_title ?? "");
-      setExperience(userData.experience ?? "");
+      setNickname(userData.nickname ?? '');
+      setJob(userData.job_title ?? '');
+      setExperience(userData.experience ?? '');
     }
   }, [userData]);
 
@@ -32,41 +32,41 @@ const ProfileInfo: React.FC = () => {
   useEffect(() => {
     const checkNicknameValidity = async () => {
       if (!nickname || nickname === userData?.nickname || !user?.id) {
-        setNicknameError("");
+        setNicknameError('');
         return;
       }
 
       const specialCharPattern = /[^a-zA-Z0-9가-힣_]/;
 
       if (nickname.length < 2 || nickname.length > 11) {
-        setNicknameError("닉네임은 2-11자 내로 입력해주세요.");
+        setNicknameError('닉네임은 2-11자 내로 입력해주세요.');
         return;
       } else if (specialCharPattern.test(nickname)) {
-        setNicknameError("닉네임에는 공백이나 특수문자를 사용할 수 없습니다.");
+        setNicknameError('닉네임에는 공백이나 특수문자를 사용할 수 없습니다.');
         return;
       }
 
       const { data, error } = await supabase
-        .from("Users")
-        .select("nickname")
-        .eq("nickname", nickname)
-        .neq("user_id", user?.id);
+        .from('Users')
+        .select('nickname')
+        .eq('nickname', nickname)
+        .neq('user_id', user?.id);
 
       if (error) {
-        setNicknameError("닉네임 중복 검사에 실패했습니다.");
-        console.error("닉네임 중복 검사 오류:", error);
+        setNicknameError('닉네임 중복 검사에 실패했습니다.');
+        console.error('닉네임 중복 검사 오류:', error);
         return;
       }
 
       if (data && data.length > 0) {
-        setNicknameError("이미 사용 중인 닉네임입니다.");
+        setNicknameError('이미 사용 중인 닉네임입니다.');
       } else {
-        setNicknameError("");
+        setNicknameError('');
       }
     };
 
     if (nickname) {
-      checkNicknameValidity();
+      void checkNicknameValidity();
     }
   }, [nickname, supabase, user?.id, userData?.nickname]);
 
@@ -90,15 +90,15 @@ const ProfileInfo: React.FC = () => {
     }
 
     const { error } = await supabase
-      .from("Users")
+      .from('Users')
       .update({ nickname, job_title: job, experience })
-      .eq("user_id", user.id);
+      .eq('user_id', user.id);
 
     if (error) {
-      setToastState({ state: "error", message: "업데이트에 실패했습니다." });
+      setToastState({ state: 'error', message: '업데이트에 실패했습니다.' });
     } else {
-      setToastState({ state: "success", message: "업데이트 완료되었습니다." });
-      fetchUserData(user.id);
+      setToastState({ state: 'success', message: '업데이트 완료되었습니다.' });
+      void fetchUserData(user.id);
     }
   };
 
@@ -111,11 +111,11 @@ const ProfileInfo: React.FC = () => {
   const handleConfirmLeave = () => {
     setIsCancelModalOpen(false);
     if (userData) {
-      setNickname(userData.nickname ?? "");
-      setJob(userData.job_title ?? "");
-      setExperience(userData.experience ?? "");
+      setNickname(userData.nickname ?? '');
+      setJob(userData.job_title ?? '');
+      setExperience(userData.experience ?? '');
     }
-    router.push("/");
+    router.push('/');
   };
 
   const handleCloseCancelModal = () => {
@@ -145,7 +145,7 @@ const ProfileInfo: React.FC = () => {
 
   return (
     <section>
-      <form className="space-y-6" onSubmit={handleSubmit}>
+      <form className="space-y-6" onSubmit={(evt) => void handleSubmit(evt)}>
         <fieldset className="p-6 s:p-0">
           <h1 className="text-subtitle font-baseBold text-labelNeutral mb-5">기본 정보</h1>
           <div className="grid grid-cols-2 m:grid-cols-1 gap-10 pb-11 border-b-[1px] border-fillNormal">
@@ -158,9 +158,9 @@ const ProfileInfo: React.FC = () => {
                 id="email"
                 name="email"
                 disabled
-                value={user?.email ?? ""}
+                value={user?.email ?? ''}
                 className="w-full shared-input-gray-2 border-[1px] border-fillLight"
-                style={{ color: "#5E5E5E" }}
+                style={{ color: '#5E5E5E' }}
               />
             </div>
             <div>
@@ -237,11 +237,7 @@ const ProfileInfo: React.FC = () => {
                 >
                   취소
                 </button>
-                <button
-                  type="submit"
-                  aria-label="회원 정보 저장"
-                  className="shared-button-green w-[65px] s:w-1/2"
-                >
+                <button type="submit" aria-label="회원 정보 저장" className="shared-button-green w-[65px] s:w-1/2">
                   저장
                 </button>
               </div>
@@ -254,7 +250,7 @@ const ProfileInfo: React.FC = () => {
         <Toast
           state={toastState.state}
           message={toastState.message}
-          onClear={() => setToastState({ state: "", message: "" })}
+          onClear={() => setToastState({ state: '', message: '' })}
         />
       )}
     </section>

@@ -66,6 +66,7 @@ const HubProfileForm: React.FC<{
       new URL(normalizeURL(url));
       return true;
     } catch (error) {
+      console.warn("Invalid URL:", url, error); 
       return false;
     }
   };

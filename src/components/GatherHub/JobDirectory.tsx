@@ -8,14 +8,14 @@ import { JobDirectoryProps } from '@/lib/gatherHub';
 
 const JobDirectory: React.FC<JobDirectoryProps> = ({ setFilteredJob, className }) => {
   // 로컬 스토리지에서 저장된 직업 선택 값을 불러오거나 기본값으로 all
-  const [selectedJob, setSelectedJob] = useState<string>(() => localStorage.getItem('selectedJob') || 'all');
+  const [selectedJob, setSelectedJob] = useState<string>(() => localStorage.getItem('selectedJob') ?? 'all');
 
   // 사용자 인증 정보 및 사용자 데이터 가져오기
   const { isAuthenticated } = useAuth();
   const { userData } = useUserData();
 
   // Hub 등록 여부를 useMemo로 캐싱 
-  const isHubRegistered = useMemo(() => userData?.hubCard || false, [userData]);
+  const isHubRegistered = useMemo(() => userData?.hubCard ?? false, [userData]);
 
   // 직업군 리스트
   const jobCategories = useMemo(() => [

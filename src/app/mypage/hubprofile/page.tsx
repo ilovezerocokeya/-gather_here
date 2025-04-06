@@ -39,16 +39,16 @@ const HubProfile: React.FC = () => {
         .single();
 
       if (data) {
-        setDescription(data.description || "");
-        setBlog(data.blog || "");
-        setFirstLinkType(data.first_link_type || "");
-        setFirstLink(data.first_link || "");
-        setSecondLinkType(data.second_link_type || "");
-        setSecondLink(data.second_link || "");
-        setAnswer1(data.answer1 || "");
-        setAnswer2(data.answer2 || "");
-        setAnswer3(data.answer3 || "");
-        setTechStacks(data.tech_stacks || []);
+        setDescription(data.description ?? "");
+        setBlog(data.blog ?? "");
+        setFirstLinkType(data.first_link_type ?? "");
+        setFirstLink(data.first_link ?? "");
+        setSecondLinkType(data.second_link_type ?? "");
+        setSecondLink(data.second_link ?? "");
+        setAnswer1(data.answer1 ?? "");
+        setAnswer2(data.answer2 ?? "");
+        setAnswer3(data.answer3 ?? "");
+        setTechStacks(data.tech_stacks ?? []);
       }
 
       if (error) {
@@ -56,7 +56,7 @@ const HubProfile: React.FC = () => {
       }
     };
 
-    fetchUserProfile();
+    void fetchUserProfile();
   }, [user, supabase]);
 
   const handleSave = async () => {
@@ -88,8 +88,8 @@ const HubProfile: React.FC = () => {
       setToastState({ state: "error", message: `저장에 실패했습니다: ${error.message}` });
     } else {
       setToastState({ state: "success", message: "저장되었습니다." });
-      if (user && user.id) {
-        fetchUserData(user.id);
+      if (user?.id) {
+        void fetchUserData(user.id);
       }
     }
   };
@@ -126,7 +126,7 @@ const HubProfile: React.FC = () => {
       <div className="border-b-[1px] border-fillNormal my-6" />
       <div className="mt-6 mb-12">
         <div className="flex justify-center">
-          <button onClick={handleSave} aria-label="저장" className="shared-button-green w-[65px]">
+          <button onClick={() => void handleSave()} aria-label="저장" className="shared-button-green w-[65px]">
             저장
           </button>
         </div>
