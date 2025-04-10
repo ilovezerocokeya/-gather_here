@@ -1,10 +1,9 @@
 'use client';
 
-import React, { useEffect, useRef, useState } from 'react';
+import React, { useRef, useState } from 'react';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import Image from 'next/image';
-import LoginForm from '@/components/Login/LoginForm';
 import { useAuth } from '@/provider/user/UserAuthProvider';
 import { useUserData } from '@/provider/user/UserDataProvider';
 import { supabase } from '@/utils/supabase/client';
@@ -13,9 +12,8 @@ import { SearchModalRef } from '@/types/refs/SearchModal';
 
 const Header: React.FC = () => {
   const { user, resetAuthUser } = useAuth();
-  const { userData, fetchUserData } = useUserData();
+  const { userData } = useUserData();
   const router = useRouter();
-  const [isModalOpen, setIsModalOpen] = useState(false);
   const [isMypageModalOpen, setIsMypageModalOpen] = useState(false);
   const modalRef = useRef<SearchModalRef>(null);
 
@@ -41,51 +39,8 @@ const Header: React.FC = () => {
   const mypageModalRef = useRef(false);
 
   const toggleMypageModal = () => {
-  mypageModalRef.current = !mypageModalRef.current;
-  setIsMypageModalOpen(mypageModalRef.current);
-};
-
-  // 로그인 모달 열기
-  const handleOpenLoginModal = () => {
-    setIsModalOpen(true);
-    setIsMypageModalOpen(false);
-  };
-
-  // 로그인 모달 닫기
-  const handleCloseLoginModal = () => {
-    setIsModalOpen(false);
-  };
-
-  // 모달이 열렸을 때 Esc 키로 모달 닫기
-  // NOTE: 재활용하기 좋은 것 같은데, 분리하는 건 어떨지?
-  useEffect(() => {
-    if (isModalOpen) {
-      const handleEsc = (event: KeyboardEvent) => {
-        if (event.key === 'Escape') {
-          handleCloseLoginModal(); // Esc 키를 누르면 모달을 닫음
-        }
-      };
-
-      window.addEventListener('keydown', handleEsc);
-
-      return () => {
-        window.removeEventListener('keydown', handleEsc);
-      };
-    }
-  }, [isModalOpen]); // 모달이 열릴 때만 이벤트 리스너 추가
-
-  // 사용자 데이터 가져오기
-  useEffect(() => {
-    if (!user?.id) return;
-    void fetchUserData(user.id);
-  }, [user?.id]); 
-
-  // 게시글 작성 클릭 시 로그인 여부 확인
-  const handleClickPost = (evt: React.MouseEvent<HTMLAnchorElement, MouseEvent>) => {
-    if (!user) {
-      evt.preventDefault();
-      handleOpenLoginModal();
-    }
+    mypageModalRef.current = !mypageModalRef.current;
+    setIsMypageModalOpen(mypageModalRef.current);
   };
 
   // 모달 창 크기에 따라 닫기
@@ -116,7 +71,7 @@ const Header: React.FC = () => {
               alt="@gather_here 모바일 로고"
               width={30}
               height={40}
-              quality={85} 
+              quality={85}
               priority
               className="hidden s:block"
               style={{ objectFit: 'contain', width: 'auto', height: 'auto' }}
@@ -124,7 +79,7 @@ const Header: React.FC = () => {
           </Link>
           <Link href="/gatherHub" className="logo-link">
             <Image
-              src="/logos/gatherHub.svg" 
+              src="/logos/gatherHub.svg"
               alt="@gather_hub 로고"
               width={100}
               height={50}
@@ -148,10 +103,8 @@ const Header: React.FC = () => {
               <SearchBar ref={modalRef} />
             </button>
             {/* 게시글 작성 버튼 */}
-            <Link onClick={(evt) => handleClickPost(evt)} href="/post" passHref>
-              <button className="square-header-button-gray">
-                <Image src="/assets/header/write.svg" width={16} height={16} alt="글쓰기 버튼 아이콘" />
-              </button>
+            <Link className="square-header-button-gray" href="/post" passHref>
+              <Image src="/assets/header/write.svg" width={16} height={16} alt="글쓰기 버튼 아이콘" />
             </Link>
 
             {/* 로그인 / 마이페이지 버튼 */}
@@ -174,42 +127,20 @@ const Header: React.FC = () => {
                   <Image src="/assets/header/mobile_logo.svg" alt="마이페이지 아이콘" priority width={14} height={16} />
                 </Link>
 
-                <button onClick={() => 
-                  void signOut()}  
-                  className="shared-button-small-gray-2 ml-2 s:hidden"
-                >
+                <button onClick={() => void signOut()} className="shared-button-small-gray-2 ml-2 s:hidden">
                   로그아웃
                 </button>
               </div>
             ) : (
-              <button onClick={handleOpenLoginModal} className="shared-button-small-green">
+              <Link className="shared-button-small-green" href="/login">
                 시작하기
-              </button>
+              </Link>
             )}
           </div>
         </nav>
       </div>
 
-      {/* 로그인 모달 */}
-      {isModalOpen && (
-        <>
-          <div className="fixed inset-0 bg-black opacity-80 z-40" onClick={handleCloseLoginModal}></div>
-          <div
-            className="fixed top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 bg-background rounded-[20px] p-4 z-50"
-            onClick={(e) => e.stopPropagation()}
-          >
-            <button
-              onClick={handleCloseLoginModal}
-              className="ml-auto mt-1 mr-1 block text-right p-1 text-3xl text-[fontWhite] hover:text-[#777]"
-            >
-              &times;
-            </button>
-            <LoginForm />
-          </div>
-        </>
-      )}
-
-      {/* 마이페이지 모달 */}
+      {/* 마이페이지 모달, NOTE: 로그인 모달과 비슷한 방식으로 바꾸면 코드 덜어낼 수 있을듯 */}
       {isMypageModalOpen && user && (
         <>
           <div className="fixed inset-0 bg-black opacity-50 z-40" onClick={toggleMypageModal}></div>
@@ -281,8 +212,7 @@ const Header: React.FC = () => {
               </li>
               <li>
                 <button
-                  onClick={() => 
-                    void signOut()} 
+                  onClick={() => void signOut()}
                   className="block w-full text-left text-labelNormal font-base hover:text-fontWhite"
                 >
                   로그아웃
