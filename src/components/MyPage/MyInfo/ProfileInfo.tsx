@@ -65,7 +65,6 @@
 //       }
 //     };
 
-//     if (nickname) {
 //       void checkNicknameValidity();
 //     }
 //   }, [nickname, supabase, user?.id, userData?.nickname]);
@@ -102,8 +101,6 @@
 //     }
 //   };
 
-//   // 정보 리셋 처리
-//   const handleReset = () => {
 //     setIsCancelModalOpen(true);
 //   };
 
