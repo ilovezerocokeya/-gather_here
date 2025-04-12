@@ -6,6 +6,7 @@ import Toast from "@/components/Common/Toast/Toast";
 import { updateProfile } from "@/components/MyPage/MyInfo/actions/updateProfile";
 import useCheckNickname from "@/hooks/useCheckNickname";
 import ProfileImage from "@/components/MyPage/MyInfo/ProfileImage"; 
+import { useUserData } from "@/provider/user/UserDataProvider";
 
 interface UserProfileClientFormProps {
   initialData: {
@@ -17,71 +18,71 @@ interface UserProfileClientFormProps {
   };
 }
 
+// 폼에서 필요한 값만 추출하는 유틸 함수
+const extractFormData = (form: HTMLFormElement) => {
+  const formData = new FormData(form);
+  return {
+    nickname: formData.get("nickname") as string,
+    jobTitle: formData.get("jobTitle") as string,
+    experience: formData.get("experience") as string,
+  };
+};
+
   const UserProfileClientForm: React.FC<UserProfileClientFormProps> = ({ initialData }) => {
     const router = useRouter();
     const [isPending, startTransition] = useTransition();
     const [toast, setToast] = useState({ state: "", message: "" });
     const [isCancelModalOpen, setIsCancelModalOpen] = useState(false);
+    const [isSaveModalOpen, setIsSaveModalOpen] = useState(false);
     const [nickname, setNickname] = useState(initialData.nickname);
-    const [profileImageUrl, setProfileImageUrl] = useState(initialData.profileImageUrl);
-    
+    const { userData } = useUserData(); 
     const nicknameAvailable = useCheckNickname(nickname);  // 닉네임 유효성 검사 훅
 
     // 취소 버튼 클릭 시 처리 함수
     const handleCancelClick = (e: React.FormEvent<HTMLFormElement>) => {
-      const formData = new FormData(e.currentTarget); // 폼 데이터 수집
-      const changed =
-        formData.get("nickname") !== initialData.nickname || // 닉네임이 변경되었는지 확인
-        formData.get("jobTitle") !== initialData.jobTitle || // 직군이 변경되었는지 확인
-        formData.get("experience") !== initialData.experience || // 경력이 변경되었는지 확인
-        profileImageUrl !== initialData.profileImageUrl; // 프로필 이미지 URL이 변경되었는지 확인
+      const { nickname, jobTitle, experience } = extractFormData(e.currentTarget);
   
-      // 변경된 사항이 있으면 취소 모달을 표시
+      const changed =
+        nickname !== initialData.nickname ||
+        jobTitle !== initialData.jobTitle ||
+        experience !== initialData.experience ||
+        userData?.profile_image_url !== initialData.profileImageUrl;
+  
       if (changed) {
         setIsCancelModalOpen(true);
       } else {
-        router.push("/"); // 변경 사항이 없으면 홈으로 이동
+        router.push("/");
       }
     };
-      
-    // 저장 버튼 클릭 시 처리 함수
+  
     const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
-      e.preventDefault(); // 폼 제출 기본 동작 방지
-      
-      const formData = new FormData(e.currentTarget); // 폼 데이터 수집
-      const nickname = formData.get("nickname") as string;
-      const jobTitle = formData.get("jobTitle") as string;
-      const experience = formData.get("experience") as string;
-      // 닉네임 중복 확인이 필요하면 알림을 띄움
-        if (!nicknameAvailable?.valid) {
-          setToast({ state: "error", message: "닉네임 중복 확인이 필요합니다." });
-          return;
-        }
+      e.preventDefault();
+      const { nickname, jobTitle, experience } = extractFormData(e.currentTarget);
     
       // 프로필 업데이트 비동기 처리
       startTransition(() => {
-        updateProfile({ nickname, jobTitle, experience, profileImageUrl }) // 프로필 업데이트 API 호출
-          .catch((err: unknown) => {
-            const message =
-              err instanceof Error ? err.message : "알 수 없는 오류가 발생했습니다."; // 에러 처리
-            setToast({ state: "error", message });
-          });
+        updateProfile({
+          nickname,
+          jobTitle,
+          experience,
+          profileImageUrl: userData?.profile_image_url ?? "",
+        })
+        .then(() => setIsSaveModalOpen(true))
+        .catch((err) => {
+          const message = err instanceof Error ? err.message : "알 수 없는 오류가 발생했습니다.";
+          setToast({ state: "error", message });
+        });
       });
     };
 
     return (
         <section>
-          <form className="space-y-6" onSubmit={handleSubmit} onReset={handleCancelClick}>
-            <fieldset className="p-6">
-              <h1 className="text-subtitle font-baseBold text-labelNeutral mb-5">기본 정보</h1>
-    
+          <form className="space-y-10" onSubmit={handleSubmit} onReset={handleCancelClick}>
+            <fieldset>
               {/* 프로필 이미지 업로드 컴포넌트 */}
               <ProfileImage
-                initialImageUrl={profileImageUrl}
-                onImageChange={(url) => setProfileImageUrl(url)} // 프로필 이미지 변경 시 상태 업데이트
-                onToast={(state, message) => setToast({ state, message })} // 알림 메시지 처리
+                onToast={(state, message) => setToast({ state, message })}
               />
-    
               {/* 닉네임, 직군, 경력 입력란 */}
               <div className="grid grid-cols-2 m:grid-cols-1 gap-10 pb-11 border-b-[1px] border-fillNormal">
                 {/* 이메일 */}
@@ -116,13 +117,13 @@ interface UserProfileClientFormProps {
                   />
                   <p
                     className={`text-baseXs mt-1 ${
-                      nicknameAvailable?.valid ? "text-statusPositive" : "text-statusDestructive"
+                      nickname && nicknameAvailable?.valid ? "text-statusPositive" : "text-statusDestructive"
                     }`}
                   >
-                    {nicknameAvailable?.message} {/* 닉네임 중복 확인 메시지 표시 */}
+                    {nickname && nicknameAvailable?.message}
                   </p>
                 </div>
-    
+                  
                 {/* 직군 */}
                 <div>
                   <label htmlFor="jobTitle" className="block text-sm font-medium text-labelNormal mb-1">
@@ -146,7 +147,7 @@ interface UserProfileClientFormProps {
                     <option value="마케팅">마케팅</option>
                   </select>
                 </div>
-    
+                  
                 {/* 경력 */}
                 <div>
                   <label htmlFor="experience" className="block text-sm font-medium text-labelNormal mb-1">
@@ -171,7 +172,7 @@ interface UserProfileClientFormProps {
                   </select>
                 </div>
               </div>
-    
+                  
               {/* 버튼 */}
               <div className="mt-6 flex justify-end gap-2">
                 <button
@@ -180,15 +181,22 @@ interface UserProfileClientFormProps {
                   className="shared-button-gray w-[65px]"
                   aria-busy={isPending}
                 >
-                  {isPending ? "취소 중..." : "취소"}
+                 취소
                 </button>
                 <button
                   type="submit"
-                  disabled={isPending}
-                  className="shared-button-green w-[65px]"
-                  aria-busy={isPending}
+                  disabled={
+                    isPending ||
+                    nickname.trim() === "" ||
+                    nicknameAvailable?.valid !== true
+                  }
+                  className={`w-[65px] shared-button-green ${
+                    isPending || nickname.trim() === "" || nicknameAvailable?.valid !== true
+                      ? "!bg-fillLight !text-labelDisabled !border-fillLight !cursor-not-allowed"
+                      : ""
+                  }`}
                 >
-                  {isPending ? "저장 중..." : "저장"}
+                  저장
                 </button>
               </div>
             </fieldset>
@@ -201,7 +209,23 @@ interface UserProfileClientFormProps {
               onClear={() => setToast({ state: "", message: "" })}
             />
           )}
-    
+
+          {isSaveModalOpen && (
+            <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-60 z-50">
+              <div className="bg-fillStrong p-6 rounded-xl text-center min-w-[320px]">
+                <h2 className="text-lg font-baseBold text-fontWhite mb-2">저장되었습니다.</h2>
+                <p className="text-labelNeutral text-baseS mb-5">변경 사항이 성공적으로 저장되었습니다.</p>
+                <div className="flex gap-2 justify-center">
+                  <button className="shared-button-green w-1/2" onClick={() => setIsSaveModalOpen(false)}>
+                    확인
+                  </button>
+                  <button className="shared-button-gray w-1/2" onClick={() => router.push("/")}>
+                    홈으로
+                  </button>
+                </div>
+              </div>
+            </div>
+          )}
           {isCancelModalOpen && (
             <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-60 z-50">
               <div className="bg-fillStrong p-6 rounded-xl text-center min-w-[320px]">

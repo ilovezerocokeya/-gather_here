@@ -1,96 +1,80 @@
 "use client";
 
-import { useState, useRef } from "react";
+import { useRef, useState } from "react";
 import Image from "next/image";
-import { supabase } from "@/utils/supabase/client";
 
 interface ImageUploaderProps {
-  initialImageUrl?: string;         // 초기 이미지 URL 
-  onUpload: (url: string) => void;  // 업로드 완료 후 부모 컴포넌트에 URL 전달
-  onError?: (message: string) => void;
+  imageUrl: string; // 현재 이미지 URL
+  onUpload: (file: File) => Promise<void>; // 업로드 후 처리 함수
+  onError?: (message: string) => void; // 에러 발생 시 처리 함수
 }
 
-// 유효한 이미지 파일인지 검사하는 함수
+// 확장자 + MIME 타입 둘 다 검사해서 안전하게 막기
 const isValidImage = (file: File) => {
   const allowedTypes = ["image/jpeg", "image/png"];
   const allowedExts = ["jpg", "jpeg", "png"];
   const ext = file.name.split(".").pop()?.toLowerCase();
-  return ext && allowedExts.includes(ext) && allowedTypes.includes(file.type);
+  const mime = file.type;
+
+  return !!ext && !!mime && allowedExts.includes(ext) && allowedTypes.includes(mime);
 };
 
-const ImageUploader: React.FC<ImageUploaderProps> = ({ initialImageUrl, onUpload, onError }) => {
-  const [imageUrl, setImageUrl] = useState(initialImageUrl ?? "");  // 현재 이미지 URL
-  const [uploading, setUploading] = useState(false);                // 업로드 중 여부
-  const inputRef = useRef<HTMLInputElement | null>(null);           // 숨겨진 파일 input 참조
+const ImageUploader: React.FC<ImageUploaderProps> = ({ imageUrl, onUpload, onError }) => {
+  const [uploading, setUploading] = useState(false); // 업로드 중인지 상태
+  const inputRef = useRef<HTMLInputElement | null>(null); // 숨겨진 input 클릭용
 
-  // 이미지 선택 버튼 클릭 시 input 요소 클릭 유도
+  // 버튼 누르면 input 작동시키기
   const handleClick = () => inputRef.current?.click();
 
-  // 파일 선택 후 실행되는 업로드 핸들러
+  // 파일 선택되면 호출됨
   const handleChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
-    if (!file || !isValidImage(file)) {
-      onError?.("jpg, jpeg, png 형식의 이미지 파일만 업로드할 수 있습니다.");
+    if (!file) return;
+
+    if (!isValidImage(file)) {
+      onError?.("이미지 업로드는 jpg, jpeg, png 형식만 가능합니다.");
       return;
     }
 
     setUploading(true);
-
     try {
-      const publicUrl = await uploadImageToSupabase(file);
-      setImageUrl(publicUrl);
-      onUpload(publicUrl);
-    } catch (err) {
-      console.error("업로드 실패:", err);
+      await onUpload(file);
+    } catch {
       onError?.("이미지 업로드에 실패했습니다.");
     } finally {
       setUploading(false);
     }
   };
 
-    // 실제 업로드 처리 분리
-  const uploadImageToSupabase = async (file: File): Promise<string> => {
-    const ext = file.name.split(".").pop()?.toLowerCase();
-    const fileName = `profile_${Date.now()}.${ext}`;
-    const filePath = `profileImages/${fileName}`;
-
-    const { error: uploadError } = await supabase.storage
-      .from("images")
-      .upload(filePath, file, { upsert: true });
-
-    if (uploadError) throw new Error(uploadError.message);
-
-    const { data } = supabase.storage.from("images").getPublicUrl(filePath);
-    if (!data?.publicUrl) throw new Error("URL 생성 실패");
-
-    return data.publicUrl;
-  }
-
-  const displayImage = imageUrl || "/assets/header/user.svg";  // 표시할 이미지 (없으면 기본 이미지)
-
   return (
-    <div className="relative w-32 h-32 rounded-full overflow-hidden bg-fillLight">
-      {/* 업로드 중일 경우 로딩 문구, 아니면 이미지 표시 */}
+    <div className="w-36 h-36 s:w-30 s:h-30 rounded-[20px] overflow-hidden bg-fillLight flex items-center justify-center s:mb-3 relative group">
+      {/* 로딩 중일 때 UI */}
       {uploading ? (
-        <div className="w-full h-full flex items-center justify-center">업로드 중...</div>
+        <div className="w-full h-full flex items-center justify-center bg-black/50 text-white z-10">
+          업로드 중...
+        </div>
       ) : (
-        <Image 
-            src={displayImage} 
-            alt="프로필 이미지" 
-            fill className="object-cover" 
+        <Image
+          key={imageUrl}
+          src={imageUrl}
+          alt="프로필 이미지"
+          fill
+          className="object-cover rounded-[20px]"
         />
       )}
 
-      {/* 이미지 클릭 시 파일 업로드 input 활성화 */}
-      <button
-        type="button"
-        onClick={handleClick}
-        className="absolute inset-0 hover:bg-black/40 text-white flex items-center justify-center"
-      >
-        수정
-      </button>
+      {/* hover 시 보여지는 화면 */}
+      {!uploading && (
+        <button
+          type="button"
+          onClick={handleClick}
+          className="absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100 transition-opacity text-white flex items-center justify-center"
+        >
+          <span className="text-white text-6xl">🖼️</span>
+        </button>
+      )}
 
-      {/* 실제로 파일을 선택하는 input 요소 */}
+      {/* 실제 파일 선택 input */}
       <input
         ref={inputRef}
         type="file"
