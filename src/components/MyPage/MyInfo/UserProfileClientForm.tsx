@@ -31,7 +31,10 @@ const extractFormData = (form: HTMLFormElement) => {
   const UserProfileClientForm: React.FC<UserProfileClientFormProps> = ({ initialData }) => {
     const router = useRouter();
     const [isPending, startTransition] = useTransition();
-    const [toast, setToast] = useState({ state: "", message: "" });
+    const [toast, setToast] = useState<{
+      state: "success" | "error" | "warn" | "info" | "custom" | "";
+      message: string;
+    }>({ state: "", message: "" });
     const [isCancelModalOpen, setIsCancelModalOpen] = useState(false);
     const [isSaveModalOpen, setIsSaveModalOpen] = useState(false);
     const [nickname, setNickname] = useState(initialData.nickname);

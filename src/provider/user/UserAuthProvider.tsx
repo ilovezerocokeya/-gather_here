@@ -2,7 +2,6 @@ import React, { createContext, useState, useEffect, useCallback, ReactNode, useC
 import { supabase } from "@/utils/supabase/client";
 import { User } from "@supabase/supabase-js";
 import { useSessionManager } from "@/hooks/useSessionManager";
-import { useRouter } from "next/navigation";
 import { useLikeStore } from "@/stores/useLikeStore";
 
 // 사용자 인증 상태를 정의하는 인터페이스
@@ -19,7 +18,6 @@ const AuthContext = createContext<AuthState | undefined>(undefined);
 
 // 인증 제공 컴포넌트
 export const UserAuthProvider: React.FC<{ children: ReactNode }> = ({ children }) => {
-  const router = useRouter();
 
   // 사용자 상태 관리
   const [user, setUserState] = useState<User | null>(null);
@@ -56,8 +54,14 @@ export const UserAuthProvider: React.FC<{ children: ReactNode }> = ({ children }
   // 사용자 로그아웃 및 상태 초기화 함수
   const resetAuthUser = useCallback(async () => {
     try {
-      // Supabase에서 세션을 종료
-      await supabase.auth.signOut();
+      const { data } = await supabase.auth.getSession();
+      const sessionExists = !!data.session;
+
+      if (sessionExists) {
+        await supabase.auth.signOut();
+      } else {
+        console.log("로그아웃처리가 된 상태입니다.");
+      }
 
       // 사용자 상태 초기화
       setUserState(null);
@@ -71,11 +75,10 @@ export const UserAuthProvider: React.FC<{ children: ReactNode }> = ({ children }
       // Zustand 상태 초기화 
       useLikeStore.setState({ likedMembers: {} });
 
-      router.push("/"); // 홈 화면으로 이동
     } catch (error) {
       console.error("Supabase 로그아웃 실패:", error);
     }
-  }, [router]);
+  }, []);
 
   // 자동 로그인 여부에 따라 세션을 관리하는 훅 실행
   useSessionManager(resetAuthUser, rememberMe, user);
@@ -90,7 +93,13 @@ export const UserAuthProvider: React.FC<{ children: ReactNode }> = ({ children }
         // 세션이 만료되었거나 존재하지 않으면 로그아웃 처리
         if (error || !data.session?.user) {
           console.warn("세션 만료 또는 로그인 안 됨, 로그아웃 처리");
-          await resetAuthUser();
+          // 세션이 없으면 상태만 초기화
+          if (!data.session) {
+            setUserState(null);
+            setIsAuthenticated(false);
+          } else {
+            await resetAuthUser();
+          }
           return;
         }
 

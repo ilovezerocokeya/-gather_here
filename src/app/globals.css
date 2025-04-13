@@ -265,6 +265,24 @@ body {
   }
 }
 
+.toast-error-custom {
+  font-size: 14px;
+  max-width: 65vw;
+  padding: 14px 14px;
+  position: fixed !important;
+  left: auto !important;
+  z-index: 9999 !important;
+}
+
+@media (max-width: 768px) {
+  .toast-error-custom {
+    font-size: 13px;
+    padding: 10px 12px;
+    top: 55px !important;
+    right: 12px !important;
+  }
+}
+
 .ql-editor.ql-blank {
   height: 167px;
 }
