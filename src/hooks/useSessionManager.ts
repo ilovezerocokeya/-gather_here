@@ -2,7 +2,6 @@ import { useEffect, useRef } from "react";
 import { useRouter } from "next/navigation";
 import { supabase } from "@/utils/supabase/client";
 import { User } from '@supabase/supabase-js';
-import { throttle } from "lodash";
 
 export const useSessionManager = (resetAuthUser: () => Promise<void>, rememberMe: boolean, user: User | null) => {
   const router = useRouter();
@@ -10,6 +9,7 @@ export const useSessionManager = (resetAuthUser: () => Promise<void>, rememberMe
   const sessionTimeoutRef = useRef<NodeJS.Timeout | null>(null); // 자동 로그아웃 타이머를 관리하는 변수
   const activityCheckIntervalRef = useRef<NodeJS.Timeout | null>(null); // 비활성 탭 체크 타이머를 관리하는 변수
   const startTimeRef = useRef<number>(Date.now()); // 사용자가 앱을 실행한 시점을 기록하는 변수
+  const activityTimerRef = useRef<NodeJS.Timeout | null>(null);
 
   // 일정 시간 동안의 활동을 기반으로 스로틀링 주기를 결정하는 함수
   const calculateThrottleDelay = (elapsed: number) => {
@@ -21,16 +21,16 @@ export const useSessionManager = (resetAuthUser: () => Promise<void>, rememberMe
 
   // 자동 로그인 사용자는 활동 감지를 하지 않음. 대신 55분마다 세션 갱신.
   useEffect(() => {
-    if (rememberMe) {
-      console.log("자동 로그인 활성화됨: 세션 유지 중...");
-
-      const interval = setInterval(() => {
-        void (async () => {
-          const { data, error } = await supabase.auth.getSession();
-          
-          if (error || !data.session) {
-            console.error("세션 갱신 실패:", error);
-            await resetAuthUser(); // 세션 만료 시 로그아웃 처리
+    if (!rememberMe) return;
+  
+    console.log("자동 로그인 활성화됨: 세션 유지 중...");
+  
+    const interval = setInterval(() => {
+      void (async () => {
+        const { data, error } = await supabase.auth.getSession();
+        if (error || !data.session) {
+          console.error("세션 갱신 실패:", error);
+          await resetAuthUser(); // 세션 만료 시 로그아웃 처리
           } else {
           console.log("세션이 정상 유지됨.");
           }
@@ -38,8 +38,7 @@ export const useSessionManager = (resetAuthUser: () => Promise<void>, rememberMe
         }, 55 * 60 * 1000); // 55분마다 세션 갱신 시도
 
       return () => clearInterval(interval);
-    }
-  }, [rememberMe, resetAuthUser, user]);
+  }, [rememberMe]);
 
   // 사용자의 활동이 감지될 때마다 세션 타이머를 리셋하여 1시간 동안 활동이 없을 때만 로그아웃되도록 설정
   const resetSessionTimer = () => {
@@ -74,81 +73,115 @@ export const useSessionManager = (resetAuthUser: () => Promise<void>, rememberMe
 
   // 사용자의 활동을 감지하고 동적 스로틀링을 적용하여 CPU 부담을 최소화
   useEffect(() => {
-    if (rememberMe) return; // 자동 로그인 사용자는 이벤트 감지 불필요
-
-    let elapsed = Date.now() - startTimeRef.current;
-    let throttleDelay = calculateThrottleDelay(elapsed);
-    if (!throttleDelay) return;
-
-    // 동적 스로틀링을 적용하여 점진적으로 감지 주기를 늘림
-    const activityHandler = throttle(() => {
+    if (rememberMe) return;
+  
+    // 사용자 활동 발생 시 세션 타이머를 리셋하고, 다음 감지 주기를 설정
+    const handleActivity = () => {
       resetSessionTimer();
-      elapsed = Date.now() - startTimeRef.current;
-      throttleDelay = calculateThrottleDelay(elapsed);
-    }, throttleDelay);
-
-    // 감지할 이벤트 등록
-    const events = ["mousemove", "keydown", "mousedown", "wheel"];
-    events.forEach((event) => document.addEventListener(event, activityHandler));
-
-    return () => {
-      // 이벤트 리스너 제거 및 타이머 정리
-      events.forEach((event) => document.removeEventListener(event, activityHandler));
-      activityHandler.cancel();
-      if (sessionTimeoutRef.current) clearTimeout(sessionTimeoutRef.current);
+  
+      const elapsed = Date.now() - startTimeRef.current;
+      const delay = calculateThrottleDelay(elapsed) ?? 10 * 60 * 1000;
+  
+      // 기존 타이머가 있다면 제거
+      if (activityTimerRef.current) {
+        clearTimeout(activityTimerRef.current);
+      }
+  
+      // 다음 감지 주기 설정
+      activityTimerRef.current = setTimeout(() => {
+        handleActivity();
+      }, delay);
     };
-  }, [resetAuthUser, rememberMe, user]);
+  
+    // 이벤트 리스너 등록
+    const events = ["mousemove", "keydown", "mousedown", "wheel"];
+    events.forEach((event) => document.addEventListener(event, handleActivity));
+  
+    
+    handleActivity(); // 초기 감지 1회 실행
+  
+    return () => {
+      
+      events.forEach((event) => document.removeEventListener(event, handleActivity)); // 이벤트 리스너 제거
+  
+      // 타이머 제거
+      if (activityTimerRef.current) {
+        clearTimeout(activityTimerRef.current);
+      }
+  
+      // 세션 타이머 제거
+      if (sessionTimeoutRef.current) {
+        clearTimeout(sessionTimeoutRef.current);
+      }
+    };
+  }, [rememberMe]);
 
   // 사용자가 탭을 비활성화할 경우, 동적 스로틀링을 적용하여 감지 간격을 점진적으로 증가
   useEffect(() => {
-    const handleVisibilityChange = () => {
-      if (document.hidden) {
-        console.log("탭이 비활성화됨: 로그아웃 감지 시작");
+    if (!rememberMe) {
 
-        let elapsedInactiveTime = 0;
-        let checkDelay = 10 * 60 * 1000; // 초기 감지 간격 10분
-
-        activityCheckIntervalRef.current = setInterval(() => {
-          void (async () => {
-
-            elapsedInactiveTime += checkDelay;
+      const handleVisibilityChange = () => {
+         // 탭이 비활성화된 경우 로그아웃 감지 로직 시작
+         if (document.hidden && !activityCheckIntervalRef.current) {
+          console.log("탭이 비활성화됨: 로그아웃 감지 시작");
+        
+          let elapsedInactiveTime = 0;
+        
+          // 일정 시간마다 활동 여부를 확인하고 감지 주기를 점진적으로 증가시키는 재귀 함수
+          const checkInactivity = () => {
+            const delay = calculateThrottleDelay(elapsedInactiveTime) ?? 10 * 60 * 1000;
+          
+            activityCheckIntervalRef.current = setTimeout(() => {
             
-            // 10분 → 30분 → 60분으로 감지 간격 증가
-            checkDelay = calculateThrottleDelay(elapsedInactiveTime) ?? checkDelay;
+              elapsedInactiveTime += delay;
             
-            const timeSinceLastActivity = Date.now() - lastActivityTimeRef.current;
+              const timeSinceLastActivity = Date.now() - lastActivityTimeRef.current;
+            
+              
+             // 마지막 활동 이후 1시간 이상 경과한 경우 자동 로그아웃 처리
             if (timeSinceLastActivity >= 60 * 60 * 1000) {
-              console.log("1시간 동안 활동 없음 (비활성 탭 포함): 자동 로그아웃");
+              console.log("1시간 동안 활동 없음: 자동 로그아웃");
+            
+              void (async () => {
+                await resetAuthUser();
               
-              await resetAuthUser();
-              
-              // 로그아웃 후 세션 만료 여부를 최종 확인 후 페이지 이동
-              const { data } = await supabase.auth.getSession();
-              if (!data.session) {
-                router.push("/");
-              }
+                const { data } = await supabase.auth.getSession();
+                if (!data.session) {
+                  router.push("/");
+                }
+              })();
+            } else {
+              // 아직 활동 유효함. 다음 감지 타이머 재설정
+              checkInactivity();
             }
-          })();
-          }, checkDelay);
+          }, delay);
+        };
+      
+        // 감지 시작
+        checkInactivity();
       } else {
-        // 사용자가 다시 탭을 활성화하면 감지 중단
-        if (activityCheckIntervalRef.current) {
-          clearInterval(activityCheckIntervalRef.current);
-          activityCheckIntervalRef.current = null;
-          console.log("탭이 다시 활성화됨: 자동 로그아웃 감지 중지");
+          // 사용자가 다시 탭을 활성화하면 감지 중단
+          if (!document.hidden && activityCheckIntervalRef.current) {
+            clearTimeout(activityCheckIntervalRef.current);
+            activityCheckIntervalRef.current = null;
+            console.log("탭이 다시 활성화됨: 자동 로그아웃 감지 중지");
+          }
         }
-      }
-    };
-
-    // visibilitychange 이벤트 등록
-    document.addEventListener("visibilitychange", handleVisibilityChange);
-
-    return () => {
-      // 이벤트 리스너 제거 및 타이머 정리
-      document.removeEventListener("visibilitychange", handleVisibilityChange);
-      if (activityCheckIntervalRef.current) clearInterval(activityCheckIntervalRef.current);
-    };
-  }, [resetAuthUser, router]);
+      };
+    
+       // 탭 활성/비활성 변경 이벤트 리스너 등록
+      document.addEventListener("visibilitychange", handleVisibilityChange);
+    
+      return () => {
+        // 이벤트 리스너 제거 및 타이머 정리
+        document.removeEventListener("visibilitychange", handleVisibilityChange);
+        if (activityCheckIntervalRef.current) {
+          clearTimeout(activityCheckIntervalRef.current);
+          activityCheckIntervalRef.current = null;
+        }
+      };
+    }
+  }, [rememberMe, resetAuthUser, router]);
 
   return {};
 };

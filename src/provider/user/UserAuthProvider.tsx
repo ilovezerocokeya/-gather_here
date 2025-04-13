@@ -1,4 +1,4 @@
-import React, { createContext, useState, useEffect, useCallback, ReactNode, useContext } from "react";
+import React, { createContext, useState, useEffect, useCallback, ReactNode, useContext, useRef } from "react";
 import { supabase } from "@/utils/supabase/client";
 import { User } from "@supabase/supabase-js";
 import { useSessionManager } from "@/hooks/useSessionManager";
@@ -23,16 +23,16 @@ export const UserAuthProvider: React.FC<{ children: ReactNode }> = ({ children }
   const [user, setUserState] = useState<User | null>(null);
   const [isAuthenticated, setIsAuthenticated] = useState<boolean>(false);
   const [authError, setAuthError] = useState<string | null>(null);
-  const [rememberMe, setRememberMe] = useState<boolean>(false);
+  const rememberMeRef = useRef<boolean>(false);
 
   // localStorage에서 rememberMe 값 가져오기
   useEffect(() => {
     try {
-      const savedRememberMe = localStorage.getItem("rememberMe");
-      setRememberMe(savedRememberMe ? (JSON.parse(savedRememberMe) as boolean) : false);
+      const saved = localStorage.getItem("rememberMe");
+      rememberMeRef.current = saved ? (JSON.parse(saved) as boolean) : false;
     } catch (error) {
       console.error("rememberMe 상태 로드 오류:", error);
-      setRememberMe(false);
+      rememberMeRef.current = false;
     }
   }, []);
 
@@ -40,10 +40,13 @@ export const UserAuthProvider: React.FC<{ children: ReactNode }> = ({ children }
   const setAuthUser = useCallback(async (user: User | null, remember = false) => {
     setUserState(user);
     setIsAuthenticated(!!user); // user가 존재하면 true, 없으면 false
-    setRememberMe(remember);
 
+    // 상태가 아니라 Ref에 저장
+    rememberMeRef.current = remember; 
+    
     // rememberMe 값 localStorage에 저장
     localStorage.setItem("rememberMe", JSON.stringify(remember));
+    
 
     // 로그인 성공 시, 좋아요 상태를 서버와 동기화
     if (user) {
@@ -67,7 +70,7 @@ export const UserAuthProvider: React.FC<{ children: ReactNode }> = ({ children }
       setUserState(null);
       setIsAuthenticated(false);
       setAuthError(null);
-      setRememberMe(false);
+      rememberMeRef.current = false;
 
       // localStorage에서 rememberMe 값 삭제
       localStorage.removeItem("rememberMe");
@@ -80,8 +83,8 @@ export const UserAuthProvider: React.FC<{ children: ReactNode }> = ({ children }
     }
   }, []);
 
-  // 자동 로그인 여부에 따라 세션을 관리하는 훅 실행
-  useSessionManager(resetAuthUser, rememberMe, user);
+  // rememberMeRef.current를 useSessionManager에 전달
+  useSessionManager(resetAuthUser, rememberMeRef.current, user);
 
   // 앱 로드 시, 기존 세션이 있는지 확인
   useEffect(() => {
@@ -104,12 +107,12 @@ export const UserAuthProvider: React.FC<{ children: ReactNode }> = ({ children }
         }
 
         // 유저 정보 설정
-        await setAuthUser(data.session.user, rememberMe);
+        await setAuthUser(data.session.user, rememberMeRef.current);
       } catch (error) {
         console.error("세션 확인 중 오류 발생:", error);
       }
     })();
-  }, [setAuthUser, rememberMe, resetAuthUser]);
+  }, [setAuthUser, resetAuthUser]);
 
   return (
     <AuthContext.Provider
