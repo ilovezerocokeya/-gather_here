@@ -31,40 +31,40 @@ export async function updateSession(request: NextRequest) {
 
   // IMPORTANT: DO NOT REMOVE auth.getUser()
 
-  // const {
-  //   data: { user },
-  // } = await supabase.auth.getUser();
+  const {
+    data: { user },
+  } = await supabase.auth.getUser();
 
-  // if (user && (request.nextUrl.pathname.startsWith('/login') || request.nextUrl.pathname.startsWith('/signup'))) {
-  //   // no user, potentially respond by redirecting the user to the login page
-  //   const url = request.nextUrl.clone();
-  //   url.pathname = '/';
-  //   return NextResponse.redirect(url);
-  // }
+  if (user && (request.nextUrl.pathname.startsWith('/login') || request.nextUrl.pathname.startsWith('/signup'))) {
+    // no user, potentially respond by redirecting the user to the login page
+    const url = request.nextUrl.clone();
+    url.pathname = '/';
+    return NextResponse.redirect(url);
+  }
 
-  // if (!user && request.nextUrl.pathname.startsWith('/mypage')) {
-  //   const url = request.nextUrl.clone();
-  //   url.pathname = '/';
-  //   return NextResponse.redirect(url);
-  // }
+  if (!user && request.nextUrl.pathname.startsWith('/mypage')) {
+    const url = request.nextUrl.clone();
+    url.pathname = '/login';
+    return NextResponse.redirect(url);
+  }
 
-  // // 내 글이 아니어야함.
-  // if (request.nextUrl.pathname.startsWith('/post')) {
-  //   if (!user) {
-  //     const url = request.nextUrl.clone();
-  //     url.pathname = '/login';
-  //     return NextResponse.redirect(url);
-  //   } else {
-  //     const uuid = request.nextUrl.pathname.split('/post/')[1];
-  //     const { data: post } = await supabase.from('posts').select('user_id').eq('id', uuid).single();
+  // 내 글이 아니어야함.
+  if (request.nextUrl.pathname.startsWith('/post')) {
+    if (!user) {
+      const url = request.nextUrl.clone();
+      url.pathname = '/login';
+      return NextResponse.redirect(url);
+    } else {
+      const uuid = request.nextUrl.pathname.split('/post/')[1];
+      const { data: post } = await supabase.from('posts').select('user_id').eq('id', uuid).single();
 
-  //     if (post?.user_id !== user.id) {
-  //       const url = request.nextUrl.clone();
-  //       url.pathname = '/';
-  //       return NextResponse.redirect(url);
-  //     }
-  //   }
-  // }
+      if (post?.user_id !== user.id) {
+        const url = request.nextUrl.clone();
+        url.pathname = '/login';
+        return NextResponse.redirect(url);
+      }
+    }
+  }
 
   // IMPORTANT: You *must* return the supabaseResponse object as it is.
   // If you're creating a new response object with NextResponse.next() make sure to:
