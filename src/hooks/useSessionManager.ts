@@ -8,7 +8,7 @@ export const useSessionManager = (resetAuthUser: () => Promise<void>, rememberMe
   const lastActivityTimeRef = useRef<number>(Date.now()); // 마지막 사용자 활동 시간을 저장하는 변수
   const sessionTimeoutRef = useRef<NodeJS.Timeout | null>(null); // 자동 로그아웃 타이머를 관리하는 변수
   const activityCheckIntervalRef = useRef<NodeJS.Timeout | null>(null); // 비활성 탭 체크 타이머를 관리하는 변수
-  const startTimeRef = useRef<number>(Date.now()); // 사용자가 앱을 실행한 시점을 기록하는 변수
+  const isCheckingRef = useRef(false);
   const activityTimerRef = useRef<NodeJS.Timeout | null>(null);
 
   // 일정 시간 동안의 활동을 기반으로 스로틀링 주기를 결정하는 함수
@@ -79,7 +79,7 @@ export const useSessionManager = (resetAuthUser: () => Promise<void>, rememberMe
     const handleActivity = () => {
       resetSessionTimer();
   
-      const elapsed = Date.now() - startTimeRef.current;
+      const elapsed = Date.now() - lastActivityTimeRef.current;
       const delay = calculateThrottleDelay(elapsed) ?? 10 * 60 * 1000;
   
       // 기존 타이머가 있다면 제거
@@ -118,60 +118,55 @@ export const useSessionManager = (resetAuthUser: () => Promise<void>, rememberMe
 
   // 사용자가 탭을 비활성화할 경우, 동적 스로틀링을 적용하여 감지 간격을 점진적으로 증가
   useEffect(() => {
-    if (!rememberMe) {
+    if (!rememberMe && user) {
 
       const handleVisibilityChange = () => {
-         // 탭이 비활성화된 경우 로그아웃 감지 로직 시작
-         if (document.hidden && !activityCheckIntervalRef.current) {
+
+        // 탭이 비활성화되었고 아직 감지 타이머가 없다면
+        if (document.hidden && !activityCheckIntervalRef.current && !isCheckingRef.current) {
           console.log("탭이 비활성화됨: 로그아웃 감지 시작");
-        
+  
           let elapsedInactiveTime = 0;
-        
-          // 일정 시간마다 활동 여부를 확인하고 감지 주기를 점진적으로 증가시키는 재귀 함수
-          const checkInactivity = () => {
+          isCheckingRef.current = true;
+  
+          // 감지 로직 (점진적 delay 증가)
+          const startInactivityCheck = () => {
             const delay = calculateThrottleDelay(elapsedInactiveTime) ?? 10 * 60 * 1000;
-          
-            activityCheckIntervalRef.current = setTimeout(() => {
-            
-              elapsedInactiveTime += delay;
-            
-              const timeSinceLastActivity = Date.now() - lastActivityTimeRef.current;
-            
-              
-             // 마지막 활동 이후 1시간 이상 경과한 경우 자동 로그아웃 처리
+            elapsedInactiveTime += delay;
+  
+            const timeSinceLastActivity = Date.now() - lastActivityTimeRef.current;
+  
             if (timeSinceLastActivity >= 60 * 60 * 1000) {
               console.log("1시간 동안 활동 없음: 자동 로그아웃");
-            
+  
               void (async () => {
                 await resetAuthUser();
-              
                 const { data } = await supabase.auth.getSession();
                 if (!data.session) {
                   router.push("/");
                 }
               })();
             } else {
-              // 아직 활동 유효함. 다음 감지 타이머 재설정
-              checkInactivity();
+              activityCheckIntervalRef.current = setTimeout(startInactivityCheck, delay);
             }
-          }, delay);
-        };
-      
-        // 감지 시작
-        checkInactivity();
-      } else {
-          // 사용자가 다시 탭을 활성화하면 감지 중단
-          if (!document.hidden && activityCheckIntervalRef.current) {
-            clearTimeout(activityCheckIntervalRef.current);
-            activityCheckIntervalRef.current = null;
-            console.log("탭이 다시 활성화됨: 자동 로그아웃 감지 중지");
-          }
+          };
+  
+          // 최초 감지는 10분 후 시작
+          activityCheckIntervalRef.current = setTimeout(startInactivityCheck, 10 * 60 * 1000);
+        }
+  
+        // 사용자가 다시 탭을 활성화하면 감지 중단
+        if (!document.hidden && activityCheckIntervalRef.current) {
+          clearTimeout(activityCheckIntervalRef.current);
+          activityCheckIntervalRef.current = null;
+          isCheckingRef.current = false;
+          console.log("탭이 다시 활성화됨: 자동 로그아웃 감지 중지");
         }
       };
-    
-       // 탭 활성/비활성 변경 이벤트 리스너 등록
+  
+        // 탭 활성/비활성 변경 이벤트 리스너 등록
       document.addEventListener("visibilitychange", handleVisibilityChange);
-    
+  
       return () => {
         // 이벤트 리스너 제거 및 타이머 정리
         document.removeEventListener("visibilitychange", handleVisibilityChange);
@@ -179,9 +174,10 @@ export const useSessionManager = (resetAuthUser: () => Promise<void>, rememberMe
           clearTimeout(activityCheckIntervalRef.current);
           activityCheckIntervalRef.current = null;
         }
+        isCheckingRef.current = false;
       };
     }
-  }, [rememberMe, resetAuthUser, router]);
+  }, [rememberMe, user, resetAuthUser, router]);
 
   return {};
 };
