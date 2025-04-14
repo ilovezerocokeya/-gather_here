@@ -2,7 +2,6 @@
 
 import React, { useRef, useState } from 'react';
 import Link from 'next/link';
-import { useRouter } from 'next/navigation';
 import Image from 'next/image';
 import { useAuth } from '@/provider/user/UserAuthProvider';
 import { useUserData } from '@/provider/user/UserDataProvider';
@@ -13,7 +12,6 @@ import { SearchModalRef } from '@/types/refs/SearchModal';
 const Header: React.FC = () => {
   const { user, resetAuthUser } = useAuth();
   const { userData } = useUserData();
-  const router = useRouter();
   const [isMypageModalOpen, setIsMypageModalOpen] = useState(false);
   const modalRef = useRef<SearchModalRef>(null);
 
@@ -31,7 +29,6 @@ const Header: React.FC = () => {
       }
     } finally {
       void resetAuthUser(); // 사용자 상태 초기화
-      router.push('/'); // 메인 페이지로 이동
     }
   };
 
