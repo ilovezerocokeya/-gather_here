@@ -1,11 +1,9 @@
-import ProfilePicture from "@/components/MyPage/MyInfo/ProfilePicture";
-import ProfileInfo from "@/components/MyPage/MyInfo/ProfileInfo";
+import UserProfileForm from "@/components/MyPage/MyInfo/UserProfileForm";
 
 const MyInfo = () => {
   return (
     <div className="flex flex-col gap-4">
-      <ProfilePicture />
-      <ProfileInfo />
+      <UserProfileForm />
     </div>
   );
 };

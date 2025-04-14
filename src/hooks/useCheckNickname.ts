@@ -1,41 +1,32 @@
-import { useState, useEffect } from "react";
-import { supabase } from "@/utils/supabase/client";
+import { useEffect, useState } from "react";
+import { doubleCheckNickname } from "@/components/MyPage/MyInfo/actions/doubleCheckNickname";
 
 const useCheckNickname = (nickname: string) => {
-  const [nicknameAvailable, setNicknameAvailable] = useState<boolean | null>(null);
+  const [result, setResult] = useState<null | { valid: boolean; message: string }>(null);
 
-  // 닉네임 유효성 검사 및 사용 가능 여부 체크하는 함수
   useEffect(() => {
-    const checkNicknameAvailability = async () => {
-      const specialCharPattern = /[^a-zA-Z0-9가-힣_]/;
+    // 닉네임이 비어있으면 검사 초기화
+    if (!nickname) {
+      setResult(null);
+      return;
+    }
 
-      if (
-        !nickname ||
-        typeof nickname !== "string" ||
-        nickname.length < 2 ||
-        nickname.length > 11 ||
-        specialCharPattern.test(nickname)
-      ) {
-        setNicknameAvailable(null);
-        return;
-      }
-
-      // Supabase의 Users 테이블에서 닉네임을 조회하여 중복 여부 확인
-      const { data, error } = await supabase.from("Users").select("nickname").eq("nickname", nickname);
-
-      if (error) {
-        console.error("Error checking nickname availability:", error);
-        return;
-      }
-      
-      // 닉네임이 사용 중이지 않으면 true, 사용 중이면 false로 설정
-      setNicknameAvailable(data.length === 0);
+    // 서버 액션을 통해 닉네임 검사 실행
+    const checkNickname = async () => {
+      const res = await doubleCheckNickname(nickname);
+      setResult(res);
     };
+    
+    // 디바운스 처리
+    const timer = setTimeout(() => {
+      void checkNickname(); 
+    }, 400);
 
-   void checkNicknameAvailability();
+     // 닉네임이 변경될 때 이전 타이머 제거
+    return () => clearTimeout(timer);
   }, [nickname]);
 
-  return nicknameAvailable;
+  return result;
 };
 
 export default useCheckNickname;
