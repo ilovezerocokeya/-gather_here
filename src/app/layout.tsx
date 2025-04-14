@@ -4,7 +4,7 @@ import CombinedProviders from '@/provider/CombinedProviders';
 import Header from '@/components/Common/Header/Header';
 import 'react-toastify/dist/ReactToastify.css';
 import type { Metadata } from 'next';
-import { Suspense } from 'react';
+import React from 'react';
 
 const pretendard = localFont({
   src: [
@@ -66,17 +66,18 @@ export const metadata: Metadata = {
 
 export default function RootLayout({
   children,
+  login,
 }: Readonly<{
   children: React.ReactNode;
+  login: React.ReactNode;
 }>) {
   return (
     <html lang="ko" className={pretendard.className}>
       <body className="bg-background text-fontWhite">
         <CombinedProviders>
-          <Suspense>
-            <Header />
-          </Suspense>
+          <Header />
           {children}
+          {login}
         </CombinedProviders>
       </body>
     </html>
