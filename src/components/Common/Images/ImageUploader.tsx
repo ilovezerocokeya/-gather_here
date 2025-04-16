@@ -80,16 +80,19 @@ const ImageUploader: React.FC<ImageUploaderProps> = ({ imageUrl, onUpload, onErr
 
   return (
     <div
-      className={`w-36 h-36 s:w-30 s:h-30 rounded-[20px] overflow-hidden flex items-center justify-center s:mb-3 relative group transition-all ${
-        isDragging ? "border-2 border-dashed border-primary bg-fillHover" : "bg-fillLight"
+      className={`w-48 h-48 s:w-30 s:h-30 rounded-[20px] bg-black/70 overflow-hidden relative group cursor-pointer transition-all duration-300 ${
+        isDragging
+          ? "border-2 border-dashed border-primary bg-black/70"
+          : "bg-black/80"
       }`}
+      onClick={handleClick}
       onDragOver={handleDragOver}
       onDragLeave={handleDragLeave}
       onDrop={(e) => void handleDrop(e)}
     >
-      {/* 로딩 중일 때 UI */}
+      {/* 업로드 중 */}
       {uploading ? (
-        <div className="w-full h-full flex items-center justify-center bg-black/50 text-white z-10">
+        <div className="w-full h-full flex items-center justify-center bg-black/60 text-white z-10">
           업로드 중...
         </div>
       ) : (
@@ -98,32 +101,45 @@ const ImageUploader: React.FC<ImageUploaderProps> = ({ imageUrl, onUpload, onErr
           src={imageUrl}
           alt="프로필 이미지"
           fill
-          className="object-cover rounded-[20px]"
+          className="object-cover transition-all duration-300 group-hover:scale-105 brightness-75"
         />
       )}
 
-      {/* hover 시 보여지는 화면 */}
+      <div className="absolute inset-0 bg-black/70 z-10 pointer-events-none transition-all duration-300 group-hover:bg-black/80" />
+
+
+      {/* 기본 아이콘 + 텍스트 (항상 표시) */}
       {!uploading && (
-        <button
-          type="button"
-          onClick={handleClick}
-          className="absolute inset-1/2 transform -translate-x-1/2 -translate-y-1/2 w-[48px] h-[48px] bg-fillLight opacity-0 group-hover:opacity-100 z-20 rounded-[20px]"
-        >
+        <div className="absolute inset-0 z-20 flex flex-col items-center justify-center transition-opacity duration-300">
           <Image
             src="/assets/mypage/image_upload.svg"
             alt="이미지 업로드 아이콘"
-            width={24}
-            height={24}
-            className="mx-auto"
+            width={48}
+            height={48}
+            className="group-hover:hidden opacity-80 mb-1"
           />
-        </button>
+          <span className="text-white text-[11px] group-hover:hidden">이미지 업로드</span>
+        </div>
       )}
 
-      {/* 실제 파일 선택 input */}
+      {/* 호버 or 드래그 중 인터랙션 메시지 */}
+      <div
+        className={`absolute top-[50%] left-1/2 transform -translate-x-1/2 -translate-y-[35%] z-30 w-max 
+        ${isDragging ? "flex" : "hidden"} group-hover:flex flex-col items-center animate-fade-in`}
+      >
+        <p className="text-white text-[12px] font-medium whitespace-nowrap text-center">
+          이미지를 선택하거나 드래그해보세요
+        </p>
+        <p className="text-gray-300 text-[8px] font-normal whitespace-nowrap text-center">
+          (최대 3MB / jpg, jpeg, png, webp 첨부가능)
+        </p>
+      </div>
+
+      {/* 파일 선택 input */}
       <input
         ref={inputRef}
         type="file"
-        accept="image/png, image/jpeg"
+        accept="image/png, image/jpeg, image/webp"
         onChange={(e) => void handleChange(e)}
         className="hidden"
       />
