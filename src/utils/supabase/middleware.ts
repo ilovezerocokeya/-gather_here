@@ -48,21 +48,26 @@ export async function updateSession(request: NextRequest) {
     return NextResponse.redirect(url);
   }
 
-  // 내 글이 아니어야함.
-  if (request.nextUrl.pathname.startsWith('/post')) {
-    if (!user) {
-      const url = request.nextUrl.clone();
-      url.pathname = '/login';
-      return NextResponse.redirect(url);
-    } else {
-      const uuid = request.nextUrl.pathname.split('/post/')[1];
-      const { data: post } = await supabase.from('posts').select('user_id').eq('id', uuid).single();
+  if (!user && request.nextUrl.pathname.startsWith('/post')) {
+    const url = request.nextUrl.clone();
+    url.pathname = '/login';
 
-      if (post?.user_id !== user.id) {
-        const url = request.nextUrl.clone();
-        url.pathname = '/login';
-        return NextResponse.redirect(url);
-      }
+    return NextResponse.redirect(url);
+  } else if (user && request.nextUrl.pathname.split('/post/')[1]) {
+    const post_id = request.nextUrl.pathname.split('/post/')[1];
+    const { data: post } = await supabase
+      .from('Posts')
+      .select('*')
+      .match({ post_id: post_id, user_id: user.id })
+      .single();
+
+    console.log('post: ', post);
+
+    if (!post) {
+      const url = request.nextUrl.clone();
+      url.pathname = '/';
+
+      return NextResponse.redirect(url);
     }
   }
 
