@@ -23,8 +23,13 @@ const HubProfile: React.FC = () => {
   const [answer1, setAnswer1] = useState("");
   const [answer2, setAnswer2] = useState("");
   const [answer3, setAnswer3] = useState("");
+  const [isLoading, setIsLoading] = useState(false);
   const [techStacks, setTechStacks] = useState<string[]>([]);
-  const [toastState, setToastState] = useState({ state: "", message: "" });
+  const [isHubCardActive, setIsHubCardActive] = useState(false);
+  const [toast, setToast] = useState<{
+    state: "success" | "error" | "warn" | "info" | "custom" | "";
+    message: string;
+  }>({ state: "", message: "" });
 
   useEffect(() => {
     const fetchUserProfile = async () => {
@@ -33,12 +38,13 @@ const HubProfile: React.FC = () => {
       const { data, error } = await supabase
         .from("Users")
         .select(
-          "description, blog, first_link_type, first_link, second_link_type, second_link, answer1, answer2, answer3, tech_stacks",
+          "hubCard, description, blog, first_link_type, first_link, second_link_type, second_link, answer1, answer2, answer3, tech_stacks",
         )
         .eq("user_id", user.id)
         .single();
 
       if (data) {
+        setIsHubCardActive(data.hubCard ?? false);
         setDescription(data.description ?? "");
         setBlog(data.blog ?? "");
         setFirstLinkType(data.first_link_type ?? "");
@@ -59,18 +65,20 @@ const HubProfile: React.FC = () => {
     void fetchUserProfile();
   }, [user, supabase]);
 
-  const handleSave = async () => {
-    if (!blog) {
-      setToastState({ state: "error", message: "포트폴리오 링크를 작성해주세요!" });
+  // 등록/삭제 토글 핸들러
+  const handleToggleHubCard = async () => {
+    if (!user || isLoading) return;
+
+    if (!isHubCardActive && !blog) {
+      setToast({ state: "error", message: "포트폴리오 링크를 작성해주세요!" });
       return;
     }
-
-    if (!user) return;
+    setIsLoading(true);
 
     const { error } = await supabase
       .from("Users")
       .update({
-        hubCard: true,
+        hubCard: !isHubCardActive,
         description,
         blog,
         first_link_type: firstLinkType,
@@ -84,15 +92,27 @@ const HubProfile: React.FC = () => {
       })
       .eq("user_id", user.id);
 
-    if (error) {
-      setToastState({ state: "error", message: `저장에 실패했습니다: ${error.message}` });
-    } else {
-      setToastState({ state: "success", message: "저장되었습니다." });
-      if (user?.id) {
-        void fetchUserData(user.id);
+      if (error) {
+        setToast({ state: "error", message: `저장에 실패했습니다: ${error.message}` });
+      } else {
+        const nextState = !isHubCardActive;
+        setIsHubCardActive(nextState);
+        setToast({
+          state: "success",
+          message: nextState ? "프로필이 등록되었습니다." : "프로필이 삭제되었습니다.",
+        });
+  
+        if (user?.id) {
+          void fetchUserData(user.id);
+        }
+        // 삭제된 경우에는 새로고침 
+        setTimeout(() => {
+          window.location.reload();
+        }, 3000);
       }
-    }
-  };
+  
+      setIsLoading(false);
+    };
 
   return (
     <section>
@@ -124,20 +144,41 @@ const HubProfile: React.FC = () => {
         setSecondLink={setSecondLink}
       />
       <div className="border-b-[1px] border-fillNormal my-6" />
-      <div className="mt-6 mb-12">
-        <div className="flex justify-center">
-          <button onClick={() => void handleSave()} aria-label="저장" className="shared-button-green w-[65px]">
-            저장
-          </button>
-        </div>
+
+      {/* 등록 상태 안내 및 토글 */}
+      <div className="mt-6 mb-12 flex flex-col items-center gap-3">
+        {/* 상태 텍스트 */}
+        <span className="text-sm text-white font-medium">
+          {isHubCardActive ? "프로필이 등록된 상태입니다." : "프로필이 비공개 상태입니다."}
+        </span>
+
+        {/* 토글 스위치 */}
+        <label className="relative inline-flex items-center cursor-pointer">
+          <input
+            type="checkbox"
+            className="sr-only peer"
+            checked={isHubCardActive}
+            onChange={() => void handleToggleHubCard()}
+            disabled={isLoading}
+          />
+          <div
+            className={`w-14 h-8 bg-gray-300 rounded-full peer
+              peer-checked:bg-green-500 transition-all duration-300
+              after:content-[''] after:absolute after:top-1 after:left-1 after:bg-white
+              after:rounded-full after:h-6 after:w-6 after:transition-all
+              peer-checked:after:translate-x-6
+              ${isLoading ? "opacity-50 cursor-not-allowed" : ""}`}
+          ></div>
+        </label>
       </div>
-      {toastState.state && (
-        <Toast
-          state={toastState.state}
-          message={toastState.message}
-          onClear={() => setToastState({ state: "", message: "" })}
-        />
-      )}
+
+      {toast.state && (
+            <Toast
+              state={toast.state}
+              message={toast.message}
+              onClear={() => setToast({ state: "", message: "" })}
+            />
+          )}
     </section>
   );
 };
