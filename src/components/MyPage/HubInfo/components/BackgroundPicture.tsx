@@ -7,7 +7,6 @@ import Image from "next/image";
 import { useAuth } from "@/provider/user/UserAuthProvider";
 import { useUserData } from "@/provider/user/UserDataProvider";
 import Toast from "@/components/Common/Toast/Toast";
-import ProfilePicture from "../MyInfo/ProfilePicture";
 
 const BackgroundPicture: React.FC = () => {
   const [backgroundImage, setBackgroundImage] = useState<string | null>(null);
@@ -15,7 +14,10 @@ const BackgroundPicture: React.FC = () => {
   const [uploading, setUploading] = useState(false);
   const { user } = useAuth();
   const { userData, setUserData } = useUserData();
-  const [toastState, setToastState] = useState({ state: "", message: "" });
+  const [toast, setToast] = useState<{
+    state: "success" | "error" | "warn" | "info" | "custom" | "";
+    message: string;
+  }>({ state: "", message: "" });
   const defaultImage = "/assets/mypage/image_upload.svg";
 
   
@@ -65,13 +67,13 @@ const BackgroundPicture: React.FC = () => {
           answer3: userData?.answer3 ?? "",
           blog: userData?.blog ?? "",
         });
-        setToastState({ state: "success", message: "배경 이미지 업데이트 완료되었습니다." });
+        setToast({ state: "success", message: "배경 이미지 업데이트 완료되었습니다." });
       } else {
         throw new Error("배경 이미지 URL을 얻지 못했습니다.");
       }
     } catch (error) {
       console.error("배경 이미지 업데이트 중 오류 발생:", error);
-      setToastState({ state: "error", message: "배경 이미지 업데이트에 실패했습니다." });
+      setToast({ state: "error", message: "배경 이미지 업데이트에 실패했습니다." });
     } finally {
       setUploading(false);
     }
@@ -108,8 +110,6 @@ const BackgroundPicture: React.FC = () => {
 
   return (
     <div>
-      {user?.id ? (
-        <>
           <div className="px-6 pt-6 pb-10 s:p-0 s:pb-4">
             <label className="block text-subtitle font-baseBold text-labelNeutral mb-5">커버 이미지</label>
             <div className="flex items-center flex-wrap s:mb-3 gap-5">
@@ -158,17 +158,13 @@ const BackgroundPicture: React.FC = () => {
               />
             </div>
           </div>
-          {toastState.state && (
+          {toast.state && (
             <Toast
-              state={toastState.state}
-              message={toastState.message}
-              onClear={() => setToastState({ state: "", message: "" })}
+              state={toast.state}
+              message={toast.message}
+              onClear={() => setToast({ state: "", message: "" })}
             />
           )}
-        </>
-      ) : (
-        <ProfilePicture />
-      )}
     </div>
   );
 };
