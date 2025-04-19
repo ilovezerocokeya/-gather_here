@@ -70,11 +70,12 @@ const BackgroundPicture: React.FC = () => {
 
   // 전역 상태에 있는 배경 이미지 URL을 로컬 상태로 반영
   useEffect(() => {
-    if (
-      userData?.background_image_url &&
-      stripQuery(userData.background_image_url) !== stripQuery(backgroundImage)
-    ) {
-      setBackgroundImage(userData.background_image_url);
+    const strippedLocal = stripQuery(backgroundImage); // 현재 로컬 상태의 이미지 URL
+    const strippedRemote = stripQuery(userData?.background_image_url ?? ""); // UserDataProvider의 이미지 URL 
+  
+    if (!strippedLocal && strippedRemote) {
+      // 초기 로딩 상태일 때만 반영
+      setBackgroundImage(userData?.background_image_url ?? null);
     }
   }, [userData]);
 

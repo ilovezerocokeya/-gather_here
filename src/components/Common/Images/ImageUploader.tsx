@@ -1,6 +1,6 @@
 "use client";
 
-import { useRef, useState } from "react";
+import { useCallback, useRef, useState } from "react";
 import Image from "next/image";
 import { convertToWebp } from "@/utils/Image/convertToWebp";
 
@@ -28,7 +28,9 @@ const ImageUploader: React.FC<ImageUploaderProps> = ({ imageUrl, onUpload, onErr
   const inputRef = useRef<HTMLInputElement | null>(null); // 숨겨진 input 클릭용
 
   // 버튼 누르면 input 작동시키기
-  const handleClick = () => inputRef.current?.click();
+  const handleClick = useCallback(() => {
+    if (!uploading) inputRef.current?.click();
+  }, [uploading]);
 
   // 파일 선택되면 호출됨
   const handleChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -97,7 +99,6 @@ const ImageUploader: React.FC<ImageUploaderProps> = ({ imageUrl, onUpload, onErr
         </div>
       ) : (
         <Image
-          key={imageUrl}
           src={imageUrl}
           alt="프로필 이미지"
           fill
@@ -142,6 +143,7 @@ const ImageUploader: React.FC<ImageUploaderProps> = ({ imageUrl, onUpload, onErr
         accept="image/png, image/jpeg, image/webp"
         onChange={(e) => void handleChange(e)}
         className="hidden"
+        disabled={uploading} // 업로드 중이면 비활성화
       />
     </div>
   );
