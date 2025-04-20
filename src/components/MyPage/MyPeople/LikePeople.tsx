@@ -16,14 +16,20 @@ const LikePeople = async () => {
   }
 
   // User_Interests 테이블에서 내가 좋아요한 유저 ID 리스트 가져오기
-  const { data: interestsData } = await supabase
-    .from("User_Interests")
-    .select("liked_user_id")
-    .eq("user_id", session.user.id);
+  const { data: interestsData, error: interestsError } = await supabase
+  .from("User_Interests")
+  .select("liked_user_id")
+  .eq("user_id", session.user.id);
+
+  // 오류가 있으면 메시지 표시
+  if (interestsError) {
+    console.error("좋아요 데이터 조회 오류:", interestsError.message);
+    return <div className="text-center mt-8 text-red-500">데이터를 불러오는 중 오류가 발생했습니다.</div>;
+  }
 
   // 관심 멤버가 하나도 없다면 해당 메시지 반환
   if (!interestsData || interestsData.length === 0) {
-    return <div>아직 좋아요한 멤버가 없습니다.🫠</div>;
+    return <div className="mt-8 text-center text-labelNeutral col-span-full">아직 좋아요한 멤버가 없습니다.🫠</div>;
   }
 
   const likedUserIds = interestsData.map((item) => item.liked_user_id); // liked_user_id 배열 생성

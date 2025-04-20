@@ -3,7 +3,7 @@
 import MemberCard from "@/components/GatherHub/MemberCard";
 import { useLikeStore } from "@/stores/useLikeStore";
 import { secureImageUrl } from "@/utils/imageUtils";
-import { useState, useEffect } from "react";
+import { useState, useEffect, useMemo } from "react";
 import type { UserData } from "@/types/userData";
 import Pagination from "@/components/MyPage/Common/Pagination"; 
 
@@ -21,13 +21,20 @@ const LikePeopleClient = ({ userId, likedMembers }: Props) => {
   // 페이지네이션 관련 상태
   const [currentPage, setCurrentPage] = useState(1);
   const membersPerPage = 6;
-  const totalPages = Math.ceil(likedMembers.length / membersPerPage);
+
+  // 좋아요 상태 기반으로 화면에 보여줄 멤버만 필터링
+  const visibleMembers = useMemo(() => {
+    return likedMembers.filter((member) => likedMap[member.user_id]);
+  }, [likedMembers, likedMap]);
+
+  const totalPages = useMemo(() => Math.ceil(visibleMembers.length / membersPerPage), [visibleMembers]);
+
 
   // 현재 페이지 멤버 슬라이싱
-  const currentMembers = likedMembers.slice(
-    (currentPage - 1) * membersPerPage,
-    currentPage * membersPerPage
-  );
+  const currentMembers = useMemo(() => {
+    const start = (currentPage - 1) * membersPerPage;
+    return visibleMembers.slice(start, start + membersPerPage);
+  }, [visibleMembers, currentPage]);
 
   // 컴포넌트 마운트 시 좋아요 상태를 서버에서 불러와 zustand에 동기화
   useEffect(() => {
