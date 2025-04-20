@@ -15,7 +15,7 @@ interface Props {
   likedMembers: LikedMember[];
 }
 
-const MyPeopleClient = ({ userId, likedMembers }: Props) => {
+const LikePeopleClient = ({ userId, likedMembers }: Props) => {
   const { likedMembers: likedMap, syncLikesWithServer, toggleLike } = useLikeStore();
 
   // 페이지네이션 관련 상태
@@ -83,4 +83,4 @@ const MyPeopleClient = ({ userId, likedMembers }: Props) => {
   );
 };
 
-export default MyPeopleClient;
+export default LikePeopleClient;
