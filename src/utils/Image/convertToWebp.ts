@@ -26,7 +26,7 @@ export const convertToWebp = async (file: File): Promise<File> => {
               resolve(webpFile);
             },
             "image/webp",
-            0.9
+            0.75
           );
         };
   
