@@ -7,12 +7,14 @@ import SelfIntroduction from "@/components/MyPage/HubInfo/components/Introductio
 import TeamworkQuestions from "@/components/MyPage/HubInfo/components/TeamQuestions";
 import TechStack from "@/components/MyPage/HubInfo/components/TechStack";
 import { HubProfileState, hubProfileReducer, } from "@/components/MyPage/HubInfo/reducer/hubProfileReducer";
+import HubProfileToggle from "./HubProfileToggle";
 
 interface HubProfileClientFormProps {
+  initialIsActive: boolean;
   initialData: HubProfileState;
 }
 
-const HubProfileClientForm: React.FC<HubProfileClientFormProps> = ({ initialData }) => {
+const HubProfileClientForm: React.FC<HubProfileClientFormProps> = ({ initialIsActive,  initialData }) => {
   const [state, dispatch] = useReducer(hubProfileReducer, initialData); // useReducer를 통해 상태 초기화 및 디스패치 함수 생성
 
   return (
@@ -59,6 +61,12 @@ const HubProfileClientForm: React.FC<HubProfileClientFormProps> = ({ initialData
       />
 
       <div className="border-b-[1px] border-fillNormal my-6" />
+
+      {/* 상태를 넘겨서 HubProfileToggle 렌더링 */}
+      <HubProfileToggle
+        initialIsActive={initialIsActive}
+        state={state}
+      />
     </>
   );
 };

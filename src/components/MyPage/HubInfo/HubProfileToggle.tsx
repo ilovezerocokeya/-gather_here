@@ -5,34 +5,14 @@ import { supabase } from "@/utils/supabase/client";
 import { useAuth } from "@/provider/user/UserAuthProvider";
 import { useUserData } from "@/provider/user/UserDataProvider";
 import Toast from "@/components/Common/Toast/Toast";
+import type { HubProfileState } from "@/components/MyPage/HubInfo/reducer/hubProfileReducer";
 
 interface HubProfileToggleProps {
   initialIsActive: boolean;
-  description: string;
-  blog: string;
-  firstLinkType: string;
-  firstLink: string;
-  secondLinkType: string;
-  secondLink: string;
-  answer1: string;
-  answer2: string;
-  answer3: string;
-  techStacks: string[];
+  state: HubProfileState;
 }
 
-const HubProfileToggle: React.FC<HubProfileToggleProps> = ({
-  initialIsActive,
-  description,
-  blog,
-  firstLinkType,
-  firstLink,
-  secondLinkType,
-  secondLink,
-  answer1,
-  answer2,
-  answer3,
-  techStacks,
-}) => {
+const HubProfileToggle: React.FC<HubProfileToggleProps> = ({ initialIsActive, state, }) => {
     const { user } = useAuth(); // 인증된 사용자 정보
     const { fetchUserData } = useUserData(); // 사용자 정보 갱신 함수
     const [isHubCardActive, setIsHubCardActive] = useState(initialIsActive); // 현재 허브카드 등록 여부 상태
@@ -59,16 +39,16 @@ const HubProfileToggle: React.FC<HubProfileToggleProps> = ({
         .from("Users")
         .update({
           hubCard: active,
-          description,
-          blog,
-          first_link_type: firstLinkType,
-          first_link: firstLink,
-          second_link_type: secondLinkType,
-          second_link: secondLink,
-          answer1,
-          answer2,
-          answer3,
-          tech_stacks: techStacks,
+          description: state.description,
+          blog: state.blog,
+          first_link_type: state.firstLinkType,
+          first_link: state.firstLink,
+          second_link_type: state.secondLinkType,
+          second_link: state.secondLink,
+          answer1: state.answer1,
+          answer2: state.answer2,
+          answer3: state.answer3,
+          tech_stacks: state.techStacks,
         })
         .eq("user_id", user.id);
     };
@@ -78,7 +58,7 @@ const HubProfileToggle: React.FC<HubProfileToggleProps> = ({
       if (!user || isLoading) return;
   
       // 등록을 시도하는데 포트폴리오 링크가 없을 경우 에러 처리
-      if (!isHubCardActive && !blog) {
+      if (!isHubCardActive && !state.blog) {
         showToast("error", "포트폴리오 링크를 작성해주세요!");
         return;
       }
@@ -100,7 +80,7 @@ const HubProfileToggle: React.FC<HubProfileToggleProps> = ({
         // 변경 사항 적용을 위해 새로고침
         setTimeout(() => {
           window.location.reload();
-        }, 3000);
+        }, 1500);
       }
   
       setIsLoading(false);

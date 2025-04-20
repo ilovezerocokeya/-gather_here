@@ -1,6 +1,5 @@
 import { createServerSupabaseClient } from "@/utils/supabase/server";
 import HubProfileClientForm from "@/components/MyPage/HubInfo/HubProfileClientForm";
-import HubProfileToggle from "@/components/MyPage/HubInfo/HubProfileToggle";
 
 const HubProfile = async () => {
   // Supabase 서버 클라이언트 생성
@@ -30,8 +29,8 @@ const HubProfile = async () => {
 
   return (
     <section>
-      {/* 프로필 작성 영역 */}
       <HubProfileClientForm
+        initialIsActive={data.hubCard ?? false}
         initialData={{
           description: data.description ?? "",
           blog: data.blog ?? "",
@@ -44,21 +43,6 @@ const HubProfile = async () => {
           answer3: data.answer3 ?? "",
           techStacks: data.tech_stacks ?? [],
         }}
-      />
-
-      {/* HubCard 등록/비공개 토글 영역 */}
-      <HubProfileToggle
-        initialIsActive={data.hubCard ?? false}
-        description={data.description ?? ""}
-        blog={data.blog ?? ""}
-        firstLinkType={data.first_link_type ?? ""}
-        firstLink={data.first_link ?? ""}
-        secondLinkType={data.second_link_type ?? ""}
-        secondLink={data.second_link ?? ""}
-        answer1={data.answer1 ?? ""}
-        answer2={data.answer2 ?? ""}
-        answer3={data.answer3 ?? ""}
-        techStacks={data.tech_stacks ?? []}
       />
     </section>
   );
