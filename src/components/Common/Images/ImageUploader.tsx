@@ -5,8 +5,8 @@ import Image from "next/image";
 import { convertToWebp } from "@/utils/Image/convertToWebp";
 
 interface ImageUploaderProps {
-  imageUrl: string; // 현재 이미지 URL
-  onUpload: (file: File) => Promise<void>; // 업로드 후 처리 함수
+  imageUrl: string | null; // 현재 이미지 URL
+  onUpload: (file: File, previewUrl: string) => Promise<void>; // 업로드 후 처리 함수
   onError?: (message: string) => void; // 에러 발생 시 처리 함수
 }
 
@@ -26,6 +26,7 @@ const ImageUploader: React.FC<ImageUploaderProps> = ({ imageUrl, onUpload, onErr
   const [uploading, setUploading] = useState(false); // 업로드 중인지 상태
   const [isDragging, setIsDragging] = useState(false); // 드래그로 이미지 업로드할때 테두리
   const inputRef = useRef<HTMLInputElement | null>(null); // 숨겨진 input 클릭용
+  const [previewUrl, setPreviewUrl] = useState<string | null>(null); // local preview용 URL
 
   // 버튼 누르면 input 작동시키기
   const handleClick = useCallback(() => {
@@ -52,8 +53,10 @@ const ImageUploader: React.FC<ImageUploaderProps> = ({ imageUrl, onUpload, onErr
     }
     setUploading(true);
     try {
-      const webpFile = await convertToWebp(file); // WebP 변환
-      await onUpload(webpFile);                   // 변환된 파일 업로드
+      const webpFile = await convertToWebp(file);
+      const blobPreview = URL.createObjectURL(webpFile); // 로컬 preview 생성
+      setPreviewUrl(blobPreview); // preview 상태로 등록
+      await onUpload(webpFile, blobPreview); // preview URL까지 전달
     } catch {
       onError?.("이미지 업로드에 실패했습니다.");
     } finally {
@@ -99,7 +102,7 @@ const ImageUploader: React.FC<ImageUploaderProps> = ({ imageUrl, onUpload, onErr
         </div>
       ) : (
         <Image
-          src={imageUrl}
+          src={previewUrl ?? imageUrl ?? "/assets/mypage/image_upload.svg"}
           alt="프로필 이미지"
           fill
           className="object-cover transition-all duration-300 group-hover:scale-105 brightness-75"
