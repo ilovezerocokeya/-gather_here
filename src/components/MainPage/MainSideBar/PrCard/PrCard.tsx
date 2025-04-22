@@ -16,6 +16,7 @@ import { secureImageUrl } from "@/utils/imageUtils";
 import Image from "next/image";
 import Head from "next/head";
 import Script from "next/script";
+import CardSkeleton from "@/components/GatherHub/CardSkeleton";
 
 const PrCard: React.FC = () => {
 
@@ -77,7 +78,13 @@ const PrCard: React.FC = () => {
   }, [data, likedMembers]);
 
   // 데이터 로딩 중일 경우 로딩 메시지 표시
-  if (isLoading) return <p>Loading...</p>;
+  if (isLoading) {
+    return (
+      <div className="flex justify-center">
+        <CardSkeleton />
+      </div>
+    );
+  }
 
   // 데이터 로드 실패 시 에러 메시지 표시
   if (isError) return <p>Error loading data...</p>;
