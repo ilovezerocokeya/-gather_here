@@ -22,13 +22,41 @@ const LikePeopleClient = ({ userId, likedMembers }: Props) => {
   const [currentPage, setCurrentPage] = useState(1);
   const membersPerPage = 6;
 
-  // 좋아요 상태 기반으로 화면에 보여줄 멤버만 필터링
-  const visibleMembers = useMemo(() => {
-    return likedMembers.filter((member) => likedMap[member.user_id]);
+  // 좋아요 상태만 있고 상세 정보가 없는 유저도 임시 데이터로 추가해 렌더링 누락 방지
+  const enrichedLikedMembers = useMemo(() => {
+    const likedIds = Object.keys(likedMap).filter((id) => likedMap[id]);
+    const knownIds = new Set(likedMembers.map((m) => m.user_id));
+
+    const newMembers = likedIds
+      .filter((id) => !knownIds.has(id))
+      .map((id) => ({
+        user_id: id,
+        nickname: "알 수 없음",
+        job_title: "",
+        experience: "",
+        description: "",
+        background_image_url: "",
+        profile_image_url: "",
+        blog: "",
+        answer1: "",
+        answer2: "",
+        answer3: "",
+        first_link: undefined,
+        first_link_type: undefined,
+        second_link: undefined,
+        second_link_type: undefined,
+        tech_stacks: [],
+      }));
+
+    return [...likedMembers, ...newMembers];
   }, [likedMembers, likedMap]);
 
-  const totalPages = useMemo(() => Math.ceil(visibleMembers.length / membersPerPage), [visibleMembers]);
+  // zustand 기반 좋아요 상태로 최종 렌더 대상 계산
+  const visibleMembers = useMemo(() => {
+    return enrichedLikedMembers.filter((member) => likedMap[member.user_id]);
+  }, [enrichedLikedMembers, likedMap]);
 
+  const totalPages = useMemo(() => Math.ceil(visibleMembers.length / membersPerPage), [visibleMembers]);
 
   // 현재 페이지 멤버 슬라이싱
   const currentMembers = useMemo(() => {
