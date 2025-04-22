@@ -35,7 +35,10 @@ const PostEditPage = () => {
   const [deadline, setDeadline] = useState<string>('');
   const [content, setContent] = useState<string>('');
   const [place, setPlace] = useState<string>('');
-  const [toastState, setToastState] = useState({ state: '', message: '' });
+  const [toast, setToast] = useState<{
+    state: "success" | "error" | "warn" | "info" | "custom";
+    message: string;
+  } | null>(null);
 
   useEffect(() => {
     const fetchPostData = async () => {
@@ -86,7 +89,7 @@ const PostEditPage = () => {
     });
 
     if (validationError) {
-      setToastState({ state: 'error', message: validationError });
+      setToast({ state: 'error', message: validationError });
       return;
     }
 
@@ -109,7 +112,7 @@ const PostEditPage = () => {
 
     if (error) {
       console.error('데이터 수정 실패:', error);
-      setToastState({ state: 'error', message: '다시 시도해주세요!' });
+      setToast({ state: 'error', message: '다시 시도해주세요!' });
     } else {
       router.push(`/maindetail/${id}`);
     }
@@ -394,13 +397,13 @@ const PostEditPage = () => {
           </div>
         </div>
       </form>
-      {toastState.state && (
-        <Toast
-          state={toastState.state}
-          message={toastState.message}
-          onClear={() => setToastState({ state: '', message: '' })}
-        />
-      )}
+      {toast && (
+            <Toast
+              state={toast.state}
+              message={toast.message}
+              onClear={() => setToast(null)}
+            />
+          )}
     </>
   );
 };
