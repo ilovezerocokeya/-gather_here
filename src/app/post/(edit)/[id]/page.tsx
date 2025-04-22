@@ -3,9 +3,9 @@
 import React, { useState, ChangeEvent, useEffect } from 'react';
 import { useRouter, usePathname } from 'next/navigation';
 import { supabase } from '@/utils/supabase/client';
-import FormInput from '@/components/MainDetail/FormInput';
-import FormDropdown from '@/components/MainDetail/FormDropdown';
-import FormMultiSelect from '@/components/MainDetail/FormMultiSelect';
+import FormInput from '@/components/MainDetail/components/form/FormInput';
+import FormDropdown from '@/components/MainDetail/components/form/FormDropdown';
+import FormMultiSelect from '@/components/MainDetail/components/form/FormMultiSelect';
 import ReactQuillEditor from '@/components/MainDetail/ReactQuillEditor';
 import Toast from '@/components/Common/Toast/Toast';
 import 'react-quill/dist/quill.snow.css';
