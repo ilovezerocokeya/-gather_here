@@ -30,7 +30,7 @@ const PostEditPage = () => {
   const [totalMembers, setTotalMembers] = useState<string>('');
   const [personalLink, setPersonalLink] = useState<string>('');
   const [targetPosition, setTargetPosition] = useState<string[]>([]);
-  const [recruitments, setRecruitments] = useState<string>('');
+  const [recruitmentCount, setRecruitmentCount] = useState<string>('');
   const [techStack, setTechStack] = useState<string[]>([]);
   const [deadline, setDeadline] = useState<string>('');
   const [content, setContent] = useState<string>('');
@@ -57,7 +57,7 @@ const PostEditPage = () => {
         setTotalMembers(postData.total_members?.toString() ?? '');
         setPersonalLink(postData.personal_link ?? '');
         setTargetPosition(postData.target_position?.map((pos: string) => pos ?? []));
-        setRecruitments(postData.recruitments?.toString() ?? '');
+        setRecruitmentCount(postData.recruitmentCount?.toString() ?? '');
         setTechStack(postData.tech_stack?.map((tech: string) => tech ?? []));
         setDeadline(postData.deadline ?? '');
         setContent(postData.content ?? '');
@@ -78,10 +78,8 @@ const PostEditPage = () => {
       duration,
       totalMembers,
       personalLink,
-      // @ts-expect-error, 오류를 어떻게 처리해야할지 모르는 상황이라 일단 대기.
       targetPosition,
-      recruitments,
-      // @ts-expect-error, 오류를 어떻게 처리해야할지 모르는 상황이라 일단 대기.
+      recruitmentCount,
       techStack,
       deadline,
       content,
@@ -101,7 +99,7 @@ const PostEditPage = () => {
       total_members: Number(totalMembers),
       personal_link: personalLink,
       target_position: targetPosition.map((pos) => pos),
-      recruitments: Number(recruitments),
+      recruitmentCount: Number(recruitmentCount),
       tech_stack: techStack.map((ts) => ts),
       deadline: deadline ?? '',
       content: content,
@@ -195,7 +193,7 @@ const PostEditPage = () => {
     { value: '마케터', label: '마케터' },
   ];
 
-  const recruitmentsOptions: Option[] = [
+  const recruitmentCountOptions: Option[] = [
     { value: '1', label: '1명' },
     { value: '2', label: '2명' },
     { value: '3', label: '3명' },
@@ -332,9 +330,9 @@ const PostEditPage = () => {
             </div>
             <FormDropdown
               label="모집 인원"
-              options={recruitmentsOptions}
-              value={recruitments}
-              onChange={handleInputChange(setRecruitments)}
+              options={recruitmentCountOptions}
+              value={recruitmentCount}
+              onChange={handleInputChange(setRecruitmentCount)}
               placeholder="모집 인원을 선택해주세요"
             />
             <div className="space-y-2">

@@ -208,7 +208,7 @@ export interface Database {
           personal_link: string | null;
           place: string;
           post_id: string;
-          recruitments: number;
+          recruitmentCount: number;
           target_position: string[];
           tech_stack: string[];
           title: string | null;
@@ -225,7 +225,7 @@ export interface Database {
           personal_link?: string | null;
           place: string;
           post_id?: string;
-          recruitments: number;
+          recruitmentCount: number;
           target_position: string[];
           tech_stack: string[];
           title?: string | null;
@@ -242,7 +242,7 @@ export interface Database {
           personal_link?: string | null;
           place?: string;
           post_id?: string;
-          recruitments?: number;
+          recruitmentCount?: number;
           target_position?: string[];
           tech_stack?: string[];
           title?: string | null;

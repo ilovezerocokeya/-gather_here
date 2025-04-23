@@ -138,7 +138,7 @@ const MainDetailLayout: React.FC<Props> = ({
           <div className="w-1/2 s:w-full">
             <hr className="hidden s:block border-fillNeutral my-5" />
             <p className="mb-4 flex"><strong className="text-labelNeutral w-20 font-baseBold">모집 대상</strong><span className="ml-5">{post.target_position.join(', ')}</span></p>
-            <p className="mb-4 flex"><strong className="text-labelNeutral w-20 font-baseBold">모집 인원</strong><span className="ml-5">{post.recruitments}명</span></p>
+            <p className="mb-4 flex"><strong className="text-labelNeutral w-20 font-baseBold">모집 인원</strong><span className="ml-5">{post.recruitmentCount}명</span></p>
             <p className="mb-4 flex"><strong className="text-labelNeutral w-20 font-baseBold">마감일</strong><span className="ml-5">{new Date(post.deadline).toLocaleDateString()}</span></p>
             <p className="mb-4 flex"><strong className="text-labelNeutral w-20 font-baseBold">장소</strong><span className="ml-5">{post.place}</span></p>
             <div className="mb-4 flex items-start">

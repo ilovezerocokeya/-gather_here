@@ -28,6 +28,9 @@ const LoginForm = () => {
       provider,
       options: {
         redirectTo: `${process?.env?.NEXT_PUBLIC_BASE_URL}/api/auth/callback`,
+        queryParams: {
+          prompt: 'select_account',
+        },
       },
     });
 

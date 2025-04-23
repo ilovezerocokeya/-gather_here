@@ -100,7 +100,7 @@ const PostCardShort: React.FC<PostCardProps> = ({ post }) => {
                 )}
               </div>
               <div className={`mr-2 ${jobTitleClassMap[post.target_position?.[0]] || 'text-default'}`}>
-                {post.recruitments}명
+                {post.recruitmentCount}명
               </div>
               <div className="flex items-center">
                 <Image

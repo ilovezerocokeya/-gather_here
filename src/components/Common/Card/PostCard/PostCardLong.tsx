@@ -125,7 +125,7 @@ const PostCardLong: React.FC<PostCardProps> = ({ post, onRemoveBookmark }) => {
           </div>
           <div className="flex items-center flex-none">
             <div className={`mr-2 ${jobTitleClassMap[post.target_position[0]] || 'text-default'}`}>
-              {post.recruitments}명
+              {post.recruitmentCount}명
             </div>
             <div className="flex items-center">
               <Image
