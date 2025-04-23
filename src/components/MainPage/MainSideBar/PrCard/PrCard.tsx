@@ -16,7 +16,7 @@ import { secureImageUrl } from "@/utils/imageUtils";
 import Image from "next/image";
 import Head from "next/head";
 import Script from "next/script";
-import CardSkeleton from "@/components/GatherHub/CardSkeleton";
+import CardSkeleton from "@/components/Common/Skeleton/CardSkeleton";
 
 const PrCard: React.FC = () => {
 

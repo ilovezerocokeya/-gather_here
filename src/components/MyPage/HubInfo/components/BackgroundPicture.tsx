@@ -42,7 +42,7 @@ const BackgroundPicture: React.FC = () => {
       const filename = `background_${btoa(user.id)}.${ext}`;
       const path = `backgroundImages/${filename}`;
 
-      const webpFile = await convertToWebp(file);
+      const webpFile = await convertToWebp(file, 300, 160); 
 
       // Supabase Storage에 파일 업로드
       const { error: uploadError } = await supabase.storage

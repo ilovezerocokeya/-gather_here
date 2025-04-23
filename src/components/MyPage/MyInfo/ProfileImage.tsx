@@ -6,6 +6,7 @@ import { updateProfileImage } from "./actions/updateProfileImage";
 import { supabase } from "@/utils/supabase/client";
 import Image from "next/image";
 import React, { useState, useMemo, useCallback } from "react";
+import { convertToWebp } from "@/utils/Image/convertToWebp";
 
 interface ProfileImageProps {
   onImageChange?: (url: string) => void;
@@ -40,7 +41,7 @@ const ProfileImage: React.FC<ProfileImageProps> = ({ onImageChange, onToast }) =
     async (file: File, previewUrl: string) => {
       try {
         if (!userData?.user_id) throw new Error("유저 정보 없음");
-
+  
         const current = stripQuery(userData.profile_image_url);
         if (current === stripQuery(previewUrl)) {
           onToast("info", "이미 현재 프로필 이미지입니다."); // 중복 이미지 업로드 방지
@@ -50,11 +51,13 @@ const ProfileImage: React.FC<ProfileImageProps> = ({ onImageChange, onToast }) =
         const filename = `profile_${userData.user_id}.${ext}`;
         const path = `profileImages/${filename}`;
 
-        const { error: uploadError } = await supabase.storage
-            .from("images")
-            .upload(path, file, { upsert: true }); // 기존 파일 덮어쓰기
+        const webpFile = await convertToWebp(file, 120, 120);
 
-          if (uploadError) throw new Error(uploadError.message);
+        const { error: uploadError } = await supabase.storage
+          .from("images")
+          .upload(path, webpFile, { upsert: true }); // 기존 파일 덮어쓰기
+
+        if (uploadError) throw new Error(uploadError.message);
 
 
         const { data } = supabase.storage.from("images").getPublicUrl(path);
