@@ -3,7 +3,6 @@ import { useForm, SubmitHandler } from "react-hook-form";
 import useCheckNickname from "@/hooks/useCheckNickname";
 import useSubmitProfile from "@/hooks/useSubmitProfile"; 
 import { useSignup } from "@/provider/user/UserSignupProvider";
-import { useUserData } from "@/provider/user/UserDataProvider";
 
 export interface FormValues {
   nickname: string; 
@@ -13,7 +12,6 @@ export interface FormValues {
 
 const Signup03: React.FC = () => {
   const { prevStep } = useSignup();
-  const { setUserData } = useUserData();
   const {
     register,
     handleSubmit,
@@ -24,7 +22,7 @@ const Signup03: React.FC = () => {
 
   const watchNickname = watch("nickname");
   const { result: nicknameAvailable, isEmpty } = useCheckNickname(watchNickname);
-  const { onSubmit } = useSubmitProfile(setUserData);
+  const { onSubmit } = useSubmitProfile();
 
   const onSubmitForm: SubmitHandler<FormValues> = async (data: FormValues) => {
     const isValid = nicknameAvailable?.valid ?? false;
