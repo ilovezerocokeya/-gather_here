@@ -110,3 +110,23 @@ export const categoryOptions = [
     { value: 'Vue', label: 'Vue' },
     { value: 'Zeplin', label: 'Zeplin' },
   ];
+
+import { PostFormState } from '@/components/PostForm/postFormTypes';
+import type { Database } from '@/types/supabase';
+
+  export type SupabasePostRow = Database['public']['Tables']['Posts']['Row'];
+  
+  export const convertPostToFormState = (data: SupabasePostRow): Partial<PostFormState> => ({
+    title: data.title ?? '',
+    category: data.category ?? '',
+    place: data.place ?? '',
+    location: data.location ?? '',
+    duration: String(data.duration ?? ''),
+    totalMembers: String(data.total_members ?? ''),
+    personalLink: data.personal_link ?? '',
+    targetPosition: (data.target_position ?? []).map((pos) => ({ label: pos, value: pos })),
+    recruitmentCount: String(data.recruitmentCount ?? ''),
+    techStack: (data.tech_stack ?? []).map((ts) => ({ label: ts, value: ts })),
+    deadline: data.deadline ?? '',
+    content: data.content ?? '',
+  });

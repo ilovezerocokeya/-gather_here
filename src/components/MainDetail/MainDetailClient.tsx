@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useState, useRef, useEffect } from 'react';
+import React, { useState, useRef, useEffect, useMemo } from 'react';
 import { useRouter } from 'next/navigation';
 import CommonModal from '@/components/Common/Modal/CommonModal';
 import SpinnerLoader from '@/components/Common/Loading/SpinnerLoader';
@@ -23,7 +23,10 @@ const MainDetailClient: React.FC<MainDetailClientProps> = ({ post, user }) => {
   const [showDeleteModal, setShowDeleteModal] = useState(false);
   const optionsRef = useRef<HTMLDivElement>(null);
   
-  const handleMoreOptions = () => setShowOptions((prev) => !prev);
+  const handleMoreOptions = (e?: React.MouseEvent) => {
+    e?.stopPropagation(); // 이벤트 버블링 방지
+    setShowOptions((prev) => !prev);
+  };
   const handleClickOutside = (event: MouseEvent) => {
     if (optionsRef.current && !optionsRef.current.contains(event.target as Node)) {
       setShowOptions(false);
@@ -51,6 +54,16 @@ const MainDetailClient: React.FC<MainDetailClientProps> = ({ post, user }) => {
     router.push('/');
   };
 
+  const handleEdit = () => {
+    setShowOptions(false);
+    router.push(`/post/${post.post_id}`);
+  };
+
+    // 작성자인지 여부를 사전에 판단
+    const isAuthor = useMemo(() => {
+      return !!userData && userData.user_id === post.user_id;
+    }, [userData, post.user_id]);
+
   const onBack = () => router.push('/');
 
   if (!post) return <SpinnerLoader />;
@@ -66,6 +79,8 @@ const MainDetailClient: React.FC<MainDetailClientProps> = ({ post, user }) => {
         handleMoreOptions={handleMoreOptions}
         setShowDeleteModal={setShowDeleteModal}
         onBack={onBack}
+        handleEdit={handleEdit}
+        showOptionsButton={isAuthor}
       />
 
       {showDeleteModal && (

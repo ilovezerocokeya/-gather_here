@@ -2,6 +2,7 @@ import React, { createContext, ReactNode, useContext, useEffect, useMemo, useSta
 import { useFetchUserData } from "@/hooks/useFetchUserData";
 import { useUpdateUserData } from "@/hooks/useUpdateUserData";
 import { UserData } from "@/types/userData";
+import { supabase } from "@/utils/supabase/client";
 import ProfileLoader from "@/components/Common/Skeleton/ProfileLoader";
 
 // 사용자 데이터, 로딩 상태, 에러 메시지, 데이터를 가져오거나 업데이트하는 함수 포함
@@ -19,15 +20,25 @@ const UserDataContext = createContext<UserDataContextType | undefined>(undefined
 
 // UserDataProvider: 유저 데이터를 관리하는 컨텍스트 프로바이더
 export const UserDataProvider: React.FC<{ children: ReactNode }> = ({ children }) => {
-
-  // 유저 데이터를 가져오는 커스텀 훅
-  const { userData, fetchUserData, loading, error, setUserData } = useFetchUserData();
-
+  const { userData, fetchUserData, loading, error, setUserData } = useFetchUserData(); // 유저 데이터를 가져오는 커스텀 훅
   const [hydrated, setHydrated] = useState(false);
 
   useEffect(() => {
-    setHydrated(true);
-  }, []);
+    const init = async () => {
+      const { data } = await supabase.auth.getUser();
+      const userId = data?.user?.id;
+  
+      if (userId) {
+        await fetchUserData(userId); // 자동 호출
+      } else {
+        setUserData(null); // 로그아웃 상태로 명시
+      }
+  
+      setHydrated(true); // hydration 완료
+    };
+  
+    void init();
+  }, [fetchUserData, setUserData]);
 
   // 유저 데이터를 업데이트하는 커스텀 훅
   const updateUserAnswers = useMemo(() => {

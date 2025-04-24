@@ -19,6 +19,8 @@ interface Props {
   handleMoreOptions: () => void;
   setShowDeleteModal: (value: boolean) => void;
   onBack: () => void;
+  handleEdit: () => void;
+  showOptionsButton: boolean;
 }
 
 const MainDetailLayout: React.FC<Props> = ({
@@ -30,6 +32,8 @@ const MainDetailLayout: React.FC<Props> = ({
   handleMoreOptions,
   setShowDeleteModal,
   onBack,
+  handleEdit,
+  showOptionsButton,
 }) => {
   return (
     <>
@@ -77,7 +81,7 @@ const MainDetailLayout: React.FC<Props> = ({
               currentUser={userData ?? null}
               category={post.category}
             />
-            {userData?.user_id === post.user_id && (
+            {showOptionsButton && ( // ✅ 조건문 변경: 작성자인 경우에만 옵션 버튼 보이게 처리
               <div className="relative ml-2" ref={optionsRef}>
                 <button onClick={handleMoreOptions} className="flex items-center">
                   <Image
@@ -92,7 +96,7 @@ const MainDetailLayout: React.FC<Props> = ({
                   <div className="absolute right-0 mt-2 w-48 bg-fillStrong rounded-lg shadow-lg">
                     <button
                       className="w-full px-4 py-2 text-sm text-white hover:bg-fillAssistive flex items-center"
-                      onClick={onBack}
+                      onClick={handleEdit}
                     >
                       <Image
                         src="/Detail/edit.svg"

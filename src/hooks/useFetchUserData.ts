@@ -3,14 +3,9 @@ import { supabase } from "@/utils/supabase/client";
 import { UserData, defaultUserData } from "@/types/userData";
 
 export const useFetchUserData = () => {
-  // 유저 데이터를 저장하는 상태
-  const [userData, setUserData] = useState<UserData | null>(null);
-
-  // API 요청이 진행 중인지 나타내는 로딩 상태
-  const [loading, setLoading] = useState<boolean>(false);
-
-  // API 요청 중 발생한 에러 메시지를 저장하는 상태
-  const [error, setError] = useState<string | null>(null);
+  const [userData, setUserData] = useState<UserData | null>(null);  // 유저 데이터를 저장하는 상태 
+  const [loading, setLoading] = useState<boolean>(false); // API 요청이 진행 중인지 나타내는 로딩 상태
+  const [error, setError] = useState<string | null>(null); // API 요청 중 발생한 에러 메시지를 저장하는 상태
 
   // 사용자 데이터를 가져오는 함수
   const fetchUserData = useCallback(async (userId: string) => {
@@ -29,8 +24,7 @@ export const useFetchUserData = () => {
         throw new Error(error?.message || "사용자 데이터를 가져오는 데 실패했습니다.");
       }
       
-      // data를 UserData 타입으로 안전하게 캐스팅
-      const userData = data as UserData;
+      const userData = data as UserData; // data를 UserData 타입으로 안전하게 캐스팅
 
       // defaultUserData에 존재하는 키만 유지하면서 data의 값을 채움
       const formattedData: UserData = (Object.entries(defaultUserData) as [keyof UserData, UserData[keyof UserData]][]).reduce(

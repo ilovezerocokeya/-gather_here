@@ -24,7 +24,6 @@ const Header: React.FC = () => {
       const { error } = await supabase.auth.signOut();
       if (error) throw new Error(error.message);
     } catch (err) {
-      // 'err'를 명시적으로 Error로 캐스팅
       if (err instanceof Error) {
         console.error('로그아웃 중 오류:', err.message);
       } else {
@@ -33,6 +32,11 @@ const Header: React.FC = () => {
     } finally {
       void resetAuthUser(); // 사용자 상태 초기화
       router.push('/');
+  
+      // 0.3초 후 새로고침
+      setTimeout(() => {
+        location.reload();
+      }, 300);
     }
   };
 

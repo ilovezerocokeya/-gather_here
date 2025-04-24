@@ -10,13 +10,10 @@ import PostFormEditor from './PostFormEditor';
 import PostFormButtons from './PostFormButtons';
 import PostFormModals from './PostFormModals';
 import Toast from '@/components/Common/Toast/Toast';
+import { convertFormStateToPostPayload } from '@/utils/postUtils/postFormUtils';
 import { useEffect, useState } from 'react';
 import { PostFormState } from './postFormTypes';
-import {
-  saveDraftToStorage,
-  loadDraftFromStorage,
-  clearDraftFromStorage,
-} from '@/hooks/useDraftStorage';
+import { saveDraftToStorage, loadDraftFromStorage, clearDraftFromStorage } from '@/hooks/useDraftStorage';
 
 interface PostFormWrapperProps {
   mode: 'create' | 'edit';
@@ -54,21 +51,6 @@ const PostFormWrapper = ({ mode, defaultValues, postId }: PostFormWrapperProps) 
     return data.user;
   };
 
-  const buildPayload = () => ({
-    title: state.title,
-    category: state.category,
-    place: state.place,
-    location: state.location,
-    duration: Number(state.duration),
-    total_members: Number(state.totalMembers),
-    personal_link: state.personalLink,
-    target_position: state.targetPosition.map((pos) => pos.value),
-    recruitmentCount: Number(state.recruitmentCount),
-    tech_stack: state.techStack.map((ts) => ts.value),
-    deadline: state.deadline,
-    content: state.content,
-  });
-
   const handleSubmit = async () => {
     const errorMessage = validateDraft(state);
     if (errorMessage) return showToast('error', errorMessage);
@@ -76,7 +58,7 @@ const PostFormWrapper = ({ mode, defaultValues, postId }: PostFormWrapperProps) 
     const user = await getUserOrShowLogin();
     if (!user) return;
 
-    const payload = { ...buildPayload(), user_id: user.id };
+    const payload = convertFormStateToPostPayload(state, user.id);
 
     if (mode === 'create') {
       const { data, error } = await supabase.from('Posts').insert([payload]).select('post_id');
@@ -117,6 +99,21 @@ const PostFormWrapper = ({ mode, defaultValues, postId }: PostFormWrapperProps) 
     showToast('success', '임시 저장 완료!');
   };
 
+  const hasUnsavedChanges = (): boolean => {
+    if (!defaultValues) return false;
+    const keys = Object.keys(state) as (keyof PostFormState)[];
+    return keys.some((key) => {
+      const current = state[key];
+      const original = defaultValues[key];
+  
+      if (Array.isArray(current) && Array.isArray(original)) {
+        return JSON.stringify(current) !== JSON.stringify(original);
+      }
+  
+      return current !== original;
+    });
+  };
+
   useEffect(() => {
     const init = async () => {
       const { data } = await supabase.auth.getUser();
@@ -150,9 +147,17 @@ const PostFormWrapper = ({ mode, defaultValues, postId }: PostFormWrapperProps) 
           <PostFormEditor content={state.content} handleContentChange={handleInputChange('content')} />
           <PostFormButtons
             onSaveDraft={() => void handleSaveDraft()}
-            onExit={() => setShowExitModal(true)}
+            onExit={() => {
+              if (mode === 'edit' && hasUnsavedChanges()) {
+                setShowExitModal(true);
+              } else if (mode === 'edit') {
+                router.push(`/maindetail/${postId}`);
+              } else {
+                setShowExitModal(true);
+              }
+            }}
             mode={mode}
-            />
+          />
         </form>
       </div>
 
