@@ -1,4 +1,3 @@
-'use client';
 import PostFormWrapper from '@/components/PostForm/PostFormWrapper';
 
 const PostPage = () => {

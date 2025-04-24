@@ -1,6 +1,6 @@
 import { createServerSupabaseClient } from '@/utils/supabase/server';
 import { notFound } from 'next/navigation';
-import PostEditClient from './PostEditClinet';
+import PostEditClient from './PostEditClient';
 import { convertPostToFormState } from '@/lib/postFormOptions';
 
 
