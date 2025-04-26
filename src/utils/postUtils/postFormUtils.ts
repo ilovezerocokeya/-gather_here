@@ -26,20 +26,21 @@ export const convertPostToFormState = (
   content: data.content ?? '',
 });
 
-export const convertFormStateToPostPayload = (state: PostFormState, userId: string) => {
-  return {
-    title: state.title,
-    category: state.category,
-    place: state.place,
-    location: state.location,
-    duration: Number(state.duration),
-    total_members: Number(state.totalMembers),
-    personal_link: state.personalLink,
-    target_position: state.targetPosition.map((pos) => pos.value),
-    recruitmentCount: Number(state.recruitmentCount),
-    tech_stack: state.techStack.map((ts) => ts.value),
-    deadline: state.deadline,
-    content: state.content,
-    user_id: userId,
-  };
-};
+export const convertFormStateToPostPayload = (
+  state: PostFormState,
+  userId: string
+) => ({
+  title: state.title,
+  category: state.category,
+  place: state.place,
+  location: state.location,
+  duration: Number(state.duration),
+  total_members: Number(state.totalMembers),
+  personal_link: state.personalLink,
+  target_position: state.targetPosition.map((pos) => pos.value),
+  recruitmentCount: Number(state.recruitmentCount),
+  tech_stack: state.techStack.map((ts) => ts.value),
+  deadline: state.deadline,
+  content: state.content,
+  user_id: userId,
+});

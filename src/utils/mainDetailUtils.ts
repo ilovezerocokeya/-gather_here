@@ -25,3 +25,14 @@ export const cleanContent = (html: string): string => {
     ALLOWED_ATTR: ['href', 'target', 'style', 'class'],
   });
 };
+
+
+/** 마감일까지 남은 날짜 계산 */
+export const getDisplayDaysLeft = (deadline: string | Date): string => {
+  const deadlineDate = new Date(deadline);
+  deadlineDate.setHours(0, 0, 0, 0); // 시간 0시로 고정
+  const today = new Date();
+  today.setHours(0, 0, 0, 0);
+  const daysLeft = Math.ceil((deadlineDate.getTime() - today.getTime()) / (1000 * 60 * 60 * 24));
+  return daysLeft === 0 ? 'D-day' : `D-${daysLeft}`;
+};

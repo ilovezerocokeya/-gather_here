@@ -111,22 +111,18 @@ export const categoryOptions = [
     { value: 'Zeplin', label: 'Zeplin' },
   ];
 
-import { PostFormState } from '@/components/PostForm/postFormTypes';
-import type { Database } from '@/types/supabase';
+// 직업군 색상표시
+  export const jobTitleClassMap: Record<string, string> = {
+    프론트엔드: 'text-primary',
+    IOS: 'text-accentPurple',
+    안드로이드: 'text-accentRed',
+    PM: 'text-accentColumbia',
+    기획자: 'text-accentPink',
+    마케터: 'text-accentYellow',
+    백엔드: 'text-accentOrange',
+    디자이너: 'text-accentMaya',
+    데브옵스: 'text-accentMint',
+  };
 
-  export type SupabasePostRow = Database['public']['Tables']['Posts']['Row'];
-  
-  export const convertPostToFormState = (data: SupabasePostRow): Partial<PostFormState> => ({
-    title: data.title ?? '',
-    category: data.category ?? '',
-    place: data.place ?? '',
-    location: data.location ?? '',
-    duration: String(data.duration ?? ''),
-    totalMembers: String(data.total_members ?? ''),
-    personalLink: data.personal_link ?? '',
-    targetPosition: (data.target_position ?? []).map((pos) => ({ label: pos, value: pos })),
-    recruitmentCount: String(data.recruitmentCount ?? ''),
-    techStack: (data.tech_stack ?? []).map((ts) => ({ label: ts, value: ts })),
-    deadline: data.deadline ?? '',
-    content: data.content ?? '',
-  });
+
+

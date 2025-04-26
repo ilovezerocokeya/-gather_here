@@ -1,14 +1,15 @@
 'use client';
 
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useMemo, useState } from 'react';
 import { PostWithUser } from '@/types/posts/Post.type';
 import Image from 'next/image';
 import Link from 'next/link';
-import DOMPurify from 'dompurify';
 import LikeButton from '@/components/MainDetail/components/common/LikeButton';
 import dayjs from 'dayjs';
 import { secureImageUrl } from '@/utils/imageUtils';
 import { useUserData } from '@/provider/user/UserDataProvider';
+import { jobTitleClassMap } from '@/lib/postFormOptions';
+import { getDisplayDaysLeft, cleanContent } from '@/utils/mainDetailUtils';
 
 interface PostCardProps {
   post: PostWithUser;
@@ -18,34 +19,19 @@ interface PostCardProps {
 const PostCardShort: React.FC<PostCardProps> = ({ post }) => {
   const { userData } = useUserData();
   const [isMounted, setIsMounted] = useState<boolean>(false);
-  const deadlineDate = new Date(post.deadline);
-  deadlineDate.setHours(0, 0, 0, 0);
-  const currentDate = new Date();
-  currentDate.setHours(0, 0, 0, 0);
-  const daysLeft = Math.ceil((deadlineDate.getTime() - Date.now()) / (1000 * 60 * 60 * 24));
-  const displayDaysLeft = daysLeft === 0 ? 'D-day' : `D-${daysLeft.toFixed(0)}`;
+  const displayDaysLeft = isMounted ? getDisplayDaysLeft(post.deadline) : '';
 
   useEffect(() => {
     setIsMounted(true);
-
     return () => {
       setIsMounted(false);
     };
   }, [post]);
 
-  const jobTitleClassMap: Record<string, string> = {
-    프론트엔드: 'text-primary',
-    IOS: 'text-accentPurple',
-    안드로이드: 'text-accentRed',
-    PM: 'text-accentColumbia',
-    기획자: 'text-accentPink',
-    마케터: 'text-accentYellow',
-    백엔드: 'text-accentOrange',
-    디자이너: 'text-accentMaya',
-    데브옵스: 'text-accentMint',
-  };
-
-  const cleanContent = DOMPurify.sanitize(post.content, { ALLOWED_TAGS: [], ALLOWED_ATTR: [] });
+  const sanitizedContent = useMemo(() => {
+      if (!isMounted || typeof window === 'undefined') return '';
+      return cleanContent(post.content);
+    }, [isMounted, post.content]);
 
   return (
     <div className="w-full h-full max-w-container-l m:max-w-container-m s:max-w-container-s post-card">
@@ -66,7 +52,7 @@ const PostCardShort: React.FC<PostCardProps> = ({ post }) => {
         <Link href={`/maindetail/${post.post_id}`}>
           <h2 className="text-left text-subtitle font-semibold truncate mt-3 text-labelStrong">{post.title}</h2>
           <div className="hidden sm:block mt-2 mb-3 h-11 overflow-hidden text-left font-thin line-clamp-2 text-labelNeutral">
-            <div dangerouslySetInnerHTML={{ __html: cleanContent }} />
+            <div dangerouslySetInnerHTML={{ __html: sanitizedContent }} />
           </div>
           <div className="mt-1">
             <div className="flex items-center mb-4">

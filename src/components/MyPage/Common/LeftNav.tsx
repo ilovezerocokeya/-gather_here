@@ -8,6 +8,7 @@ import { useUserData } from "@/provider/user/UserDataProvider";
 import Image from "next/image";
 import LeftNavLoader from "@/components/Common/Skeleton/LeftNavLoader";
 import { secureImageUrl } from "@/utils/imageUtils";
+import { jobTitleClassMap } from '@/lib/postFormOptions';
 
 
 const LeftNav: React.FC = () => {
@@ -15,18 +16,6 @@ const LeftNav: React.FC = () => {
   const { user } = useAuth();
   const { userData, fetchUserData, loading } = useUserData();
   const defaultImage = "/assets/header/user.svg";
-
-  const jobTitleClassMap: Record<string, string> = {
-    프론트엔드: "text-primary",
-    IOS: "text-accentMaya",
-    안드로이드: "text-accentPurple",
-    PM: "text-accentColumbia",
-    기획: "text-accentPink",
-    마케팅: "text-accentYellow",
-    백엔드: "text-accentOrange",
-    디자인: "text-accentMint",
-    데브옵스: "text-accentRed",
-  };
 
   const getJobTitleClass = (job_title: string) => {
     if (!job_title) {

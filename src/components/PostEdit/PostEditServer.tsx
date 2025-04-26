@@ -1,7 +1,7 @@
 import { createServerSupabaseClient } from '@/utils/supabase/server';
 import { notFound } from 'next/navigation';
 import PostEditClient from './PostEditClient';
-import { convertPostToFormState } from '@/lib/postFormOptions';
+import { convertPostToFormState } from '@/utils/postUtils/postFormUtils';
 
 
 const PostEditServer = async ({ postId }: { postId: string }) => {
