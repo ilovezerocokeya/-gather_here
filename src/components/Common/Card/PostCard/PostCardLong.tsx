@@ -6,7 +6,7 @@ import React, { useEffect, useMemo, useState } from 'react';
 import Link from 'next/link';
 import dayjs from 'dayjs';
 import LikeButton from '@/components/MainDetail/components/common/LikeButton';
-import { secureImageUrl } from '@/utils/imageUtils';
+import { secureImageUrl } from '@/utils/Image/imageUtils';
 import { useUserData } from '@/provider/user/UserDataProvider';
 import { jobTitleClassMap } from '@/lib/postFormOptions';
 import { getDisplayDaysLeft, cleanContent } from '@/utils/mainDetailUtils';

@@ -1,9 +1,12 @@
 import { useEffect, useState } from "react";
 import { doubleCheckNickname } from "@/components/MyPage/MyInfo/actions/doubleCheckNickname";
+import { useDebounce } from "@/hooks/useDebounce";
+
 
 const useCheckNickname = (nickname: string | undefined) => {
   const [result, setResult] = useState<null | { valid: boolean; message: string }>(null);
   const isEmpty = (nickname ?? "").trim() === "";
+  const debouncedNickname = useDebounce(nickname, 300);
 
   useEffect(() => {
     // 닉네임이 비어있으면 검사 초기화
@@ -14,18 +17,12 @@ const useCheckNickname = (nickname: string | undefined) => {
 
     // 서버 액션을 통해 닉네임 검사 실행
     const checkNickname = async () => {
-      const res = await doubleCheckNickname(nickname!); // nickname은 이 시점에 undefined 아님
+      const res = await doubleCheckNickname(debouncedNickname!); 
       setResult(res);
     };
     
-    // 디바운스 처리
-    const timer = setTimeout(() => {
-      void checkNickname();
-    }, 300);
-
-     // 닉네임이 변경될 때 이전 타이머 제거
-    return () => clearTimeout(timer);
-  }, [nickname]);
+    void checkNickname();
+  }, [debouncedNickname, isEmpty]);
 
   return { result, isEmpty };
 };

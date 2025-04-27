@@ -1,6 +1,6 @@
 import type { SupabaseClient } from "@supabase/supabase-js";
 import type { Database, SupabaseUser } from "./types";
-import { secureImageUrl } from "@/utils/imageUtils";
+import { secureImageUrl } from "@/utils/Image/imageUtils";
 
 
 // 사용자 데이터 조회 함수 (hydration mismatch 방지)

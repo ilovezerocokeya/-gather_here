@@ -1,5 +1,5 @@
 import { fetchMembers } from "@/utils/fetchMembers";
-import GatherHubPageClient from "@/components/GatherHub/GatherHubPageClient";
+import GatherHubPageClient from "@/components/GatherHub/GatherHubClientPage";
 
 // SSR을 위해 서버에서 미리 데이터 불러오기
 const getMembersForSSR = async () => {

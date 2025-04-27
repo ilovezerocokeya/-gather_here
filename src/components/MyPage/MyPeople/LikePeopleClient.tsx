@@ -2,7 +2,7 @@
 
 import MemberCard from "@/components/GatherHub/MemberCard";
 import { useLikeStore } from "@/stores/useLikeStore";
-import { secureImageUrl } from "@/utils/imageUtils";
+import { secureImageUrl } from "@/utils/Image/imageUtils";
 import { useState, useEffect, useMemo } from "react";
 import type { UserData } from "@/types/userData";
 import Pagination from "@/components/MyPage/Common/Pagination"; 

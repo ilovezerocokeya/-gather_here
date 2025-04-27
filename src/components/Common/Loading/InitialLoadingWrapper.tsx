@@ -6,21 +6,32 @@ import PuzzleAnimation from "./PuzzleAnimation";
 
 interface InitialLoadingWrapperProps {
   children: React.ReactNode;
+  targetPath?: string;
+  delay?: number; 
 }
 
-const InitialLoadingWrapper: React.FC<InitialLoadingWrapperProps> = ({ children }) => {
+const InitialLoadingWrapper: React.FC<InitialLoadingWrapperProps> = ({
+  children,
+  targetPath = "/all",
+  delay = 500,          
+}) => {
   const [initialLoading, setInitialLoading] = useState(true);
-  const pathname = usePathname();
+  const pathname = usePathname(); 
 
   useEffect(() => {
-    if (pathname === "/all") {
-      setTimeout(() => {
-        setInitialLoading(false);
-      }, 500);
+    let timeoutId: NodeJS.Timeout;
+
+    if (pathname === targetPath) {
+      // 현재 경로가 targetPath와 일치하면 로딩 애니메이션 표시
+      timeoutId = setTimeout(() => {
+        setInitialLoading(false); // delay 이후 로딩 종료
+      }, delay);
     } else {
-      setInitialLoading(false);
+      
+      setInitialLoading(false); // 다른 경로에서는 바로 로딩 종료
     }
-  }, [pathname]);
+    return () => clearTimeout(timeoutId); // 컴포넌트 언마운트 시 타이머 정리
+  }, [pathname, targetPath, delay]);
 
   if (initialLoading) {
     return (

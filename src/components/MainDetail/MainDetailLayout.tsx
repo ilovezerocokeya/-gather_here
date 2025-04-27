@@ -5,7 +5,7 @@ import Image from 'next/image';
 import LikeButton from '@/components/MainDetail/components/common/LikeButton';
 import ShareButton from '@/components/MainDetail/components/common/ShareButton';
 import PostTechStackIcons from '@/components/MainDetail/components/PostTechStackIcons';
-import { secureImageUrl } from '@/utils/imageUtils';
+import { secureImageUrl } from '@/utils/Image/imageUtils';
 import { timeAgo, cleanContent } from '@/utils/mainDetailUtils';
 import { Post, User } from '@/types/posts/Post.type';
 import { UserData } from '@/types/userData';

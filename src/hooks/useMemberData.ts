@@ -4,7 +4,7 @@ import { useInfiniteQuery } from "@tanstack/react-query";
 import { useLikeStore } from "@/stores/useLikeStore";
 import { useUserData } from "@/provider/user/UserDataProvider";
 import { fetchMembers } from "@/utils/fetchMembers";
-import { throttle } from "lodash";
+import { ReactQueryInfiniteScrollHandler } from "@/utils/scroll/InfinityScroll";
 import { MemberCardProps, UseMemberDataReturn } from "@/lib/gatherHub";
 
 // 초기 데이터를 받아서 무한스크롤 적용
@@ -43,16 +43,14 @@ export const useMemberData = (
 
   // 무한 스크롤 감지
   useEffect(() => {
-    const handleScroll = throttle(() => {
-      if (
-        hasNextPage &&
-        !isFetchingNextPage &&
-        window.innerHeight + window.scrollY >= document.body.offsetHeight - 200
-      ) {
-        void fetchNextPage();
-      }
-    }, 300);
-
+    const handleScroll = ReactQueryInfiniteScrollHandler({
+      hasNextPage,
+      isFetchingNextPage,
+      fetchNextPage,
+      threshold: 200,
+      throttleMs: 300,     
+    });
+  
     window.addEventListener("scroll", handleScroll);
     return () => window.removeEventListener("scroll", handleScroll);
   }, [hasNextPage, isFetchingNextPage, fetchNextPage]);

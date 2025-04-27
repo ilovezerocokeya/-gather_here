@@ -6,7 +6,7 @@ import { useAuth } from "@/provider/user/UserAuthProvider";
 import { useUserData } from "@/provider/user/UserDataProvider";
 import { defaultUserData } from "@/types/userData"; 
 import type { UseFormSetError } from "react-hook-form";
-import { secureImageUrl } from "@/utils/imageUtils";
+import { secureImageUrl } from "@/utils/Image/imageUtils";
 
 
 const useSubmitProfile = () => {

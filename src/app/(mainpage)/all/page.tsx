@@ -1,10 +1,10 @@
 import React, { Suspense } from "react";
-import AllContent from "@/components/MainPage/PageContent/AllContent";
+import AllServerContent from "@/components/MainPage/PageContent/All/AllServerContent";
 
-const AllPage = async () => {
+const AllPage = () => {
   return (
     <Suspense>
-      <AllContent />
+      <AllServerContent />
     </Suspense>
   );
 };

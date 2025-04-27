@@ -4,7 +4,7 @@ import Image from 'next/image';
 import dayjs from 'dayjs';
 import LoginForm from '@/components/Login/LoginForm';
 import useChat from '@/hooks/useChat';
-import { secureImageUrl } from '@/utils/imageUtils';
+import { secureImageUrl } from '@/utils/Image/imageUtils';
 
 const Chat = () => {
   const {

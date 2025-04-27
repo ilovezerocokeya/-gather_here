@@ -6,7 +6,7 @@ import Image from 'next/image';
 import Link from 'next/link';
 import LikeButton from '@/components/MainDetail/components/common/LikeButton';
 import dayjs from 'dayjs';
-import { secureImageUrl } from '@/utils/imageUtils';
+import { secureImageUrl } from '@/utils/Image/imageUtils';
 import { useUserData } from '@/provider/user/UserDataProvider';
 import { jobTitleClassMap } from '@/lib/postFormOptions';
 import { getDisplayDaysLeft, cleanContent } from '@/utils/mainDetailUtils';

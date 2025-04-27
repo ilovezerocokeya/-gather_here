@@ -7,7 +7,7 @@ import CardModal from "./CardModal";
 import ProfileExtend from "./ProfileExtend"; 
 import { MemberCardProps } from "@/lib/gatherHub";
 import { techStacks } from "@/lib/techStacks";
-import { secureImageUrl } from "@/utils/imageUtils";
+import { secureImageUrl } from "@/utils/Image/imageUtils";
 
 
 const MemberCard: React.FC<MemberCardProps> = ({

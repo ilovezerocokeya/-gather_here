@@ -7,7 +7,7 @@ import { useAuth } from "@/provider/user/UserAuthProvider";
 import { useUserData } from "@/provider/user/UserDataProvider";
 import Image from "next/image";
 import LeftNavLoader from "@/components/Common/Skeleton/LeftNavLoader";
-import { secureImageUrl } from "@/utils/imageUtils";
+import { secureImageUrl } from "@/utils/Image/imageUtils";
 import { jobTitleClassMap } from '@/lib/postFormOptions';
 
 

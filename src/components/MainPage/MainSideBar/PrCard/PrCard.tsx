@@ -12,7 +12,7 @@ import { MemberCardProps, MemberType } from "@/lib/gatherHub";
 import CardUI from "@/components/GatherHub/CardUI";
 import CardModal from "@/components/GatherHub/CardModal";
 import { techStacks } from "@/lib/techStacks";
-import { secureImageUrl } from "@/utils/imageUtils";
+import { secureImageUrl } from "@/utils/Image/imageUtils";
 import Image from "next/image";
 import Head from "next/head";
 import Script from "next/script";
