@@ -1,4 +1,5 @@
 "use client";
+
 import React from "react";
 import { Swiper, SwiperSlide } from "swiper/react";
 import "swiper/css";
@@ -14,14 +15,36 @@ interface CarouselProps {
 }
 
 const Carousel: React.FC<CarouselProps> = ({ posts }) => {
+  if (!posts || posts.length === 0) {
+    return (
+      <div className="text-center text-white py-8">
+        표시할 모집글이 없습니다.
+      </div>
+    );
+  }
+
   const today = new Date();
   today.setHours(0, 0, 0, 0);
 
   const filteredPosts = posts.filter((post) => {
+    if (!post.deadline) return false;
+
     const deadlineDate = new Date(post.deadline);
     deadlineDate.setHours(0, 0, 0, 0);
-    return deadlineDate >= today;
+
+    const diffTime = deadlineDate.getTime() - today.getTime();
+    const diffDays = diffTime / (1000 * 60 * 60 * 24);
+
+    return diffDays >= 0 && diffDays <= 7;
   });
+
+  if (filteredPosts.length === 0) {
+    return (
+      <div className="text-center text-white py-8">
+        모집 가능한 글이 없습니다.
+      </div>
+    );
+  }
 
   return (
     <div className="relative z-0">
@@ -34,18 +57,10 @@ const Carousel: React.FC<CarouselProps> = ({ posts }) => {
         pagination={{ clickable: true }}
         className="w-full swiper"
         breakpoints={{
-          280: {
-            slidesPerView: 1,
-          },
-          336: {
-            slidesPerView: 1,
-          },
-          769: {
-            slidesPerView: 3,
-          },
-          1068: {
-            slidesPerView: 3,
-          },
+          280: { slidesPerView: 1 },
+          336: { slidesPerView: 1 },
+          769: { slidesPerView: 3 },
+          1068: { slidesPerView: 3 },
         }}
       >
         {filteredPosts.map((post, index) => (

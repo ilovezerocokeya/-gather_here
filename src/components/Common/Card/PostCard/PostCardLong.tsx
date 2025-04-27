@@ -40,6 +40,11 @@ const PostCardLong: React.FC<PostCardProps> = ({ post, onRemoveBookmark }) => {
             <li>
               <span className="label-secondary rounded-full text-baseS px-3 py-1.5 mr-1">{displayDaysLeft}</span>
             </li>
+            <li>
+              <span className="bg-fillNormal text-primary text-baseS rounded-full px-3 py-1.5 mr-1">
+                {post.category}
+              </span>
+            </li>
             <li className="text-baseS text-labelNormal ml-2">
               <time dateTime="YYYY-MM-DD">~{dayjs(post.deadline).format('YY.MM.DD')}</time>
             </li>
@@ -83,6 +88,21 @@ const PostCardLong: React.FC<PostCardProps> = ({ post, onRemoveBookmark }) => {
               </span>
             ))}
           </div>
+
+          {/* 방식 + 지역 표시 */}
+          <div className="flex flex-wrap items-center justify-start text-sm text-labelNeutral gap-3">
+            {post.place && (
+              <span className="px-2 py-1 rounded bg-fillWeak">
+                {post.place}
+              </span>
+            )}
+            {post.location && (
+              <span className="px-2 py-1 rounded bg-fillWeak">
+                {post.location}
+              </span>
+            )}
+          </div>
+
           <div className="flex items-center flex-none">
             <div className={`mr-2 ${jobTitleClassMap[post.target_position[0]] || 'text-default'}`}>
               {post.recruitmentCount}명

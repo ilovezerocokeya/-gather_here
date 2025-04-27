@@ -5,7 +5,6 @@ import { PostWithUser } from '@/types/posts/Post.type';
 import Image from 'next/image';
 import Link from 'next/link';
 import LikeButton from '@/components/MainDetail/components/common/LikeButton';
-import dayjs from 'dayjs';
 import { secureImageUrl } from '@/utils/Image/imageUtils';
 import { useUserData } from '@/provider/user/UserDataProvider';
 import { jobTitleClassMap } from '@/lib/postFormOptions';
@@ -42,8 +41,10 @@ const PostCardShort: React.FC<PostCardProps> = ({ post }) => {
               <li>
                 <span className="label-secondary rounded-full text-baseS  px-3 py-1.5 mr-1">{displayDaysLeft}</span>
               </li>
-              <li className="text-baseS  text-labelNormal ml-2">
-                <time dateTime="YYYY-MM-DD">~{dayjs(post.deadline).format('YY.MM.DD')}</time>
+              <li>
+                <span className="bg-fillNormal text-primary text-baseS rounded-full px-3 py-1.5 mr-1">
+                  {post.category}
+                </span>
               </li>
             </ul>
           ) : null}

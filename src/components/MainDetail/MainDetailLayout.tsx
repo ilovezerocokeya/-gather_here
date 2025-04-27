@@ -81,7 +81,7 @@ const MainDetailLayout: React.FC<Props> = ({
               currentUser={userData ?? null}
               category={post.category}
             />
-            {showOptionsButton && ( // ✅ 조건문 변경: 작성자인 경우에만 옵션 버튼 보이게 처리
+            {showOptionsButton && ( // 조건문 변경: 작성자인 경우에만 옵션 버튼 보이게 처리
               <div className="relative ml-2" ref={optionsRef}>
                 <button onClick={handleMoreOptions} className="flex items-center">
                   <Image

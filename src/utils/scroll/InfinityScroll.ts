@@ -12,7 +12,7 @@ export function ReactQueryInfiniteScrollHandler({
   hasNextPage,
   isFetchingNextPage,
   fetchNextPage,
-  threshold = 300,
+  threshold = 600,
   throttleMs = 400,
 }: ReactQueryInfiniteScrollOptions) {
   return throttle(() => {

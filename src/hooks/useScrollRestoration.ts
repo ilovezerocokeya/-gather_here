@@ -18,7 +18,7 @@ export function useScrollRestoration(storageKey: string, canRestore: boolean) {
     const targetY = Number(savedY);
     let attempt = 0;
     const maxAttempts = 30;
-    const interval = 50; // 50ms마다 체크
+    const interval = 100; 
     const errorRange = 20;
 
     const restoreInterval = setInterval(() => {
@@ -54,7 +54,7 @@ export function useScrollRestoration(storageKey: string, canRestore: boolean) {
       throttleTimer = setTimeout(() => {
         sessionStorage.setItem(storageKey, String(window.scrollY));
         throttleTimer = null;
-      }, 300);
+      }, 500);
     };
 
     window.addEventListener("scroll", saveScroll);

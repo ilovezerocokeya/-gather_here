@@ -15,5 +15,8 @@ export default tseslint.config(
       },
     },
     ignores: ['dist/**/*.ts', 'dist/**', '**/*.mjs', 'eslint.config.mjs', '**/*.js'],
+    rules: {
+      '@typescript-eslint/prefer-nullish-coalescing': 'off',
+    },
   },
 );

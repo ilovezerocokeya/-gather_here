@@ -44,7 +44,7 @@ const AllClientContent: React.FC<AllClientContentProps> = ({ initialPosts }) => 
 
   const canRestore = !isFetching && !isFetchingNextPage;
 
-  // ✅ 스크롤 복원 및 저장 훅 적용
+  // 스크롤 복원 및 저장 훅 적용
   useScrollRestoration("all-page-scroll", canRestore);
 
   // 무한 스크롤 감지

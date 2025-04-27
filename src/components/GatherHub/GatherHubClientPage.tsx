@@ -23,7 +23,7 @@ const GatherHubPageClient: React.FC<GatherHubPageClientProps> = ({ initialData }
     setFilteredJob,
   } = useMemberData(initialData.members);
 
-  // ✅ 데이터 로딩 중 화면에 표시할 UI
+  // 데이터 로딩 중 화면에 표시할 UI
   if (isLoading) {
     return (
       <div className="fixed inset-0 bg-black flex justify-center items-center">
@@ -32,7 +32,7 @@ const GatherHubPageClient: React.FC<GatherHubPageClientProps> = ({ initialData }
     );
   }
 
-  // ✅ 에러 발생 시 오류 메시지와 재시도 버튼 표시
+  // 에러 발생 시 오류 메시지와 재시도 버튼 표시
   if (isError) {
     return (
       <div className="text-center text-red-500 py-10">
@@ -47,7 +47,7 @@ const GatherHubPageClient: React.FC<GatherHubPageClientProps> = ({ initialData }
     );
   }
 
-  // ✅ 정상 렌더링
+  // 정상 렌더링
   return (
     <div className="flex flex-col lg:flex-row justify-center">
       <div className="w-full lg:max-w-6xl lg:flex lg:justify-between px-4 py-8">
