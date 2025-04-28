@@ -3,13 +3,13 @@
 import React, { useEffect, useState, useMemo } from "react";
 import { useAuth } from "@/provider/user/UserAuthProvider";
 import { fetchLikedPosts } from "@/lib/fetchPosts";
-import PostCardLong from "@/components/Common/Card/PostCard/PostCardLong";
+import PostCardShort from "@/components/Common/Card/PostCard/PostCardShort";
 import ItEventCardShort from "@/components/Common/Card/PostCard/ItEventCardShort";
 import MypageList from "@/components/Common/Skeleton/MypageList";
 import Pagination from "@/components/MyPage/Common/Pagination";
 import { PostWithUser, ITEvent } from "@/types/posts/Post.type";
 
-type Tab = "전체" | "스터디" | "프로젝트" | "IT 행사";
+type Tab = "전체" | "스터디" | "프로젝트";
 
 const InterestsTap: React.FC = () => {
   const { user } = useAuth();
@@ -46,7 +46,6 @@ const InterestsTap: React.FC = () => {
   const filteredPosts = useMemo(() => {
     return originalPosts.filter((post) => {
       if (selectedTab === "전체") return true;
-      if ("event_id" in post && selectedTab === "IT 행사") return true;
       if ("category" in post && post.category === selectedTab) return true;
       return false;
     });
@@ -87,8 +86,8 @@ const InterestsTap: React.FC = () => {
     <div className="relative flex flex-col">
       {/* 탭 필터 */}
       <div className="sticky z-10 s:relative s:top-auto">
-        <div className="flex w-[320px] s:w-full items-center m:justify-start s:justify-center space-x-4 s:space-x-6 p-3 bg-fillStrong rounded-2xl">
-          {(["전체", "스터디", "프로젝트", "IT 행사"] as Tab[]).map((tab) => (
+        <div className="flex w-[240px] s:w-full items-center m:justify-start s:justify-center space-x-4 s:space-x-6 p-3 bg-fillStrong rounded-2xl">
+          {(["전체", "스터디", "프로젝트"] as Tab[]).map((tab) => (
             <button
               key={tab}
               className={`text-baseS min-w-[60px] ${selectedTab === tab ? "tab-button" : ""}`}
@@ -113,7 +112,7 @@ const InterestsTap: React.FC = () => {
               {"event_id" in post ? (
                 <ItEventCardShort post={post} onRemoveBookmark={() => handleRemoveBookmark(post.event_id)} />
               ) : (
-                <PostCardLong post={post} onRemoveBookmark={() => handleRemoveBookmark(post.post_id)} />
+                <PostCardShort post={post} onRemoveBookmark={() => handleRemoveBookmark(post.post_id)} />
               )}
             </div>
           ))

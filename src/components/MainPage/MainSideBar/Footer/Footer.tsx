@@ -4,7 +4,7 @@ import Link from "next/link";
 
 const Footer = () => {
   return (
-    <footer className="bg-fillStrong text-labelNeutral rounded-2xl p-5 text-center w-[295px] mx-auto translate-x-[-10px]">
+    <footer className="bg-fillStrong text-labelNeutral rounded-2xl p-5 text-center w-[290px] mx-auto translate-x-[-8px]">
       <p>@gather_here</p>
       <div className="footer-links mt-2 space-x-2">
         <Link href="/privacy-policy" className="hover:text-primary cursor-pointer">

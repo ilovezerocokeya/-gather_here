@@ -101,22 +101,22 @@ const LeftNav: React.FC = () => {
             <ul className="ml-4 mt-2">
               <li className="mb-2">
                 <Link
-                  href="/mypage/myinterests"
-                  className={`block w-full hover:text-primary focus:text-primary ${
-                    pathname === "/mypage/myinterests" ? "text-primary font-baseBold" : "text-labelNeutral"
-                  }`}
-                >
-                  내 관심 글
-                </Link>
-              </li>
-              <li className="mb-2">
-                <Link
                   href="/mypage/mypeople"
                   className={`block w-full hover:text-primary focus:text-primary ${
                     pathname === "/mypage/mypeople" ? "text-primary font-baseBold" : "text-labelNeutral"
                   }`}
                 >
                   내 관심 멤버
+                </Link>
+              </li>
+              <li className="mb-2">
+                <Link
+                  href="/mypage/myinterests"
+                  className={`block w-full hover:text-primary focus:text-primary ${
+                    pathname === "/mypage/myinterests" ? "text-primary font-baseBold" : "text-labelNeutral"
+                  }`}
+                >
+                  내 관심 글
                 </Link>
               </li>
             </ul>

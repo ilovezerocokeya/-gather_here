@@ -3,13 +3,13 @@
 import React, { useEffect, useState } from "react";
 import { useAuth } from "@/provider/user/UserAuthProvider";
 import { fetchPosts } from "@/lib/fetchPosts";
-import PostCardLong from "@/components/Common/Card/PostCard/PostCardLong";
 import MypageList from "@/components/Common/Skeleton/MypageList";
 import Pagination from "@/components/MyPage/Common/Pagination";
 import Image from "next/image";
 import { useRouter } from "next/navigation";
 import { supabase } from "@/utils/supabase/client";
 import { PostWithUser } from "@/types/posts/Post.type";
+import PostCardShort from "@/components/Common/Card/PostCard/PostCardShort";
 
 
 type Tab = "전체" | "스터디" | "프로젝트";
@@ -160,63 +160,56 @@ const PostsTap: React.FC = () => {
         </div>
       )}
 
+    <div className="relative flex flex-col">
+      {/* 탭 필터 */}
       <div className="sticky z-10 s:relative s:top-auto">
-        <div className="flex w-[250px] s:w-full items-center m:justify-start s:justify-center space-x-4 s:space-x-6 p-3 bg-fillStrong rounded-2xl">
-          <button
-            className={`text-baseS min-w-[64px] ${selectedTab === "전체" ? "tab-button" : ""}`}
-            onClick={() => handleTabClick("전체")}
-          >
-            전체
-          </button>
-          <button
-            className={`text-baseS min-w-[64px] ${selectedTab === "스터디" ? "tab-button" : ""}`}
-            onClick={() => handleTabClick("스터디")}
-          >
-            스터디
-          </button>
-          <button
-            className={`text-baseS min-w-[66px] ${selectedTab === "프로젝트" ? "tab-button" : ""}`}
-            onClick={() => handleTabClick("프로젝트")}
-          >
-            프로젝트
-          </button>
+        <div className="flex w-[240px] s:w-full items-center m:justify-start s:justify-center space-x-4 s:space-x-6 p-3 bg-fillStrong rounded-2xl">
+          {(["전체", "스터디", "프로젝트"] as Tab[]).map((tab) => (
+            <button
+            key={tab}
+            className={`text-baseS min-w-[60px] ${selectedTab === tab ? "tab-button" : ""}`}
+            onClick={() => handleTabClick(tab)}
+            >
+              {tab}
+            </button>
+          ))}
         </div>
       </div>
       <div className="flex flex-col">
         <div className="s:w-full mt-5 grid s:grid-cols-1 m:grid-cols-2 grid-cols-3 gap-6">
           {loading ? (
             Array(3)
-              .fill(0)
-              .map((_, index) => <MypageList key={index} />)
+            .fill(0)
+            .map((_, index) => <MypageList key={index} />)
           ) : getCurrentPosts().length > 0 ? (
             getCurrentPosts().map((post) => (
               <div key={post.post_id} className="s:w-full h-[261px] relative group mb-4 sm:mb-0">
-                <PostCardLong post={post} />
+                <PostCardShort post={post} />
                 {user?.id === post.user_id && (
                   <div className="absolute inset-0 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity bg-black bg-opacity-50 rounded-2xl">
                     <button
                       onClick={() => handleEdit(post.post_id)}
                       className="m-2 p-3 bg-fillLight rounded-full hover:bg-fillNormal"
-                    >
+                      >
                       <Image
                         src="/assets/header/write.svg"
                         alt="호버시 수정 버튼"
                         width={17}
                         height={17}
                         className="w-6 h-6"
-                      />
+                        />
                     </button>
                     <button
                       onClick={() => confirmDelete(post.post_id)}
                       className="m-2 p-3 bg-fillLight rounded-full hover:bg-fillNormal"
-                    >
+                      >
                       <Image
                         src="/assets/delete.svg"
                         alt="호버시 삭제 버튼"
                         width={22}
                         height={22}
                         className="w-6 h-6"
-                      />
+                        />
                     </button>
                   </div>
                 )}
@@ -227,10 +220,15 @@ const PostsTap: React.FC = () => {
           )}
         </div>
       </div>
-      <div className="mt-auto flex justify-center py-4">
-        <Pagination currentPage={currentPage} totalPages={totalPages} onPageChange={handlePageChange} />
+      <div className="flex justify-center py-4">
+        <Pagination
+          currentPage={currentPage}
+          totalPages={totalPages}
+          onPageChange={handlePageChange}
+        />
       </div>
     </div>
+  </div>
   );
 };
 

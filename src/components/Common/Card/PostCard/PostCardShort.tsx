@@ -13,9 +13,10 @@ import { getDisplayDaysLeft, cleanContent } from '@/utils/mainDetailUtils';
 interface PostCardProps {
   post: PostWithUser;
   style?: React.CSSProperties;
+  onRemoveBookmark?: () => void;
 }
 
-const PostCardShort: React.FC<PostCardProps> = ({ post }) => {
+const PostCardShort: React.FC<PostCardProps> = ({ post, onRemoveBookmark }) => {
   const { userData } = useUserData();
   const [isMounted, setIsMounted] = useState<boolean>(false);
   const displayDaysLeft = isMounted ? getDisplayDaysLeft(post.deadline) : '';
@@ -55,6 +56,7 @@ const PostCardShort: React.FC<PostCardProps> = ({ post }) => {
                 postId={post.post_id}
                 currentUser={userData}
                 category={post.category}
+                onRemoveBookmark={onRemoveBookmark}
               />
             </div>
           </div>
@@ -87,28 +89,27 @@ const PostCardShort: React.FC<PostCardProps> = ({ post }) => {
                 </div>
               </div>
   
-              <div className="text-subtitle xs:text-base flex items-center justify-between bg-fillNormal p-3 xs:p-2 rounded-lg truncate">
-                <div className="flex-1 text-left truncate">
+              <div className="flex items-center justify-between bg-fillNormal p-2 rounded-lg min-h-[20px]">
+                <div className="flex-1 truncate text-left">
                   {post.target_position?.length > 0 && (
                     <>
                       <span className={`${jobTitleClassMap[post.target_position[0]] || 'text-default'}`}>
                         {post.target_position[0]}
                       </span>
                       {post.target_position.length > 1 && (
-                        <span className={`${jobTitleClassMap[post.target_position[0]] || 'text-default'}`}>
-                          +{post.target_position.length - 1}
-                        </span>
+                        <span className="ml-1 text-default">+{post.target_position.length - 1}</span>
                       )}
                     </>
                   )}
                 </div>
-                <div className={`mr-2 ${jobTitleClassMap[post.target_position?.[0]] || 'text-default'}`}>
-                  {post.recruitmentCount}명
-                </div>
-                <div className="flex items-center">
+                
+                <div className="flex items-center space-x-2 ml-4">
+                  <span className={`${jobTitleClassMap[post.target_position?.[0]] || 'text-default'}`}>
+                    {post.recruitmentCount}명
+                  </span>
                   <Image
                     src="/assets/cardarrow.svg"
-                    alt="Puzzle Icon"
+                    alt="화살표"
                     width={10}
                     height={10}
                     style={{ width: 'auto', height: 'auto' }}
