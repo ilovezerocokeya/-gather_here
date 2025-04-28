@@ -14,18 +14,26 @@ interface LikeButtonProps {
 }
 
 const LikeButton: React.FC<LikeButtonProps> = ({ postId, currentUser, category, onRemoveBookmark }) => {
-  const { likePosts, fetchLikeStatus, toggleLike } = usePostLikeStore();
+  const { likePosts, fetchLikeStatus, toggleLike, hydrate } = usePostLikeStore(); 
   const liked = likePosts[postId] ?? false;
   const [toast, setToast] = useState<{
     state: 'success' | 'error' | 'warn' | 'info' | 'custom';
     message: string;
   } | null>(null);
 
+  // 1. currentUser 바뀔 때만 로컬 복구
   useEffect(() => {
     if (currentUser) {
+      hydrate(currentUser.user_id);
+    }
+  }, [currentUser, hydrate]);
+  
+  // 2. postId에 대한 서버 fetch는 로컬에 없을 때만
+  useEffect(() => {
+    if (currentUser && likePosts[postId] === undefined) {
       void fetchLikeStatus(currentUser.user_id, postId);
     }
-  }, [currentUser, postId, fetchLikeStatus]);
+  }, [currentUser, postId, likePosts, fetchLikeStatus]);
 
   const handleLike = async () => {
     if (!currentUser) {
@@ -33,23 +41,20 @@ const LikeButton: React.FC<LikeButtonProps> = ({ postId, currentUser, category, 
       return;
     }
 
-    await toggleLike(
-      currentUser.user_id,
-      postId,
-      category,
-      (likedNow) => {
-        if (!likedNow && onRemoveBookmark) {
-          onRemoveBookmark(postId);
-        }
-        setToast({
-          state: 'success',
-          message: likedNow ? '게시글을 좋아요 했습니다!' : '게시글 좋아요를 취소했습니다.',
-        });
-      },
-      (errorMessage) => {
-        setToast({ state: 'error', message: errorMessage });
+    try {
+      const likedNow = await toggleLike(currentUser.user_id, postId, category);
+
+      if (!likedNow && onRemoveBookmark) {
+        onRemoveBookmark(postId);
       }
-    );
+
+      setToast({
+        state: 'success',
+        message: likedNow ? '게시글을 좋아요 했습니다!' : '게시글 좋아요를 취소했습니다.',
+      });
+    } catch (error) {
+      setToast({ state: 'error', message: (error as Error).message });
+    }
   };
 
   return (

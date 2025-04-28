@@ -55,6 +55,8 @@ export const useLikeStore = create<LikeStore>((set, get) => ({
       // 실패 시 상태 롤백
       set({ likedMembers: currentLikedMembers });
       localStorage.setItem(getLocalStorageKey(userId), JSON.stringify(currentLikedMembers)); // 상태 롤백 후 로컬 스토리지에 저장
+
+      throw error;
     }
   },
 
