@@ -3,6 +3,7 @@
 import React, { useState, useEffect } from 'react';
 import { supabase } from '@/utils/supabase/client';
 import Toast from '@/components/Common/Toast/Toast';
+import { createPortal } from 'react-dom';
 import { UserData } from '@/types/userData';
 
 interface LikeButtonProps {
@@ -91,13 +92,16 @@ const LikeButton: React.FC<LikeButtonProps> = ({ postId, currentUser, category, 
           />
         </svg>
       </button>
-      {toast && (
-        <Toast
-          state={toast.state}
-          message={toast.message}
-          onClear={() => setToast(null)}
-        />
-      )}
+      {toast &&
+        createPortal(
+          <Toast
+            state={toast.state}
+            message={toast.message}
+            onClear={() => setToast(null)}
+          />,
+          document.body
+        )
+      }
     </>
   );
 };

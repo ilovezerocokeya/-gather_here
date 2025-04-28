@@ -32,78 +32,94 @@ const PostCardShort: React.FC<PostCardProps> = ({ post }) => {
       return cleanContent(post.content);
     }, [isMounted, post.content]);
 
-  return (
-    <div className="w-full h-full max-w-container-l m:max-w-container-m s:max-w-container-s post-card">
-      <div className="p-5 h-64 text-center bg-fillStrong rounded-2xl">
-        <div className="flex justify-between items-center">
-          {isMounted ? (
-            <ul className="flex items-center">
-              <li>
-                <span className="label-secondary rounded-full text-baseS  px-3 py-1.5 mr-1">{displayDaysLeft}</span>
-              </li>
-              <li>
-                <span className="bg-fillNormal text-primary text-baseS rounded-full px-3 py-1.5 mr-1">
-                  {post.category}
-                </span>
-              </li>
-            </ul>
-          ) : null}
-          <LikeButton postId={post.post_id} currentUser={userData} category={post.category} />
-        </div>
-        <Link href={`/maindetail/${post.post_id}`}>
-          <h2 className="text-left text-subtitle font-semibold truncate mt-3 text-labelStrong">{post.title}</h2>
-          <div className="hidden sm:block mt-2 mb-3 h-11 overflow-hidden text-left font-thin line-clamp-2 text-labelNeutral">
-            <div dangerouslySetInnerHTML={{ __html: sanitizedContent }} />
-          </div>
-          <div className="mt-1">
-            <div className="flex items-center mb-4">
-              <div className="hidden sm:flex items-center">
-                {post.user?.profile_image_url && (
-                  <div className="relative w-7 h-7 mr-2">
-                    <Image
-                      src={secureImageUrl(post.user?.profile_image_url)}
-                      alt="프로필 사진"
-                      fill
-                      className="rounded-md object-cover"
-                    />
-                  </div>
-                )}
-                <p className="text-sm text-labelNeutral truncate">{post.user?.nickname}</p>
-              </div>
+    return (
+      <div className="w-full h-full max-w-container-l m:max-w-container-m s:max-w-container-s post-card">
+        <div className="p-5 h-64 text-center bg-fillStrong rounded-2xl">
+          <div className="flex justify-between items-center">
+            {isMounted && (
+              <ul className="flex items-center">
+                <li>
+                  <span className="label-secondary rounded-full text-baseS px-3 py-1.5 mr-1">
+                    {displayDaysLeft}
+                  </span>
+                </li>
+                <li>
+                  <span className="bg-fillNormal text-primary text-baseS rounded-full px-3 py-1.5 mr-1">
+                    {post.category}
+                  </span>
+                </li>
+              </ul>
+            )}
+            <div className="relative w-8 h-8 flex items-center justify-center">
+              <LikeButton
+                postId={post.post_id}
+                currentUser={userData}
+                category={post.category}
+              />
             </div>
-            <div className="text-subtitle xs:text-base flex items-center justify-between bg-fillNormal p-3 xs:p-2 rounded-lg truncate">
-              <div className="flex-1 text-left truncate">
-                {post.target_position?.length > 0 && (
-                  <>
-                    <span className={`${jobTitleClassMap[post.target_position[0]] || 'text-default'}`}>
-                      {post.target_position[0]}
-                    </span>
-                    {post.target_position.length > 1 && (
+          </div>
+  
+          <Link href={`/maindetail/${post.post_id}`}>
+            <h2 className="text-left text-subtitle font-semibold truncate mt-3 text-labelStrong">
+              {post.title}
+            </h2>
+  
+            <div className="hidden sm:block mt-2 mb-3 h-11 overflow-hidden text-left font-thin line-clamp-2 text-labelNeutral">
+              <div dangerouslySetInnerHTML={{ __html: sanitizedContent }} />
+            </div>
+  
+            <div className="mt-1">
+              <div className="flex items-center mb-4">
+                <div className="hidden sm:flex items-center">
+                  {post.user?.profile_image_url && (
+                    <div className="relative w-7 h-7 mr-2">
+                      <Image
+                        src={secureImageUrl(post.user.profile_image_url)}
+                        alt="프로필 사진"
+                        fill
+                        className="rounded-md object-cover"
+                      />
+                    </div>
+                  )}
+                  <p className="text-sm text-labelNeutral truncate">
+                    {post.user?.nickname}
+                  </p>
+                </div>
+              </div>
+  
+              <div className="text-subtitle xs:text-base flex items-center justify-between bg-fillNormal p-3 xs:p-2 rounded-lg truncate">
+                <div className="flex-1 text-left truncate">
+                  {post.target_position?.length > 0 && (
+                    <>
                       <span className={`${jobTitleClassMap[post.target_position[0]] || 'text-default'}`}>
-                        +{post.target_position.length - 1}
+                        {post.target_position[0]}
                       </span>
-                    )}
-                  </>
-                )}
-              </div>
-              <div className={`mr-2 ${jobTitleClassMap[post.target_position?.[0]] || 'text-default'}`}>
-                {post.recruitmentCount}명
-              </div>
-              <div className="flex items-center">
-                <Image
-                  src="/assets/cardarrow.svg"
-                  alt="Puzzle Icon"
-                  width={10}
-                  height={10}
-                  style={{ width: 'auto', height: 'auto' }}
-                />
+                      {post.target_position.length > 1 && (
+                        <span className={`${jobTitleClassMap[post.target_position[0]] || 'text-default'}`}>
+                          +{post.target_position.length - 1}
+                        </span>
+                      )}
+                    </>
+                  )}
+                </div>
+                <div className={`mr-2 ${jobTitleClassMap[post.target_position?.[0]] || 'text-default'}`}>
+                  {post.recruitmentCount}명
+                </div>
+                <div className="flex items-center">
+                  <Image
+                    src="/assets/cardarrow.svg"
+                    alt="Puzzle Icon"
+                    width={10}
+                    height={10}
+                    style={{ width: 'auto', height: 'auto' }}
+                  />
+                </div>
               </div>
             </div>
-          </div>
-        </Link>
+          </Link>
+        </div>
       </div>
-    </div>
-  );
-};
-
-export default PostCardShort;
+    );
+  };
+  
+  export default PostCardShort;
