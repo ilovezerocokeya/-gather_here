@@ -6,6 +6,7 @@ interface PostLikeStoreState {
   likePosts: Record<string, boolean>;
   fetchLikeStatus: (userId: string, postId: string) => Promise<void>;
   toggleLike: (userId: string, postId: string, category: string) => Promise<boolean>;
+  getLikeCount: (postId: string) => Promise<number>;
   hydrate: (userId: string) => void;
   reset: (userId: string) => void;
 }
@@ -41,10 +42,10 @@ export const usePostLikeStore = create<PostLikeStoreState>((set, get) => ({
     }
   },
 
-  // 좋아요 토글 (Optimistic UI + 실패 시 롤백 추가)
+  // 좋아요 토글 
   toggleLike: async (userId, postId, category) => {
     const liked = get().likePosts[postId];
-    const previousLikePosts = { ...get().likePosts }; // 🔥 기존 상태 스냅샷 저장
+    const previousLikePosts = { ...get().likePosts };
 
     // Optimistic UI: 상태 먼저 바꿈
     set((state) => {
@@ -79,6 +80,21 @@ export const usePostLikeStore = create<PostLikeStoreState>((set, get) => ({
       localStorage.setItem(getLocalStorageKey(userId), JSON.stringify(previousLikePosts));
       throw error; // 에러는 그대로 던져서 버튼 쪽에서 catch
     }
+  },
+
+  // 좋아요 수 가져오기
+  getLikeCount: async (postId) => {
+    const { count, error } = await supabase
+      .from('Interests')
+      .select('*', { count: 'exact', head: true })
+      .eq('post_id', postId);
+
+    if (error) {
+      console.error('좋아요 수 가져오기 실패:', error);
+      return 0;
+    }
+
+    return count ?? 0;
   },
 
   // 로그아웃 시 상태 초기화

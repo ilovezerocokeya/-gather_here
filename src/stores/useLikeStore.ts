@@ -8,10 +8,11 @@ interface LikeStore {
   syncLikesWithServer: (userId: string) => Promise<void>; // 서버에서 동기화
   hydrate: (userId: string) => void; // 앱 실행 시 로컬 스토리지에서 불러오기
   reset: (userId: string) => void; // 로그아웃 시 초기화
+  getLikeCount: (likedUserId: string) => Promise<number>;
 }
 
-// 유저별 로컬 스토리지 키 생성
-const getLocalStorageKey = (userId: string) => `likedMembers_${userId}`;
+
+const getLocalStorageKey = (userId: string) => `likedMembers_${userId}`; // 유저별 로컬 스토리지 키 생성
 
 export const useLikeStore = create<LikeStore>((set, get) => ({
   likedMembers: {}, // 좋아요 상태 초기화
@@ -24,8 +25,8 @@ export const useLikeStore = create<LikeStore>((set, get) => ({
     const storedLikes = localStorage.getItem(getLocalStorageKey(userId));
     const parsedLikes = storedLikes ? JSON.parse(storedLikes) as Record<string, boolean> : {};
 
-    // 상태 업데이트
-    set({ likedMembers: parsedLikes });
+    
+    set({ likedMembers: parsedLikes }); // 상태 업데이트
   },
 
   // 좋아요 상태 토글
@@ -94,5 +95,20 @@ export const useLikeStore = create<LikeStore>((set, get) => ({
   reset: (userId) => {
     set({ likedMembers: {} });  // 상태 초기화
     localStorage.removeItem(getLocalStorageKey(userId)); // 로컬 스토리지에서 데이터 삭제
+  },
+
+  // 나를 좋아요한 유저 수 가져오기
+  getLikeCount: async (likedUserId) => {
+    const { count, error } = await supabase
+      .from("User_Interests")
+      .select("*", { count: "exact", head: true })
+      .eq("liked_user_id", likedUserId);
+
+    if (error) {
+      console.error("좋아요 수 가져오기 실패:", error);
+      return 0;
+    }
+
+    return count ?? 0;
   },
 }));

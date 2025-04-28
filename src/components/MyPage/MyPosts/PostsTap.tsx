@@ -10,6 +10,8 @@ import { useRouter } from "next/navigation";
 import { supabase } from "@/utils/supabase/client";
 import { PostWithUser } from "@/types/posts/Post.type";
 import PostCardShort from "@/components/Common/Card/PostCard/PostCardShort";
+import { usePostLikeStore } from "@/stores/usePostLikeStore";
+
 
 
 type Tab = "전체" | "스터디" | "프로젝트";
@@ -17,6 +19,7 @@ type Tab = "전체" | "스터디" | "프로젝트";
 const PostsTap: React.FC = () => {
   const { user } = useAuth();
   const router = useRouter();
+  const { getLikeCount } = usePostLikeStore();
   const [selectedTab, setSelectedTab] = useState<Tab>("전체");
   const [posts, setPosts] = useState<PostWithUser[]>([]);
   const [loading, setLoading] = useState<boolean>(true);
@@ -65,6 +68,26 @@ const PostsTap: React.FC = () => {
     };
     void loadPosts();
   }, [user]);
+
+  // 좋아요 수 가져오기
+const [likeCounts, setLikeCounts] = useState<Record<string, number>>({});
+
+useEffect(() => {
+  const fetchLikeCounts = async () => {
+    const counts: Record<string, number> = {};
+
+    for (const post of posts) {
+      const count = await getLikeCount(post.post_id);
+      counts[post.post_id] = count;
+    }
+
+    setLikeCounts(counts);
+  };
+
+  if (posts.length > 0) {
+    void fetchLikeCounts();
+  }
+}, [posts]);
 
   // 전체 페이지 수 업데이트
   const updateTotalPages = (filteredPosts: PostWithUser[]) => {
@@ -175,6 +198,7 @@ const PostsTap: React.FC = () => {
           ))}
         </div>
       </div>
+      
       <div className="flex flex-col">
         <div className="s:w-full mt-5 grid s:grid-cols-1 m:grid-cols-2 grid-cols-3 gap-6">
           {loading ? (
@@ -185,6 +209,9 @@ const PostsTap: React.FC = () => {
             getCurrentPosts().map((post) => (
               <div key={post.post_id} className="s:w-full h-[261px] relative group mb-4 sm:mb-0">
                 <PostCardShort post={post} />
+                <div className="text-sm text-labelNeutral mt-2 text-center">
+                  작성글 ❤️ {likeCounts[post.post_id] ?? 0}
+                </div>
                 {user?.id === post.user_id && (
                   <div className="absolute inset-0 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity bg-black bg-opacity-50 rounded-2xl">
                     <button

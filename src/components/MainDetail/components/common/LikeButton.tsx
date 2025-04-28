@@ -21,20 +21,21 @@ const LikeButton: React.FC<LikeButtonProps> = ({ postId, currentUser, category, 
     message: string;
   } | null>(null);
 
-  // 1. currentUser 바뀔 때만 로컬 복구
+  // 유저 정보가 변경되면 로컬 스토리지에서 좋아요 상태 복구
   useEffect(() => {
     if (currentUser) {
       hydrate(currentUser.user_id);
     }
   }, [currentUser, hydrate]);
   
-  // 2. postId에 대한 서버 fetch는 로컬에 없을 때만
+  // 로컬에 좋아요 상태가 없을 때만 서버에서 좋아요 상태 조회
   useEffect(() => {
     if (currentUser && likePosts[postId] === undefined) {
       void fetchLikeStatus(currentUser.user_id, postId);
     }
   }, [currentUser, postId, likePosts, fetchLikeStatus]);
 
+  // 좋아요 버튼 클릭 핸들러
   const handleLike = async () => {
     if (!currentUser) {
       setToast({ state: 'error', message: '로그인이 필요합니다!' });
@@ -44,15 +45,19 @@ const LikeButton: React.FC<LikeButtonProps> = ({ postId, currentUser, category, 
     try {
       const likedNow = await toggleLike(currentUser.user_id, postId, category);
 
+      // 좋아요 취소 시 북마크 리스트에서 제거
       if (!likedNow && onRemoveBookmark) {
         onRemoveBookmark(postId);
       }
 
+      // 성공 알림
       setToast({
         state: 'success',
         message: likedNow ? '게시글을 좋아요 했습니다!' : '게시글 좋아요를 취소했습니다.',
       });
     } catch (error) {
+
+      // 에러 발생 시 알림
       setToast({ state: 'error', message: (error as Error).message });
     }
   };
@@ -71,6 +76,8 @@ const LikeButton: React.FC<LikeButtonProps> = ({ postId, currentUser, category, 
           />
         </svg>
       </button>
+      
+       {/* 토스트 */}
       {toast &&
         createPortal(
           <Toast

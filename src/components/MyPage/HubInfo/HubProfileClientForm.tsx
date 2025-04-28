@@ -1,6 +1,6 @@
 "use client";
 
-import { useReducer } from "react";
+import { useEffect, useReducer, useState } from "react";
 import BackgroundPicture from "./components/BackgroundPicture";
 import HubProfileForm from "./components/HubProfileInfo";
 import SelfIntroduction from "@/components/MyPage/HubInfo/components/Introductioin";
@@ -8,6 +8,8 @@ import TeamworkQuestions from "@/components/MyPage/HubInfo/components/TeamQuesti
 import TechStack from "@/components/MyPage/HubInfo/components/TechStack";
 import { HubProfileState, hubProfileReducer, } from "@/components/MyPage/HubInfo/reducer/hubProfileReducer";
 import HubProfileToggle from "./HubProfileToggle";
+import { useLikeStore } from "@/stores/useLikeStore";
+import { useUserData } from "@/provider/user/UserDataProvider";
 
 interface HubProfileClientFormProps {
   initialIsActive: boolean;
@@ -15,11 +17,39 @@ interface HubProfileClientFormProps {
 }
 
 const HubProfileClientForm: React.FC<HubProfileClientFormProps> = ({ initialIsActive,  initialData }) => {
-  const [state, dispatch] = useReducer(hubProfileReducer, initialData); // useReducer를 통해 상태 초기화 및 디스패치 함수 생성
+  const [state, dispatch] = useReducer(hubProfileReducer, initialData); // 허브 프로필 상태를 useReducer로 관리
+  const { getLikeCount } = useLikeStore();
+  const { userData } = useUserData();
+  const [likeCount, setLikeCount] = useState<number>(0);
+
+  // 프로필 좋아요 수 가져오기
+  useEffect(() => {
+    const fetchLikeCount = async () => {
+      if (userData?.user_id) {
+        const count = await getLikeCount(userData.user_id);
+        setLikeCount(count);
+      }
+    };
+  
+    void fetchLikeCount();
+  }, [userData?.user_id, getLikeCount]);
 
   return (
     <>
-      <BackgroundPicture />
+      {/* 프로필 배경 이미지와 좋아요 수 영역 */}
+      <div className="flex items-center gap-4 mb-6">
+        <BackgroundPicture />     
+        <div className="flex flex-col">
+          <h3 className="text-baseS font-semibold text-labelStrong mb-2">
+            프로필 좋아요
+          </h3>
+          <p className="text-base text-labelNormal">
+            ❤️ {likeCount}
+          </p>
+        </div>
+      </div>
+
+      {/* 자기소개 입력 영역 */}
       <SelfIntroduction
         description={state.description}
         setDescription={(value) => dispatch({ type: "SET_DESCRIPTION", payload: value })}
@@ -27,6 +57,7 @@ const HubProfileClientForm: React.FC<HubProfileClientFormProps> = ({ initialIsAc
 
       <div className="border-b-[1px] border-fillNormal my-6" />
 
+      {/* 팀워크 관련 질문 입력 영역 */}
       <TeamworkQuestions
         answer1={state.answer1}
         setAnswer1={(value) => dispatch({ type: "SET_ANSWER1", payload: value })}
@@ -38,6 +69,7 @@ const HubProfileClientForm: React.FC<HubProfileClientFormProps> = ({ initialIsAc
 
       <div className="border-b-[1px] border-fillNormal my-6" />
 
+      {/* 기술 스택 선택 영역 */}
       <TechStack
         selectedStacks={state.techStacks}
         setSelectedStacks={(value) =>
@@ -47,6 +79,7 @@ const HubProfileClientForm: React.FC<HubProfileClientFormProps> = ({ initialIsAc
 
       <div className="border-t border-labelAssistive my-6" />
 
+      {/* 추가 정보 입력 영역 */}
       <HubProfileForm
         blog={state.blog}
         setBlog={(value) => dispatch({ type: "SET_BLOG", payload: value })}
@@ -62,7 +95,7 @@ const HubProfileClientForm: React.FC<HubProfileClientFormProps> = ({ initialIsAc
 
       <div className="border-b-[1px] border-fillNormal my-6" />
 
-      {/* 상태를 넘겨서 HubProfileToggle 렌더링 */}
+      {/* 허브 프로필 공개/비공개 토글 영역 */}
       <HubProfileToggle
         initialIsActive={initialIsActive}
         state={state}
