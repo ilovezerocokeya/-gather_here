@@ -307,8 +307,7 @@ gather_here                                                        //
 │  │  │  └─ page.tsx                                               //
 │  │  └─ terms-of-service                                          //
 │  │     └─ page.tsx                                               //
-│  ├─ assets                                                       //
-│  │  ├─ loadingBar.json                                           //
+│  ├─ assets                                                       //                      //
 │  │  └─ loadingSpinner.json                                       //
 │  ├─ components                                                   //
 │  │  ├─ Common                                                    //
@@ -322,8 +321,7 @@ gather_here                                                        //
 │  │  │  │  └─ Header.tsx                                          //
 │  │  │  ├─ Loading                                                //
 │  │  │  │  ├─ InitialLoadingWrapper.tsx                           //
-│  │  │  │  ├─ SpinnerLoader.tsx                                   //
-│  │  │  │  ├─ LottieAnimation.tsx                                 //
+│  │  │  │  ├─ SpinnerLoader.tsx                                   //                              //
 │  │  │  │  └─ PuzzleAnimation.tsx                                 //
 │  │  │  ├─ Modal                                                  //
 │  │  │  │  └─ CommonModal.tsx                                     //
