@@ -20,6 +20,7 @@ export interface MemberCardProps {
   liked: boolean;
   toggleLike: (userId: string, currentUserId: string) => void;
   tech_stacks: string[];
+  imageVersion?: number;
 }
 
 // CardUI에서만 필요한 추가 속성
@@ -40,6 +41,7 @@ export interface CardUIProps {
   secureImageUrl: (url: string) => string;
   onOpenModal: () => void;
   onOpenProfile?: () => void;
+  imageVersion?: number;
 }
 
 // CardModal 인터페이스
@@ -64,6 +66,7 @@ export interface CardModalProps {
   selectedTechStacks: { id: string; name: string; image: string }[];
   handleToggleLike?: () => void;
   secureImageUrl: (url: string) => string;
+  imageVersion?: number;
 }
 
 export interface ProfileExtendProps {
@@ -72,6 +75,7 @@ export interface ProfileExtendProps {
   profileImageUrl: string;
   nickname: string;
   secureImageUrl: (url: string) => string;
+  imageVersion: number;
 }
 
 // useMemberData에서 사용하는 훅 반환 타입
@@ -151,4 +155,5 @@ export interface MemberType {
   liked: boolean;
   toggleLike: (userId: string, currentUserId: string) => void;
   tech_stacks: string[];
+  imageVersion?: number;
 }

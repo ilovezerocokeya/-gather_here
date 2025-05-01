@@ -20,8 +20,15 @@ const UserDataContext = createContext<UserDataContextType | undefined>(undefined
 
 // UserDataProvider: 유저 데이터를 관리하는 컨텍스트 프로바이더
 export const UserDataProvider: React.FC<{ children: ReactNode }> = ({ children }) => {
-  const { userData, fetchUserData, loading, error, setUserData } = useFetchUserData(); // 유저 데이터를 가져오는 커스텀 훅
+  const { userData: rawUserData, fetchUserData, loading, error, setUserData } = useFetchUserData(); // 유저 데이터를 가져오는 커스텀 훅
   const [hydrated, setHydrated] = useState(false);
+  const userData = useMemo(() => {
+    if (!rawUserData) return null;
+    return {
+      ...rawUserData,
+      imageVersion: rawUserData.imageVersion ?? 0, // 초기값 보장
+    };
+  }, [rawUserData]);
 
   useEffect(() => {
     const init = async () => {

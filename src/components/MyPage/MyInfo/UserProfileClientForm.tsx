@@ -40,6 +40,8 @@ const extractFormData = (form: HTMLFormElement) => {
     const [nickname, setNickname] = useState(initialData.nickname);
     const { userData } = useUserData(); 
     const { result: nicknameAvailable, isEmpty } = useCheckNickname(nickname);
+    const [updatedImageUrl, setUpdatedImageUrl] = useState<string | null>(null);
+
 
     // 취소 버튼 클릭 시 처리 함수
     const handleCancelClick = (e: React.FormEvent<HTMLFormElement>) => {
@@ -48,8 +50,7 @@ const extractFormData = (form: HTMLFormElement) => {
       const changed =
         nickname !== initialData.nickname ||
         jobTitle !== initialData.jobTitle ||
-        experience !== initialData.experience ||
-        userData?.profile_image_url !== initialData.profileImageUrl;
+        experience !== initialData.experience;
   
       if (changed) {
         setIsCancelModalOpen(true);
@@ -62,22 +63,21 @@ const extractFormData = (form: HTMLFormElement) => {
       e.preventDefault();
       const { nickname, jobTitle, experience } = extractFormData(e.currentTarget);
     
-      // 프로필 업데이트 비동기 처리
       startTransition(() => {
         updateProfile({
           nickname,
           jobTitle,
           experience,
-          profileImageUrl: userData?.profile_image_url ?? "",
+          profileImageUrl: updatedImageUrl ?? userData?.profile_image_url ?? "",
         })
-        .then(() => {
-          setToast({ state: "success", message: "프로필이 저장되었습니다." });
-          setIsSaveModalOpen(true);
-        })
-        .catch((err) => {
-          const message = err instanceof Error ? err.message : "알 수 없는 오류가 발생했습니다.";
-          setToast({ state: "error", message });
-        });
+          .then(() => {
+            setToast({ state: "success", message: "프로필이 저장되었습니다." });
+            setIsSaveModalOpen(true);
+          })
+          .catch((err) => {
+            const message = err instanceof Error ? err.message : "알 수 없는 오류가 발생했습니다.";
+            setToast({ state: "error", message });
+          });
       });
     };
 
@@ -87,6 +87,7 @@ const extractFormData = (form: HTMLFormElement) => {
             <fieldset>
               {/* 프로필 이미지 업로드 컴포넌트 */}
               <ProfileImage
+                onImageChange={(url) => setUpdatedImageUrl(url)}
                 onToast={(state, message) => setToast({ state, message })}
               />
               {/* 닉네임, 직군, 경력 입력란 */}

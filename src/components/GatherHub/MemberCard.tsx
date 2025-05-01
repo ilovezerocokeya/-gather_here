@@ -59,6 +59,7 @@ const MemberCard: React.FC<MemberCardProps> = ({
     return techStacks.filter((stack) => tech_stacks.includes(stack.id));
   }, [tech_stacks]);
 
+
   return (
     <>
       {/* 카드 UI */}
@@ -79,6 +80,7 @@ const MemberCard: React.FC<MemberCardProps> = ({
         secureImageUrl={secureImageUrl}
         onOpenModal={() => setIsModalOpen(true)}
         onOpenProfile={() => setIsProfileModalOpen(true)}
+        imageVersion={userData?.imageVersion ?? 0} 
       />
 
       {/* 상세 모달 */}
@@ -103,6 +105,7 @@ const MemberCard: React.FC<MemberCardProps> = ({
         handleToggleLike={handleToggleLike}
         secureImageUrl={secureImageUrl}
         selectedTechStacks={selectedTechStacks}
+        imageVersion={userData?.imageVersion ?? 0} 
       />
 
       {/* 프로필 확대 모달 */}
@@ -112,6 +115,7 @@ const MemberCard: React.FC<MemberCardProps> = ({
         profileImageUrl={profile_image_url}
         nickname={nickname}
         secureImageUrl={secureImageUrl}
+        imageVersion={userData?.imageVersion ?? 0} 
       />
     </>
   );

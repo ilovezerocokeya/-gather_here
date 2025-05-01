@@ -33,7 +33,7 @@ export async function updateProfile({
   // 이미지 URL 유효성 검사
   if (profileImageUrl) {
     const urlWithoutQuery = profileImageUrl.split("?")[0];
-    const isValidImage = /\.(jpg|jpeg|png)$/i.test(urlWithoutQuery);
+    const isValidImage = /\.(webp|jpg|jpeg|png)$/i.test(urlWithoutQuery);
 
     if (!isValidImage) {
       return { error: "프로필 이미지는 jpg, jpeg, png 형식만 허용됩니다." };

@@ -17,6 +17,7 @@ export interface UserData {
     second_link_type?: string;
     second_link?: string;
     tech_stacks?: string[];
+    imageVersion?: number;
   }
   
   // 기본값 제공 (null 방지)

@@ -21,7 +21,9 @@ const CardUI: React.FC<CardUIProps> = ({
   liked,
   handleToggleLike,
   secureImageUrl,
+  imageVersion
 }) => {
+  const versionedProfileImage = `${secureImageUrl(profile_image_url)}?v=${imageVersion ?? 0}`;
 
   return (
     <div
@@ -92,7 +94,8 @@ const CardUI: React.FC<CardUIProps> = ({
       >
         <div className="relative w-[60px] h-[60px]">
           <Image
-            src={secureImageUrl(profile_image_url)}
+            key={versionedProfileImage}
+            src={versionedProfileImage}
             alt={nickname}
             width={120}
             height={120}

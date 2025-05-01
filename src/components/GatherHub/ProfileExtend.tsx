@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useMemo } from "react";
 import { createPortal } from "react-dom";
 import Image from "next/image";
 import { ProfileExtendProps } from '@/lib/gatherHub';
@@ -9,8 +9,14 @@ const ProfileExtend: React.FC<ProfileExtendProps> = ({
   profileImageUrl,
   nickname,
   secureImageUrl,
+  imageVersion
 }) => {
   if (!isOpen) return null;
+
+  const imageUrl = useMemo(() => {
+    const baseUrl = secureImageUrl(profileImageUrl || "/assets/header/user.svg");
+    return `${baseUrl}?v=${imageVersion}`;
+  }, [profileImageUrl, imageVersion]);
 
   return createPortal(
     <div
@@ -20,7 +26,7 @@ const ProfileExtend: React.FC<ProfileExtendProps> = ({
     >
       <div className="relative">
         <Image
-          src={secureImageUrl(profileImageUrl) || "/assets/header/user.svg"} 
+          src={imageUrl}
           alt={nickname}
           width={500}
           height={500}

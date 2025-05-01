@@ -44,7 +44,7 @@ export const convertToWebp = async (
             resolve(webpFile);
           },
           "image/webp",
-          0.75
+          0.95
         );
       };
 
