@@ -2,7 +2,7 @@
 
 import React, { useMemo, useState } from "react";
 import ImageUploader from "@/components/Common/Images/ImageUploader";
-import { useUserData } from "@/provider/user/UserDataProvider";
+import { useUserStore } from "@/stores/useUserStore";
 import { useImageUploadManager } from "@/hooks/useImageUploadManager";
 import Toast from "@/components/Common/Toast/Toast";
 import {
@@ -11,48 +11,47 @@ import {
 } from "@/utils/Image/imageUtils";
 
 const BackgroundPicture: React.FC = () => {
-  const { userData, setUserData } = useUserData();
+  const {
+    userData,
+    backgroundImageUrl,
+    imageVersion,
+    setBackgroundImageUrl,
+    incrementImageVersion,
+  } = useUserStore();
+
   const [toast, setToast] = useState<{
     state: "success" | "error" | "warn" | "info" | "custom";
     message: string;
   } | null>(null);
 
-  const {
-    uploadImage,
-    resetImage,
-    imageVersion,
-  } = useImageUploadManager(
+   // 이미지 업로드 및 초기화 관련 로직 제공 훅
+   const { uploadImage, resetImage } = useImageUploadManager(
     userData?.user_id ?? null,
-    userData?.background_image_url ?? null,
     (state, msg) => setToast({ state, message: msg }),
     "background"
   );
 
-  // 렌더링용 URL에만 ?v= 캐시 무효화 적용
+   // 캐시 무효화를 위한 버전 기반 이미지 URL 생성
   const imageUrl = useMemo(() => {
-    const base = stripQuery(userData?.background_image_url ?? DEFAULT_BACKGROUND_IMAGE);
+    const base = stripQuery(backgroundImageUrl ?? DEFAULT_BACKGROUND_IMAGE);
     return `${base}?v=${imageVersion}`;
-  }, [userData?.background_image_url, imageVersion]);
+  }, [backgroundImageUrl, imageVersion]);
 
+  // 이미지 업로드 처리 핸들러
   const handleUpload = async (file: File) => {
     const uploadedUrl = await uploadImage(file);
     if (uploadedUrl) {
-      const cleanUrl = stripQuery(uploadedUrl); // 상태 저장 시 쿼리 제거
-      setUserData(prev =>
-        prev ? {
-          ...prev,
-          background_image_url: cleanUrl,
-          imageVersion: (prev.imageVersion ?? 0) + 1,
-        } : prev
-      );
+      const cleanUrl = stripQuery(uploadedUrl);
+      setBackgroundImageUrl(cleanUrl);
+      incrementImageVersion();
     }
   };
 
+  // 기본 이미지로 초기화 처리 핸들러
   const handleReset = async () => {
     await resetImage();
-    setUserData((prev) =>
-      prev ? { ...prev, background_image_url: DEFAULT_BACKGROUND_IMAGE } : prev
-    );
+    setBackgroundImageUrl(DEFAULT_BACKGROUND_IMAGE);
+    incrementImageVersion();
   };
 
   return (

@@ -1,6 +1,6 @@
 "use client";
 
-import { useCallback, useRef, useState } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 import Image from "next/image";
 import { convertToWebp } from "@/utils/Image/convertToWebp";
 
@@ -27,6 +27,14 @@ const ImageUploader: React.FC<ImageUploaderProps> = ({ imageUrl, onUpload, onErr
   const [isDragging, setIsDragging] = useState(false); // 드래그로 이미지 업로드할때 테두리
   const inputRef = useRef<HTMLInputElement | null>(null); // 숨겨진 input 클릭용
   const [previewUrl, setPreviewUrl] = useState<string | null>(null); // local preview용 URL
+
+  useEffect(() => {
+    return () => {
+      if (previewUrl) {
+        URL.revokeObjectURL(previewUrl);
+      }
+    };
+  }, [previewUrl]);
 
   // 버튼 누르면 input 작동시키기
   const handleClick = useCallback(() => {

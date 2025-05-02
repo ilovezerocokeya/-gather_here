@@ -2,7 +2,7 @@
 import { useState, useMemo, useEffect } from "react";
 import { useInfiniteQuery } from "@tanstack/react-query";
 import { useLikeStore } from "@/stores/useLikeStore";
-import { useUserData } from "@/provider/user/UserDataProvider";
+import { useUserStore } from "@/stores/useUserStore";
 import { fetchMembers } from "@/utils/fetchMembers";
 import { ReactQueryInfiniteScrollHandler } from "@/utils/scroll/InfinityScroll";
 import { MemberCardProps, UseMemberDataReturn } from "@/lib/gatherHub";
@@ -11,7 +11,7 @@ import { MemberCardProps, UseMemberDataReturn } from "@/lib/gatherHub";
 export const useMemberData = (
   initialMembers: MemberCardProps[],
 ): UseMemberDataReturn => {
-  const { userData } = useUserData();
+  const { userData } = useUserStore();
   const { likedMembers, hydrate, syncLikesWithServer } = useLikeStore();
   const [filteredJob, setFilteredJob] = useState<string>("all");
 

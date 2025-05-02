@@ -75,7 +75,7 @@ export interface ProfileExtendProps {
   profileImageUrl: string;
   nickname: string;
   secureImageUrl: (url: string) => string;
-  imageVersion: number;
+  imageVersion?: number;
 }
 
 // useMemberData에서 사용하는 훅 반환 타입

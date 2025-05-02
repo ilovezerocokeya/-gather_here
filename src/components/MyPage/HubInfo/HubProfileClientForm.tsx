@@ -9,7 +9,7 @@ import TechStack from "@/components/MyPage/HubInfo/components/TechStack";
 import { HubProfileState, hubProfileReducer, } from "@/components/MyPage/HubInfo/reducer/hubProfileReducer";
 import HubProfileToggle from "./HubProfileToggle";
 import { useLikeStore } from "@/stores/useLikeStore";
-import { useUserData } from "@/provider/user/UserDataProvider";
+import { useUserStore } from '@/stores/useUserStore';
 
 interface HubProfileClientFormProps {
   initialIsActive: boolean;
@@ -19,7 +19,7 @@ interface HubProfileClientFormProps {
 const HubProfileClientForm: React.FC<HubProfileClientFormProps> = ({ initialIsActive,  initialData }) => {
   const [state, dispatch] = useReducer(hubProfileReducer, initialData); // 허브 프로필 상태를 useReducer로 관리
   const { getLikeCount } = useLikeStore();
-  const { userData } = useUserData();
+  const { userData } = useUserStore();
   const [likeCount, setLikeCount] = useState<number>(0);
 
   // 프로필 좋아요 수 가져오기

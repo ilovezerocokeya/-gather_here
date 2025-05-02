@@ -3,7 +3,7 @@ import { supabase } from "@/utils/supabase/client";
 import { FormValues } from "@/components/Signup/Signup03";
 import { useSignup } from "@/provider/user/UserSignupProvider";
 import { useAuth } from "@/provider/user/UserAuthProvider";
-import { useUserData } from "@/provider/user/UserDataProvider";
+import { useUserStore } from "@/stores/useUserStore";
 import { defaultUserData } from "@/types/userData"; 
 import type { UseFormSetError } from "react-hook-form";
 import { secureImageUrl } from "@/utils/Image/imageUtils";
@@ -13,16 +13,16 @@ const useSubmitProfile = () => {
   
   const { nextStep } = useSignup(); // 회원가입 단계 관련 상태
   const { setUser, user } = useAuth(); // 사용자 인증 관련 상태
-  const { userData, setUserData } = useUserData(); // 사용자 프로필 관련 상태 및 업데이트 함수
+  const { userData, setUserData } = useUserStore(); // 사용자 프로필 관련 상태 및 업데이트 함수
   const profileData = userData ?? defaultUserData; // 프로필 기본값 설정
 
-  // 프로필 이미지 URL을 context 기반으로 설정
+  // URL의 http 제거 및 쿼리스트링 제거 후 프로필 이미지로 설정
   const setProfileImageUrl = useCallback((url: string) => {
-    setUserData((prev) => ({
-      ...prev ?? defaultUserData,
+    setUserData({
+      ...profileData,
       profile_image_url: secureImageUrl(url),
-    }));
-  }, [setUserData]);
+    });
+  }, [setUserData, profileData]);
 
   // 세션 가져와서 유저 등록 + 프로필 이미지 반영
   useEffect(() => {
@@ -86,16 +86,13 @@ const useSubmitProfile = () => {
         return;
       }
 
-      // setUserData를 `UserData` 형식으로 변환하여 저장
-      setUserData((prev) => ({
-        ...(prev ?? defaultUserData),
+      setUserData({
+        ...profileData,
         nickname,
         job_title: profileData.job_title,
         experience: String(profileData.experience),
         profile_image_url: secureImageUrl(profileData.profile_image_url),
-        description: prev?.description ?? "",
-        blog: prev?.blog ?? "",
-      }));
+      });
 
       nextStep();
     } catch (err: unknown) {

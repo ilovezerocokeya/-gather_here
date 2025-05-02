@@ -6,7 +6,7 @@ import "slick-carousel/slick/slick.css";
 import "slick-carousel/slick/slick-theme.css";
 import { useInfiniteQuery } from "@tanstack/react-query";
 import { useLikeStore } from "@/stores/useLikeStore";
-import { useUserData } from "@/provider/user/UserDataProvider";
+import { useUserStore } from '@/stores/useUserStore';
 import { fetchMembers } from "@/utils/fetchMembers";
 import { MemberCardProps, MemberType } from "@/lib/gatherHub";
 import CardUI from "@/components/GatherHub/CardUI";
@@ -43,7 +43,7 @@ const PrCard: React.FC = () => {
   const { likedMembers, toggleLike } = useLikeStore();
 
   // 현재 로그인한 사용자 정보 가져오기
-  const { userData } = useUserData();
+  const { userData } = useUserStore();
 
   // 모달 상태 관리
   const [selectedMember, setSelectedMember] = useState<MemberCardProps | null>(null);

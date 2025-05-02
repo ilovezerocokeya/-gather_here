@@ -7,7 +7,7 @@ import Image from 'next/image';
 import LikeButton from '@/components/EventsDetail/ITLikeButton';
 import ShareButton from '@/components/MainDetail/components/common/ShareButton';
 import Link from 'next/link';
-import { useUserData } from '@/provider/user/UserDataProvider';
+import { useUserStore } from '@/stores/useUserStore';
 import { ITEvent } from '@/types/posts/Post.type';
 
 const EventDetailPage = () => {
@@ -15,7 +15,7 @@ const EventDetailPage = () => {
   const router = useRouter();
   const eventId = pathname.split('/').pop()!;
   const [event, setEvent] = useState<ITEvent>();
-  const { userData } = useUserData();
+  const { userData } = useUserStore();
 
   useEffect(() => {
     const fetchEvent = async () => {

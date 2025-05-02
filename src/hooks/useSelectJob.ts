@@ -2,12 +2,12 @@ import { useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { useModal } from '@/provider/ContextProvider';
 import { useSignup } from '@/provider/user/UserSignupProvider';
-import { useUserData } from '@/provider/user/UserDataProvider';
-import { defaultUserData, UserData } from "@/types/userData";
+import { useUserStore } from "@/stores/useUserStore";
+import { defaultUserData } from "@/types/userData";
 
 const useSelectJob = () => {
   const { nextStep } = useSignup(); 
-  const { setUserData } = useUserData();
+  const { userData, setUserData } = useUserStore(); 
   const [selectedJob, setSelectedJob] = useState<string>('');
   const router = useRouter();
   const { closeModal } = useModal();
@@ -15,10 +15,10 @@ const useSelectJob = () => {
   // 직업 선택 핸들러
   const handleJobSelection = (job_title: string) => {
     setSelectedJob(job_title);
-    setUserData((prev: UserData | null) => ({
-      ...(prev ?? defaultUserData), // prev가 null이면 기본값 사용
+    setUserData({
+      ...(userData ?? defaultUserData),
       job_title,
-    }));
+    });
     nextStep();
   };
 

@@ -3,12 +3,12 @@
 import React from "react";
 import { useRouter } from "next/navigation";
 import { useModal } from "@/provider/ContextProvider";
-import { useUserData } from "@/provider/user/UserDataProvider";
+import { useUserStore } from "@/stores/useUserStore";
 import Image from "next/image";
 
 const Signup04: React.FC = () => {
   const router = useRouter();
-  const { userData } = useUserData();
+  const { userData } = useUserStore();
   const nickname = userData?.nickname ?? "";
   const { closeModal } = useModal();
 

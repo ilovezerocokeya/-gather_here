@@ -3,7 +3,7 @@
 import { useState } from "react";
 import { supabase } from "@/utils/supabase/client";
 import { useAuth } from "@/provider/user/UserAuthProvider";
-import { useUserData } from "@/provider/user/UserDataProvider";
+import { useUserStore } from '@/stores/useUserStore';
 import Toast from "@/components/Common/Toast/Toast";
 import type { HubProfileState } from "@/components/MyPage/HubInfo/reducer/hubProfileReducer";
 
@@ -14,7 +14,7 @@ interface HubProfileToggleProps {
 
 const HubProfileToggle: React.FC<HubProfileToggleProps> = ({ initialIsActive, state, }) => {
     const { user } = useAuth(); // 인증된 사용자 정보
-    const { fetchUserData } = useUserData(); // 사용자 정보 갱신 함수
+    const { fetchUserData } = useUserStore(); // 사용자 정보 갱신 함수
     const [isHubCardActive, setIsHubCardActive] = useState(initialIsActive); // 현재 허브카드 등록 여부 상태
     const [isLoading, setIsLoading] = useState(false); // 서버 요청 중 로딩 상태
 

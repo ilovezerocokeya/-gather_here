@@ -6,7 +6,7 @@ import Toast from "@/components/Common/Toast/Toast";
 import { updateProfile } from "@/components/MyPage/MyInfo/actions/updateProfile";
 import useCheckNickname from "@/hooks/useCheckNickname";
 import ProfileImage from "@/components/MyPage/MyInfo/ProfileImage"; 
-import { useUserData } from "@/provider/user/UserDataProvider";
+import { useUserStore } from "@/stores/useUserStore";
 
 interface UserProfileClientFormProps {
   initialData: {
@@ -38,7 +38,7 @@ const extractFormData = (form: HTMLFormElement) => {
     const [isCancelModalOpen, setIsCancelModalOpen] = useState(false);
     const [isSaveModalOpen, setIsSaveModalOpen] = useState(false);
     const [nickname, setNickname] = useState(initialData.nickname);
-    const { userData } = useUserData(); 
+    const { userData } = useUserStore();
     const { result: nicknameAvailable, isEmpty } = useCheckNickname(nickname);
     const [updatedImageUrl, setUpdatedImageUrl] = useState<string | null>(null);
 
@@ -59,6 +59,7 @@ const extractFormData = (form: HTMLFormElement) => {
       }
     };
   
+    // 제출 시 updateProfile
     const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
       e.preventDefault();
       const { nickname, jobTitle, experience } = extractFormData(e.currentTarget);
@@ -222,6 +223,7 @@ const extractFormData = (form: HTMLFormElement) => {
             />
           )}
 
+          {/* 저장 완료 모달 */}
           {isSaveModalOpen && (
             <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-60 z-50">
               <div className="bg-fillStrong p-6 rounded-xl text-center min-w-[320px]">
@@ -238,6 +240,8 @@ const extractFormData = (form: HTMLFormElement) => {
               </div>
             </div>
           )}
+          
+          {/* 취소 확인 모달 */}
           {isCancelModalOpen && (
             <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-60 z-50">
               <div className="bg-fillStrong p-6 rounded-xl text-center min-w-[320px]">

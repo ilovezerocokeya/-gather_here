@@ -5,7 +5,7 @@ import { useRouter } from 'next/navigation';
 import CommonModal from '@/components/Common/Modal/CommonModal';
 import SpinnerLoader from '@/components/Common/Loading/SpinnerLoader';
 import MainDetailLayout from './MainDetailLayout';
-import { useUserData } from '@/provider/user/UserDataProvider';
+import { useUserStore } from '@/stores/useUserStore';
 import { Post, User } from '@/types/posts/Post.type';
 import { UserData } from '@/types/userData';
 import { deletePost } from '@/components/MainDetail/actions/deletePost';
@@ -18,26 +18,31 @@ interface MainDetailClientProps {
 
 const MainDetailClient: React.FC<MainDetailClientProps> = ({ post, user }) => {
   const router = useRouter();
-  const { userData }: { userData: UserData | null } = useUserData();
+  const { userData }: { userData: UserData | null } = useUserStore();
   const [showOptions, setShowOptions] = useState(false);
   const [showDeleteModal, setShowDeleteModal] = useState(false);
-  const optionsRef = useRef<HTMLDivElement>(null);
+  const optionsRef = useRef<HTMLDivElement>(null); // 옵션 메뉴의 ref
   
+  // 옵션 메뉴 토글 핸들러
   const handleMoreOptions = (e?: React.MouseEvent) => {
     e?.stopPropagation(); // 이벤트 버블링 방지
     setShowOptions((prev) => !prev);
   };
+
+  // 옵션 메뉴 외부 클릭 시 닫기
   const handleClickOutside = (event: MouseEvent) => {
     if (optionsRef.current && !optionsRef.current.contains(event.target as Node)) {
       setShowOptions(false);
     }
   };
 
+  // 외부 클릭 감지 이벤트 등록 및 해제
   useEffect(() => {
     document.addEventListener('mousedown', handleClickOutside);
     return () => document.removeEventListener('mousedown', handleClickOutside);
   }, []);
 
+  // 게시글 삭제 처리
   const handleDelete = async () => {
     if (!userData) {
       alert('로그인이 필요합니다.');
@@ -54,6 +59,7 @@ const MainDetailClient: React.FC<MainDetailClientProps> = ({ post, user }) => {
     router.push('/');
   };
 
+  // 수정 페이지로 이동
   const handleEdit = () => {
     setShowOptions(false);
     router.push(`/post/${post.post_id}`);
@@ -64,9 +70,11 @@ const MainDetailClient: React.FC<MainDetailClientProps> = ({ post, user }) => {
       return !!userData && userData.user_id === post.user_id;
     }, [userData, post.user_id]);
 
-  const onBack = () => router.push('/');
+  
+  const onBack = () => router.push('/'); // 뒤로가기 핸들러
 
-  if (!post) return <SpinnerLoader />;
+  
+  if (!post) return <SpinnerLoader />; // 게시글이 없을 경우 로딩 스피너 표시
 
   return (
     <>

@@ -1,7 +1,8 @@
-import React, { useMemo } from "react";
+import React from "react";
 import { createPortal } from "react-dom";
 import Image from "next/image";
 import { ProfileExtendProps } from '@/lib/gatherHub';
+import { stripQuery } from "@/utils/Image/imageUtils"; 
 
 const ProfileExtend: React.FC<ProfileExtendProps> = ({
   isOpen,
@@ -13,10 +14,9 @@ const ProfileExtend: React.FC<ProfileExtendProps> = ({
 }) => {
   if (!isOpen) return null;
 
-  const imageUrl = useMemo(() => {
-    const baseUrl = secureImageUrl(profileImageUrl || "/assets/header/user.svg");
-    return `${baseUrl}?v=${imageVersion}`;
-  }, [profileImageUrl, imageVersion]);
+  // URL에서 쿼리 스트링 제거 후 버전 파라미터 추가
+  const baseUrl = stripQuery(secureImageUrl(profileImageUrl));
+  const versionedImageUrl = `${baseUrl}?v=${imageVersion ?? 0}`;
 
   return createPortal(
     <div
@@ -26,12 +26,12 @@ const ProfileExtend: React.FC<ProfileExtendProps> = ({
     >
       <div className="relative">
         <Image
-          src={imageUrl}
+          src={versionedImageUrl || "/assets/header/user.svg"}
           alt={nickname}
           width={500}
           height={500}
-          quality={90} 
-          priority 
+          quality={90}
+          priority
           className="s:w-[340px] s:h-[340px] h-[500px] w-[500px] object-cover rounded-2xl shadow-lg"
         />
         <button

@@ -3,6 +3,7 @@ import { createPortal } from "react-dom";
 import Image from "next/image";
 import Link from "next/link";
 import { CardModalProps } from '@/lib/gatherHub';
+import { stripQuery } from "@/utils/Image/imageUtils";
 
 const CardModal: React.FC<CardModalProps> = ({
   isModalOpen,
@@ -25,6 +26,7 @@ const CardModal: React.FC<CardModalProps> = ({
   handleToggleLike,
   secureImageUrl,
   selectedTechStacks,
+  imageVersion
 }) => {
 
   const [hasMounted, setHasMounted] = useState(false);
@@ -68,7 +70,6 @@ const CardModal: React.FC<CardModalProps> = ({
 
   // 모달이 닫혀 있을 경우 렌더링하지 않음
   if (!isModalOpen || !hasMounted) return null;
-
   
   
   return createPortal(
@@ -102,7 +103,7 @@ const CardModal: React.FC<CardModalProps> = ({
           style={{ userSelect: "none" }}
         >
           <Image
-            src={secureImageUrl(background_image_url) || "/logos/defaultBackgroundImage.svg"}
+            src={`${stripQuery(secureImageUrl(background_image_url))}?v=${imageVersion}`}
             alt="배경 이미지"
             fill
             quality={80}
@@ -115,15 +116,15 @@ const CardModal: React.FC<CardModalProps> = ({
         <div className="relative flex-shrink-0">
           <div className="absolute -top-20 flex flex-col items-start p-6">
             <div className="w-[120px] h-[120px] rounded-2xl bg-black border-1 border-background overflow-hidden">
-            <Image
-              src={secureImageUrl(profile_image_url)}
-              alt={nickname}
-              width={120}
-              height={120}
-              quality={90}
-              priority
-              className="object-cover w-full h-full rounded-2xl shadow-lg bg-black"
-            />
+              <Image
+                src={`${stripQuery(secureImageUrl(profile_image_url))}?v=${imageVersion}`}
+                alt={nickname}
+                width={120}
+                height={120}
+                quality={90}
+                priority
+                className="object-cover w-full h-full rounded-2xl shadow-lg bg-black"
+              />
             </div>
             <div className="mt-5">
               <h2 className="text-xl font-medium text-f7f7f7 font-['Pretendard'] leading-7">{nickname}</h2>

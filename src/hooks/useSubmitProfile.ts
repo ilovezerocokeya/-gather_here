@@ -3,7 +3,7 @@ import { supabase } from "@/utils/supabase/client";
 import { FormValues } from "@/components/Signup/Signup03";
 import { useSignup } from "@/provider/user/UserSignupProvider";
 import { useAuth } from "@/provider/user/UserAuthProvider";
-import { useUserData } from "@/provider/user/UserDataProvider";
+import { useUserStore } from "@/stores/useUserStore";
 import { defaultUserData } from "@/types/userData"; 
 import type { UseFormSetError } from "react-hook-form";
 import { secureImageUrl } from "@/utils/Image/imageUtils";
@@ -13,16 +13,17 @@ const useSubmitProfile = () => {
   
   const { nextStep } = useSignup(); // 회원가입 단계 관련 상태
   const { setUser, user } = useAuth(); // 사용자 인증 관련 상태
-  const { userData, setUserData } = useUserData(); // 사용자 프로필 관련 상태 및 업데이트 함수
+  const { userData, setUserData } = useUserStore(); // 사용자 프로필 관련 상태 및 업데이트 함수
   const profileData = userData ?? defaultUserData; // 프로필 기본값 설정
 
   // 프로필 이미지 URL을 context 기반으로 설정
   const setProfileImageUrl = useCallback((url: string) => {
-    setUserData((prev) => ({
-      ...prev ?? defaultUserData,
+    const updatedData = {
+      ...(userData ?? defaultUserData),
       profile_image_url: secureImageUrl(url),
-    }));
-  }, [setUserData]);
+    };
+    setUserData(updatedData);
+  }, [setUserData, userData]);
 
   // 세션 가져와서 유저 등록 + 프로필 이미지 반영
   useEffect(() => {
@@ -86,17 +87,17 @@ const useSubmitProfile = () => {
         return;
       }
 
-      // setUserData를 `UserData` 형식으로 변환하여 저장
-      setUserData((prev) => ({
-        ...(prev ?? defaultUserData),
+      // zustand에 프로필 상태 동기화
+      setUserData({
+        ...profileData,
         nickname,
-        job_title: profileData.job_title,
-        experience: String(profileData.experience),
         profile_image_url: secureImageUrl(profileData.profile_image_url),
-        description: prev?.description ?? "",
-        blog: prev?.blog ?? "",
-      }));
+        experience: String(profileData.experience),
+        description: profileData.description ?? "",
+        blog: profileData.blog ?? "",
+      });
 
+      // 다음 단계로 이동
       nextStep();
     } catch (err: unknown) {
       console.error("Unexpected error:", err);

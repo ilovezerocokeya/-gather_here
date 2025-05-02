@@ -5,7 +5,7 @@ import Link from "next/link";
 import { usePathname } from "next/navigation";
 import Image from "next/image";
 import { useAuth } from "@/provider/user/UserAuthProvider";
-import { useUserData } from "@/provider/user/UserDataProvider";
+import { useUserStore } from '@/stores/useUserStore';
 import { secureImageUrl } from "@/utils/Image/imageUtils";
 import LeftNavLoader from "@/components/Common/Skeleton/LeftNavLoader";
 import { jobTitleClassMap } from "@/lib/postFormOptions";
@@ -20,15 +20,28 @@ const getJobTitleClass = (job_title: string) => {
 };
 
 const LeftNav = () => {
-  const { user } = useAuth();
-  const { userData, fetchUserData, loading } = useUserData();
-  const pathname = usePathname();
-  const imageVersion = userData?.imageVersion ?? 0;
-  const profileImage = `${secureImageUrl(userData?.profile_image_url ?? defaultImage)}?v=${imageVersion}`;
+  const { user } = useAuth(); // 인증된 유저 정보 가져오기
+  const { userData, loading, profileImageUrl, imageVersion, fetchUserData } = useUserStore();
+  const pathname = usePathname(); // 현재 경로 확인
+  
+  // 프로필 이미지 URL에 버전을 붙여 캐시 무효화
+  const resolvedImage = secureImageUrl(profileImageUrl ?? defaultImage);
+  const profileImage = `${secureImageUrl(profileImageUrl ?? defaultImage)}?v=${imageVersion}`;
+
+  // 유저 정보가 있을 경우 상태 초기화
+  useEffect(() => {
+    if (user?.id) {
+      console.log("[LeftNav] fetchUserData triggered for user:", user.id);
+      void fetchUserData(user.id);
+    }
+  }, [user, fetchUserData]);
 
   useEffect(() => {
-    if (user?.id) void fetchUserData(user.id);
-  }, [user, fetchUserData]);
+    console.log("[LeftNav] ✅ userData.profile_image_url:", userData?.profile_image_url);
+    console.log("[LeftNav] ✅ resolved secureImageUrl:", resolvedImage);
+    console.log("[LeftNav] ✅ final profileImage (with version):", profileImage);
+    console.log("[LeftNav] ✅ imageVersion:", imageVersion);
+  }, [profileImageUrl, imageVersion]);
 
   const jobTitleClass = userData?.job_title ? getJobTitleClass(userData.job_title) : "";
 

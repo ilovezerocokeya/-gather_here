@@ -4,7 +4,7 @@ import React, { useRef, useState } from 'react';
 import Link from 'next/link';
 import Image from 'next/image';
 import { useAuth } from '@/provider/user/UserAuthProvider';
-import { useUserData } from '@/provider/user/UserDataProvider';
+import { useUserStore } from '@/stores/useUserStore';
 import { supabase } from '@/utils/supabase/client';
 import SearchBar from '@/components/Search/SearchBar';
 import { SearchModalRef } from '@/types/refs/SearchModal';
@@ -12,7 +12,7 @@ import { useRouter } from 'next/navigation';
 
 const Header: React.FC = () => {
   const { user, resetAuthUser } = useAuth();
-  const { userData } = useUserData();
+  const { userData } = useUserStore();
   const [isMypageModalOpen, setIsMypageModalOpen] = useState(false);
   const modalRef = useRef<SearchModalRef>(null);
   const router = useRouter();

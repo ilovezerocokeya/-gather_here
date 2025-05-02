@@ -6,7 +6,7 @@ import Image from 'next/image';
 import Link from 'next/link';
 import LikeButton from '@/components/MainDetail/components/common/LikeButton';
 import { secureImageUrl } from '@/utils/Image/imageUtils';
-import { useUserData } from '@/provider/user/UserDataProvider';
+import { useUserStore } from '@/stores/useUserStore';
 import { jobTitleClassMap } from '@/lib/postFormOptions';
 import { getDisplayDaysLeft, cleanContent } from '@/utils/mainDetailUtils';
 
@@ -17,17 +17,19 @@ interface PostCardProps {
 }
 
 const PostCardShort: React.FC<PostCardProps> = ({ post, onRemoveBookmark }) => {
-  const { userData } = useUserData();
-  const [isMounted, setIsMounted] = useState<boolean>(false);
-  const displayDaysLeft = isMounted ? getDisplayDaysLeft(post.deadline) : '';
+  const { userData } = useUserStore();
+  const [isMounted, setIsMounted] = useState<boolean>(false); // 클라이언트 마운트 여부를 판단
+  const displayDaysLeft = isMounted ? getDisplayDaysLeft(post.deadline) : ''; // 마감일까지 남은 날짜 계산
 
   useEffect(() => {
+     // 컴포넌트가 마운트된 이후에만 표시되도록 플래그 설정
     setIsMounted(true);
     return () => {
-      setIsMounted(false);
+      setIsMounted(false); // 언마운트 시 정리
     };
   }, [post]);
 
+  // XSS 방지를 위해 게시글 본문을 정제하여 HTML로 렌더링
   const sanitizedContent = useMemo(() => {
       if (!isMounted || typeof window === 'undefined') return '';
       return cleanContent(post.content);
