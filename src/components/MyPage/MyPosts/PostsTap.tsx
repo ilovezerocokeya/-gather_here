@@ -27,7 +27,7 @@ const PostsTap: React.FC = () => {
   const [totalPages, setTotalPages] = useState<number>(1);
   const [isModalOpen, setIsModalOpen] = useState<boolean>(false);
   const [postIdToDelete, setPostIdToDelete] = useState<string | null>(null);
-  const postsPerPage = 6;
+  const postsPerPage = 10;
 
 
   // 게시글 데이터 로딩

@@ -348,12 +348,12 @@ body {
 }
 
 .loader {
-  width: 40px;
-  height: 40px;
-  border: 5px solid rgba(255, 255, 255, 0.3);
-  border-top-color: rgba(85, 196, 75, 1);
+  width: 60px;
+  height: 60px;
+  border: 6px solid rgba(200, 200, 200, 0.2);
+  border-top: 6px solid #16a34a;
   border-radius: 50%;
-  animation: spin 1s linear infinite;
+  animation: spin 1.2s ease-in-out infinite;
 }
 
 @keyframes spin {

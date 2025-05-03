@@ -103,7 +103,7 @@ const AllClientContent: React.FC<AllClientContentProps> = ({ initialPosts }) => 
       {filteredPosts.length === 0 ? (
         <p style={{ textAlign: "center", color: "white" }}>해당 조건에 맞는 게시물이 없습니다</p>
       ) : (
-        <div className="flex flex-col gap-6">
+        <div className="flex flex-col gap-6 pb-[120px]">
           {filteredPosts.map((post, index) => (
             <React.Fragment key={`${post.post_id}_${index}`}>
                {/* 각각의 포스트 카드 렌더링 */}
@@ -114,8 +114,8 @@ const AllClientContent: React.FC<AllClientContentProps> = ({ initialPosts }) => 
           ))}
 
           {/* 추가 데이터 로딩 중이면 스피너 */}
-          {isFetchingNextPage && (
-            <div className="flex justify-center items-center w-full py-8">
+          {hasNextPage && isFetchingNextPage && (
+            <div className="flex justify-center items-center w-full h-[80px]">
               <SpinnerLoader />
             </div>
           )}

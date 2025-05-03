@@ -38,23 +38,23 @@ export const useUserStore = create<UserStore>((set, get) => ({
   // Supabase에서 사용자 데이터를 불러와 전역 상태에 저장
   fetchUserData: async (userId: string) => {
     set({ loading: true, error: null });
-
+  
     try {
       const { data, error } = await supabase
         .from("Users")
         .select("*")
         .eq("user_id", userId)
         .single();
-
+  
       if (error || !data) {
         throw new Error(error?.message ?? "유저 데이터 없음");
       }
-
+  
       const formatted: UserData = {
         ...defaultUserData,
         ...(data as Partial<UserData>),
       };
-
+  
       set({
         userData: formatted,
         profileImageUrl: formatted.profile_image_url ?? null,
@@ -62,6 +62,7 @@ export const useUserStore = create<UserStore>((set, get) => ({
       });
     } catch (err: unknown) {
       const message = err instanceof Error ? err.message : "알 수 없는 오류";
+      console.error("[fetchUserData] 실패:", message);
       set({ error: message, userData: defaultUserData });
     } finally {
       set({ loading: false });
@@ -105,19 +106,22 @@ export const useUserStore = create<UserStore>((set, get) => ({
   // 현재 로그인된 유저 기준으로 userData 초기화
   hydrateUser: async () => {
     set({ loading: true, error: null });
-
+  
     try {
       const { data, error } = await supabase.auth.getUser();
+  
       if (error) throw new Error(error.message);
-
+  
       const userId = data?.user?.id;
       if (userId) {
         await get().fetchUserData(userId);
       } else {
+        console.warn("[hydrateUser] userId 없음 → userData null 설정");
         set({ userData: null });
       }
     } catch (err: unknown) {
       const message = err instanceof Error ? err.message : "초기화 실패";
+      console.error("[hydrateUser] 실패:", message);
       set({ error: message, userData: null });
     } finally {
       set({ loading: false, hydrated: true });

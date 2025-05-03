@@ -39,8 +39,6 @@ export function useImageUploadManager(
         if (!userId) throw new Error("유저 정보 없음");
 
         const path = getStoragePath(type, userId);
-        console.log(`[Upload] [START] 업로드 시작 - 타입: ${type}, 유저ID: ${userId}`);
-        console.log(`[Upload] 스토리지 경로: ${path}`);
 
         // 기존 이미지 삭제
         const { error: removeError } = await supabase.storage
@@ -49,8 +47,6 @@ export function useImageUploadManager(
 
         if (removeError) {
           console.warn("[Upload] 기존 이미지 삭제 실패 (계속 진행):", removeError.message);
-        } else {
-          console.log("[Upload] 기존 이미지 삭제 성공");
         }
 
         // 캐시 무효화를 위한 딜레이
@@ -95,9 +91,14 @@ export function useImageUploadManager(
         onToast("success", "이미지가 변경되었습니다.");
         return publicUrl;
       } catch (err) {
-        console.error("[Upload] 업로드 실패:", err);
-        onToast("error", "이미지 업로드에 실패했습니다.");
-        return null;
+          const errorMessage =
+            err instanceof Error
+              ? err.message
+              : "알 수 없는 오류가 발생했습니다.";
+        
+          console.error("[Upload] 업로드 실패:", errorMessage);
+          onToast("error", `이미지 업로드 실패: ${errorMessage}`);
+          return null;
       }
     },
     [

@@ -50,7 +50,7 @@ const ImageUploader: React.FC<ImageUploaderProps> = ({ imageUrl, onUpload, onErr
   // 파일 형식 검사
   const validateAndUpload = async (file: File) => {
     if (!isValidImage(file)) {
-      onError?.("이미지 업로드는 jpg, jpeg, png 형식만 가능합니다.");
+      onError?.("이미지 업로드는 jpg, jpeg, png, webp 형식만 가능합니다.");
       return;
     }
     // 파일 용량 검사
@@ -63,10 +63,17 @@ const ImageUploader: React.FC<ImageUploaderProps> = ({ imageUrl, onUpload, onErr
     try {
       const webpFile = await convertToWebp(file);
       const blobPreview = URL.createObjectURL(webpFile); // 로컬 preview 생성
-      setPreviewUrl(blobPreview); // preview 상태로 등록
-      await onUpload(webpFile, blobPreview); // preview URL까지 전달
-    } catch {
+      setPreviewUrl(blobPreview);
+      await onUpload(webpFile, blobPreview); // 업로드 + preview 전달
+    } catch (e) {
+      console.error("[ImageUploader] 업로드 실패:", e);
       onError?.("이미지 업로드에 실패했습니다.");
+    
+      // previewUrl 초기화 및 메모리 해제
+      if (previewUrl) {
+        URL.revokeObjectURL(previewUrl);
+        setPreviewUrl(null);
+      }
     } finally {
       setUploading(false);
     }

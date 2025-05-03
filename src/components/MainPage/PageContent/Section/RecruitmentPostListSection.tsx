@@ -48,15 +48,17 @@ const RecruitmentPostListSection: React.FC<RecruitmentPostListSectionProps> = ({
               {(index + 1) % 5 === 0 && <AdCard key={`ad_${index}`} />}
             </React.Fragment>
           ))}
-          {isFetchingNextPage && (
-            <div className="flex justify-center items-center w-full py-8">
+          {hasNextPage && isFetchingNextPage && (
+            <div className="flex justify-center items-center w-full h-[80px]">
               <SpinnerLoader />
             </div>
           )}
+
           {!hasNextPage && (
-            <p className="text-center text-white py-8">
-              모든 포스트를 불러왔습니다
-            </p>
+            <div className="flex flex-col items-center py-10">
+              <p className="text-white">모든 포스트를 불러왔습니다</p>
+              <div className="h-[100px]" />
+            </div>
           )}
         </div>
       )}

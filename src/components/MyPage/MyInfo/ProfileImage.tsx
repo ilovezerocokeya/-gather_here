@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useEffect, useMemo, useState } from "react";
+import React, { useMemo, useState } from "react";
 import ImageUploader from "@/components/Common/Images/ImageUploader";
 import { useUserStore } from "@/stores/useUserStore";
 import { useImageUploadManager } from "@/hooks/useImageUploadManager";
@@ -17,9 +17,6 @@ const ProfileImage: React.FC<ProfileImageProps> = ({ onImageChange, onToast }) =
     userData,
     profileImageUrl,
     imageVersion,
-    setProfileImageUrl,
-    incrementImageVersion,
-    fetchUserData,
   } = useUserStore();
 
   const [toast, setToast] = useState<{
@@ -41,41 +38,24 @@ const ProfileImage: React.FC<ProfileImageProps> = ({ onImageChange, onToast }) =
   const imageUrl = useMemo(() => {
     const base = stripQuery(profileImageUrl ?? DEFAULT_PROFILE_IMAGE);
     const fullUrl = `${base}?v=${imageVersion}`;
-    console.log("[Render] 이미지 렌더링 URL:", fullUrl);
     return fullUrl;
   }, [profileImageUrl, imageVersion]);
 
   // 이미지 업로드 처리 핸들러
   const handleUpload = async (file: File) => {
     const uploadedUrl = await uploadImage(file);
-    console.log("[ProfileImage] 업로드된 이미지 URL:", uploadedUrl);
 
     if (uploadedUrl) {
       const cleanUrl = stripQuery(uploadedUrl);
-      console.log("[ProfileImage] 클린 이미지 URL:", cleanUrl);
-      setProfileImageUrl(cleanUrl);
-      incrementImageVersion();
       onImageChange?.(cleanUrl);
-      await fetchUserData(userData?.user_id ?? ""); // 상태 일치
     }
   };
 
   // 기본 이미지로 초기화 처리 핸들러
   const handleReset = async () => {
     await resetImage();
-    console.log("[ProfileImage] 기본 이미지로 리셋");
-    setProfileImageUrl(DEFAULT_PROFILE_IMAGE);
-    incrementImageVersion();
-    await fetchUserData(userData?.user_id ?? ""); // 상태 일치
   };
 
-  useEffect(() => {
-    console.log("[ProfileImage] === 디버깅 정보 ===");
-    console.log("[ProfileImage] userData.profile_image_url:", userData?.profile_image_url);
-    console.log("[ProfileImage] profileImageUrl 상태값:", profileImageUrl);
-    console.log("[ProfileImage] imageVersion 상태값:", imageVersion);
-    console.log("[ProfileImage] 렌더링 URL:", imageUrl);
-  }, [userData, profileImageUrl, imageVersion, imageUrl]);
 
   return (
     <div className="border-b border-fillNormal pb-6 mb-6">

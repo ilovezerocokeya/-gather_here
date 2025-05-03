@@ -21,6 +21,8 @@ const GatherHubPageClient: React.FC<GatherHubPageClientProps> = ({ initialData }
     isError,
     refetch,
     setFilteredJob,
+    isFetchingNextPage,
+    hasNextPage,         
   } = useMemberData(initialData.members);
 
   // 데이터 로딩 중 화면에 표시할 UI
@@ -55,7 +57,14 @@ const GatherHubPageClient: React.FC<GatherHubPageClientProps> = ({ initialData }
         <JobDirectory setFilteredJob={setFilteredJob} className="mb-6 lg:hidden w-full" />
 
         {/* 멤버 리스트 컴포넌트 */}
-        <MemberList filteredMembers={filteredMembers} />
+        <div className="w-full">
+          <MemberList filteredMembers={filteredMembers} />
+          {hasNextPage && isFetchingNextPage && (
+            <div className="flex justify-center items-center py-6">
+              <SpinnerLoader />
+            </div>
+          )}
+        </div>
 
         {/* 큰 화면에서 JobDirectory (필터 기능) */}
         <JobDirectory setFilteredJob={setFilteredJob} className="hidden lg:block lg:ml-10 lg:w-40 mt-[-5px]" />

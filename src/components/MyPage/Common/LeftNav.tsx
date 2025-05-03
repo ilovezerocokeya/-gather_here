@@ -25,23 +25,14 @@ const LeftNav = () => {
   const pathname = usePathname(); // 현재 경로 확인
   
   // 프로필 이미지 URL에 버전을 붙여 캐시 무효화
-  const resolvedImage = secureImageUrl(profileImageUrl ?? defaultImage);
   const profileImage = `${secureImageUrl(profileImageUrl ?? defaultImage)}?v=${imageVersion}`;
 
   // 유저 정보가 있을 경우 상태 초기화
   useEffect(() => {
     if (user?.id) {
-      console.log("[LeftNav] fetchUserData triggered for user:", user.id);
       void fetchUserData(user.id);
     }
   }, [user, fetchUserData]);
-
-  useEffect(() => {
-    console.log("[LeftNav] ✅ userData.profile_image_url:", userData?.profile_image_url);
-    console.log("[LeftNav] ✅ resolved secureImageUrl:", resolvedImage);
-    console.log("[LeftNav] ✅ final profileImage (with version):", profileImage);
-    console.log("[LeftNav] ✅ imageVersion:", imageVersion);
-  }, [profileImageUrl, imageVersion]);
 
   const jobTitleClass = userData?.job_title ? getJobTitleClass(userData.job_title) : "";
 

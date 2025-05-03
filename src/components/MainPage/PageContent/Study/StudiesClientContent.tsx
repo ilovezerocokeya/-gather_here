@@ -1,5 +1,5 @@
 import { PostWithUser } from "@/types/posts/Post.type";
-import BaseClientContent from "../BaseClientConent";
+import BaseClientContent from "../BaseClientContent";
 
 interface StudiesClientContentProps {
   initialPosts: PostWithUser[];

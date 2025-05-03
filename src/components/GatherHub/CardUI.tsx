@@ -1,5 +1,4 @@
-"use client";
-import React, { useEffect } from "react";
+"use client"
 import Image from "next/image";
 import Link from "next/link";
 import { stripQuery } from "@/utils/Image/imageUtils";
@@ -28,11 +27,6 @@ const CardUI: React.FC<CardUIProps> = ({
   // 이미지 캐시를 무효화하기 위해 기존 URL에서 쿼리스트링 제거 후 버전 쿼리 추가
   const versionedProfileImage = `${stripQuery(secureImageUrl(profile_image_url))}?v=${imageVersion ?? 0}`;
   const versionedBackgroundImage = `${stripQuery(secureImageUrl(background_image_url))}?v=${imageVersion ?? 0}`;
-
-  useEffect(() => {
-    console.log("[CardUI] profile_image_url (원본):", profile_image_url);
-    console.log("[CardUI] 최종 렌더링될 profile 이미지 URL:", versionedProfileImage);
-  }, [profile_image_url, versionedProfileImage]);
 
   return (
     <div

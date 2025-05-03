@@ -15,7 +15,7 @@ export const fetchPosts = async (
   filters: FetchPostsFilters = {},
   options: FetchPostsOptions = {},
 ): Promise<PostWithUser[]> => {
-  const postsPerPage = 5;
+  const postsPerPage = 10;
 
   // 오늘 날짜 기준으로 마감일 이후의 게시글만 조회
   const today = new Date();
@@ -112,7 +112,7 @@ export const fetchPostsWithDeadLine = async (days: number, category?: string): P
         email,
         profile_image_url
       )
-    `,
+    `
     )
     .gte('deadline', formattedToday)
     .lte('deadline', formattedFutureDate)
@@ -122,7 +122,9 @@ export const fetchPostsWithDeadLine = async (days: number, category?: string): P
   if (category) {
     query.eq('category', category);
   }
-  const { data, error } = await query.throwOnError();
+
+  const { data, error } = await query;
+
   if (error) throw new Error(error.message);
 
   // Supabase join 결과로 인해 user가 배열일 수 있어 단일 객체로 정제
@@ -237,7 +239,7 @@ export const fetchEventsPosts = async (
   category?: string,
   options: FetchEventsPostsOptions = {},
 ): Promise<Tables<'IT_Events'>[]> => {
-  const postsPerPage = 5; // 한 페이지에 보여줄 IT 행사 개수
+  const postsPerPage = 10; // 한 페이지에 보여줄 IT 행사 개수
   const today = new Date().toISOString().split('T')[0]; // 오늘 날짜를 "YYYY-MM-DD" 형식으로 포맷
   const start = (page - 1) * postsPerPage; // 페이지네이션을 위한 시작 인덱스 계산
 

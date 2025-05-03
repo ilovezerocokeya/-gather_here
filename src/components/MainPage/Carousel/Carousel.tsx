@@ -18,7 +18,7 @@ const Carousel: React.FC<CarouselProps> = ({ posts }) => {
   if (!posts || posts.length === 0) {
     return (
       <div className="text-center text-white py-8">
-        표시할 모집글이 없습니다.
+        현재 마감 임박한 모집글이 없습니다.
       </div>
     );
   }
@@ -35,13 +35,13 @@ const Carousel: React.FC<CarouselProps> = ({ posts }) => {
     const diffTime = deadlineDate.getTime() - today.getTime();
     const diffDays = diffTime / (1000 * 60 * 60 * 24);
 
-    return diffDays >= 0 && diffDays <= 7;
+    return diffDays >= 0 && diffDays <= 8;
   });
 
   if (filteredPosts.length === 0) {
     return (
       <div className="text-center text-white py-8">
-        모집 가능한 글이 없습니다.
+        현재 마감 임박한 모집글이 없습니다.
       </div>
     );
   }
@@ -51,7 +51,7 @@ const Carousel: React.FC<CarouselProps> = ({ posts }) => {
       <Swiper
         modules={[Navigation, Pagination, A11y]}
         spaceBetween={12}
-        slidesPerView={2}
+        slidesPerView={3}
         navigation
         loop={true}
         pagination={{ clickable: true }}

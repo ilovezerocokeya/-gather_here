@@ -17,7 +17,7 @@ const InterestsTap: React.FC = () => {
   const [originalPosts, setOriginalPosts] = useState<(PostWithUser | ITEvent)[]>([]);
   const [loading, setLoading] = useState(true);
   const [currentPage, setCurrentPage] = useState(1);
-  const postsPerPage = 6;
+  const postsPerPage = 10;
 
   // 로그인하지 않은 경우 접근 제한
   if (!user) {

@@ -24,16 +24,12 @@ export const useSessionManager = (resetAuthUser: () => Promise<void>, rememberMe
   useEffect(() => {
     if (!rememberMe) return;
   
-    console.log("자동 로그인 활성화됨: 세션 유지 중...");
-  
     const interval = setInterval(() => {
       void (async () => {
         const { data, error } = await supabase.auth.getSession();
         if (error || !data.session) {
           console.error("세션 갱신 실패:", error);
           await resetAuthUser(); // 세션 만료 시 로그아웃 처리
-          } else {
-          console.log("세션이 정상 유지됨.");
           }
         }) ();
         }, 3 * 60 * 60 * 1000); // 3시간마다 세션 상태확인
@@ -102,8 +98,6 @@ export const useSessionManager = (resetAuthUser: () => Promise<void>, rememberMe
     // 이벤트 리스너 등록
     const events = ["mousemove", "keydown", "mousedown", "wheel"];
     events.forEach((event) => document.addEventListener(event, handleActivity));
-  
-    console.log("세션 활동 감지 시작됨");
     handleActivity(); // 초기 감지 1회 실행
   
     return () => {
@@ -131,8 +125,6 @@ export const useSessionManager = (resetAuthUser: () => Promise<void>, rememberMe
         if (document.hidden && !activityCheckIntervalRef.current && !isCheckingRef.current) {
           inactivatedAtRef.current = Date.now(); // 활성화 시점 기록
           isCheckingRef.current = true;
-  
-          console.log("탭이 비활성화됨: 로그아웃 감지 타이머 시작");
   
           activityCheckIntervalRef.current = setTimeout(() => {
             const now = Date.now();
@@ -179,7 +171,6 @@ export const useSessionManager = (resetAuthUser: () => Promise<void>, rememberMe
           activityCheckIntervalRef.current = null;
           isCheckingRef.current = false;
           inactivatedAtRef.current = null;
-          console.log("탭이 다시 활성화됨: 자동 로그아웃 감지 중지");
         }
       };
   

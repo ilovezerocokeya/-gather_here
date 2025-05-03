@@ -48,7 +48,7 @@ export const useMemberData = (
       isFetchingNextPage,
       fetchNextPage,
       threshold: 200,
-      throttleMs: 300,     
+      throttleMs: 400,     
     });
   
     window.addEventListener("scroll", handleScroll);
