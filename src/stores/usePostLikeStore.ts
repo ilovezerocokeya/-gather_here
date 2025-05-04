@@ -6,7 +6,6 @@ interface PostLikeStoreState {
   likePosts: Record<string, boolean>;
   fetchLikeStatus: (userId: string, postId: string) => Promise<void>;
   toggleLike: (userId: string, postId: string, category: string) => Promise<boolean>;
-  getLikeCount: (postId: string) => Promise<number>;
   hydrate: (userId: string) => void;
   reset: (userId: string) => void;
 }
@@ -82,20 +81,6 @@ export const usePostLikeStore = create<PostLikeStoreState>((set, get) => ({
     }
   },
 
-  // 좋아요 수 가져오기
-  getLikeCount: async (postId) => {
-    const { count, error } = await supabase
-      .from('Interests')
-      .select('*', { count: 'exact', head: true })
-      .eq('post_id', postId);
-
-    if (error) {
-      console.error('좋아요 수 가져오기 실패:', error);
-      return 0;
-    }
-
-    return count ?? 0;
-  },
 
   // 로그아웃 시 상태 초기화
   reset: (userId) => {

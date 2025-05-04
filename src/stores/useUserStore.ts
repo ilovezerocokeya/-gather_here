@@ -10,6 +10,10 @@ interface UserStore {
   // 이미지 관련 상태
   profileImageUrl: string | null;
   backgroundImageUrl: string | null;
+
+  // 허브 프로필 토글 상태
+  toggle: boolean;
+  setToggle: (val: boolean) => void;
   
   userData: UserData | null;   // 사용자 데이터 전체 객체
   hydrated: boolean; // 초기 로딩 완료 여부
@@ -34,6 +38,10 @@ export const useUserStore = create<UserStore>((set, get) => ({
   profileImageUrl: null,
   backgroundImageUrl: null,
   imageVersion: 0,     
+
+   // 토글 초기값 및 제어 함수 추가
+   toggle: false,
+   setToggle: (val) => set({ toggle: val }),
 
   // Supabase에서 사용자 데이터를 불러와 전역 상태에 저장
   fetchUserData: async (userId: string) => {

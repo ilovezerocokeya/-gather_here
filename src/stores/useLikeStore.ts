@@ -8,7 +8,6 @@ interface LikeStore {
   syncLikesWithServer: (userId: string) => Promise<void>; // 서버에서 동기화
   hydrate: (userId: string) => void; // 앱 실행 시 로컬 스토리지에서 불러오기
   reset: (userId: string) => void; // 로그아웃 시 초기화
-  getLikeCount: (likedUserId: string) => Promise<number>;
 }
 
 
@@ -97,18 +96,4 @@ export const useLikeStore = create<LikeStore>((set, get) => ({
     localStorage.removeItem(getLocalStorageKey(userId)); // 로컬 스토리지에서 데이터 삭제
   },
 
-  // 나를 좋아요한 유저 수 가져오기
-  getLikeCount: async (likedUserId) => {
-    const { count, error } = await supabase
-      .from("User_Interests")
-      .select("*", { count: "exact", head: true })
-      .eq("liked_user_id", likedUserId);
-
-    if (error) {
-      console.error("좋아요 수 가져오기 실패:", error);
-      return 0;
-    }
-
-    return count ?? 0;
-  },
 }));

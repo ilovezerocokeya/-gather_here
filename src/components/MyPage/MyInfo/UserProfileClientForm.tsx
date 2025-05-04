@@ -39,8 +39,24 @@ const extractFormData = (form: HTMLFormElement) => {
     const [isSaveModalOpen, setIsSaveModalOpen] = useState(false);
     const [nickname, setNickname] = useState(initialData.nickname);
     const { userData } = useUserStore();
+    const [isChanged, setIsChanged] = useState(false);
     const { result: nicknameAvailable, isEmpty } = useCheckNickname(nickname);
     const [updatedImageUrl, setUpdatedImageUrl] = useState<string | null>(null);
+
+    const checkFormChanged = (form: HTMLFormElement) => {
+      const { nickname, jobTitle, experience } = extractFormData(form);
+      return (
+        nickname !== initialData.nickname ||
+        jobTitle !== initialData.jobTitle ||
+        experience !== initialData.experience ||
+        (updatedImageUrl !== null && updatedImageUrl !== initialData.profileImageUrl)
+      );
+    };
+
+    const handleFormChange = (e: React.FormEvent<HTMLFormElement>) => {
+      const changed = checkFormChanged(e.currentTarget);
+      setIsChanged(changed);
+    };
 
 
     // 취소 버튼 클릭 시 처리 함수
@@ -84,7 +100,12 @@ const extractFormData = (form: HTMLFormElement) => {
 
     return (
         <section>
-          <form className="space-y-10" onSubmit={handleSubmit} onReset={handleCancelClick}>
+          <form
+            className="space-y-10"
+            onSubmit={handleSubmit}
+            onReset={handleCancelClick}
+            onChange={handleFormChange} // ✅ 변경 감지 추가
+          >
             <fieldset>
               {/* 프로필 이미지 업로드 컴포넌트 */}
               <ProfileImage
@@ -200,11 +221,12 @@ const extractFormData = (form: HTMLFormElement) => {
                   type="submit"
                   disabled={
                     isPending ||
+                    !isChanged ||
                     nickname.trim() === "" ||
                     nicknameAvailable?.valid !== true
                   }
                   className={`w-[65px] shared-button-green ${
-                    isPending || nickname.trim() === "" || nicknameAvailable?.valid !== true
+                    isPending || !isChanged || nickname.trim() === "" || nicknameAvailable?.valid !== true
                       ? "!bg-fillLight !text-labelDisabled !border-fillLight !cursor-not-allowed"
                       : ""
                   }`}

@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useReducer, useState } from "react";
+import { useEffect, useReducer } from "react";
 import BackgroundPicture from "./components/BackgroundPicture";
 import HubProfileForm from "./components/HubProfileInfo";
 import SelfIntroduction from "@/components/MyPage/HubInfo/components/Introductioin";
@@ -8,8 +8,10 @@ import TeamworkQuestions from "@/components/MyPage/HubInfo/components/TeamQuesti
 import TechStack from "@/components/MyPage/HubInfo/components/TechStack";
 import { HubProfileState, hubProfileReducer, } from "@/components/MyPage/HubInfo/reducer/hubProfileReducer";
 import HubProfileToggle from "./HubProfileToggle";
-import { useLikeStore } from "@/stores/useLikeStore";
 import { useUserStore } from '@/stores/useUserStore';
+import { useLikeCountStore } from "@/stores/useLikeCountStore";
+import { getLikeCount } from "@/utils/like/getLikeCount";
+
 
 interface HubProfileClientFormProps {
   initialIsActive: boolean;
@@ -18,21 +20,20 @@ interface HubProfileClientFormProps {
 
 const HubProfileClientForm: React.FC<HubProfileClientFormProps> = ({ initialIsActive,  initialData }) => {
   const [state, dispatch] = useReducer(hubProfileReducer, initialData); // 허브 프로필 상태를 useReducer로 관리
-  const { getLikeCount } = useLikeStore();
   const { userData } = useUserStore();
-  const [likeCount, setLikeCount] = useState<number>(0);
+  const { likeCount, setLikeCount } = useLikeCountStore();
 
   // 프로필 좋아요 수 가져오기
   useEffect(() => {
-    const fetchLikeCount = async () => {
+    const fetchCount = async () => {
       if (userData?.user_id) {
         const count = await getLikeCount(userData.user_id);
-        setLikeCount(count);
+        setLikeCount(count); // zustand에서 상태 저장
       }
     };
   
-    void fetchLikeCount();
-  }, [userData?.user_id, getLikeCount]);
+    void fetchCount();
+  }, [userData?.user_id, setLikeCount]);
 
   return (
     <>

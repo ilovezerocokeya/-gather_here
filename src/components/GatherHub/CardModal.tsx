@@ -107,7 +107,6 @@ const CardModal: React.FC<CardModalProps> = ({
             alt="배경 이미지"
             fill
             quality={80}
-            priority
             className="absolute inset-0 w-full h-full object-cover object-center"
           />
         </div>
@@ -122,7 +121,6 @@ const CardModal: React.FC<CardModalProps> = ({
                 width={120}
                 height={120}
                 quality={90}
-                priority
                 className="object-cover w-full h-full rounded-2xl shadow-lg bg-black"
               />
             </div>

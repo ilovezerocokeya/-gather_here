@@ -53,6 +53,14 @@ const ProfileImage: React.FC<ProfileImageProps> = ({ onImageChange, onToast }) =
 
   // 기본 이미지로 초기화 처리 핸들러
   const handleReset = async () => {
+    const currentImage = stripQuery(profileImageUrl ?? "");
+    const defaultImage = stripQuery(DEFAULT_PROFILE_IMAGE);
+  
+    if (currentImage === defaultImage) {
+      setToast({ state: "info", message: "이미 기본 이미지입니다." });
+      return;
+    }
+  
     await resetImage();
   };
 
