@@ -30,7 +30,15 @@ export const useMemberData = (
     getNextPageParam: (lastPage) => lastPage?.nextPage ?? undefined,
     staleTime: 60000,
     initialPageParam: 1,
-    enabled: initialMembers !== undefined, // undefined가 아닐 때만 API 호출
+    initialData: {
+      pages: [
+        {
+          members: initialMembers,
+          nextPage: initialMembers.length === 10 ? 2 : undefined,
+        },
+      ],
+      pageParams: [1],
+    },
   });
 
   // Zustand에서 좋아요 상태 동기화
@@ -59,7 +67,7 @@ export const useMemberData = (
   const allMembers = useMemo(() => {
     if (!data?.pages) return initialMembers;
     return data.pages.flatMap((page) => page.members).filter(Boolean);
-  }, [data]);
+  }, [data, initialMembers]);
 
   // 필터링된 멤버 데이터 
   const filteredMembers = useMemo(() => {

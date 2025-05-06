@@ -26,7 +26,7 @@ export default function NotFound() {
         alt="Not Found"
         width={330}
         height={330}
-        priority 
+        loading="lazy"
         style={{ marginBottom: '20px' }} 
       />
       <h1 style={{ color: "white", fontSize: "35px", fontWeight: "bold", marginBottom: "10px" }}>

@@ -42,14 +42,16 @@ const extractFormData = (form: HTMLFormElement) => {
     const [isChanged, setIsChanged] = useState(false);
     const { result: nicknameAvailable, isEmpty } = useCheckNickname(nickname);
     const [updatedImageUrl, setUpdatedImageUrl] = useState<string | null>(null);
+    const [localInitialData, setLocalInitialData] = useState(initialData); // 저장 이후 비교 기준이 될 로컬 상태 추가
 
+    // 변경 여부를 localInitialData 기준으로 감지
     const checkFormChanged = (form: HTMLFormElement) => {
       const { nickname, jobTitle, experience } = extractFormData(form);
       return (
-        nickname !== initialData.nickname ||
-        jobTitle !== initialData.jobTitle ||
-        experience !== initialData.experience ||
-        (updatedImageUrl !== null && updatedImageUrl !== initialData.profileImageUrl)
+        nickname !== localInitialData.nickname ||
+        jobTitle !== localInitialData.jobTitle ||
+        experience !== localInitialData.experience ||
+        (updatedImageUrl !== null && updatedImageUrl !== localInitialData.profileImageUrl)
       );
     };
 
@@ -62,12 +64,10 @@ const extractFormData = (form: HTMLFormElement) => {
     // 취소 버튼 클릭 시 처리 함수
     const handleCancelClick = (e: React.FormEvent<HTMLFormElement>) => {
       const { nickname, jobTitle, experience } = extractFormData(e.currentTarget);
-  
       const changed =
-        nickname !== initialData.nickname ||
-        jobTitle !== initialData.jobTitle ||
-        experience !== initialData.experience;
-  
+        nickname !== localInitialData.nickname ||
+        jobTitle !== localInitialData.jobTitle ||
+        experience !== localInitialData.experience;
       if (changed) {
         setIsCancelModalOpen(true);
       } else {
@@ -79,7 +79,7 @@ const extractFormData = (form: HTMLFormElement) => {
     const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
       e.preventDefault();
       const { nickname, jobTitle, experience } = extractFormData(e.currentTarget);
-    
+  
       startTransition(() => {
         updateProfile({
           nickname,
@@ -87,7 +87,26 @@ const extractFormData = (form: HTMLFormElement) => {
           experience,
           profileImageUrl: updatedImageUrl ?? userData?.profile_image_url ?? "",
         })
-          .then(() => {
+          .then(async () => {
+            const { fetchUserData, userData } = useUserStore.getState();
+            if (userData?.user_id) {
+              await fetchUserData(userData.user_id);
+            }
+  
+            // 저장 후 로컬 초기 상태도 갱신
+            setLocalInitialData({
+              email: localInitialData.email, // 이메일은 변하지 않으니 그대로 유지
+              nickname,
+              jobTitle,
+              experience,
+              profileImageUrl: updatedImageUrl ?? userData?.profile_image_url ?? "",
+            });
+  
+            // 상태 초기화
+            setIsChanged(false);
+            setNickname(nickname);
+            setUpdatedImageUrl(null);
+  
             setToast({ state: "success", message: "프로필이 저장되었습니다." });
             setIsSaveModalOpen(true);
           })

@@ -65,7 +65,7 @@
 //     <>
 //       <div className="w-full mb-4">
 //         <div className="flex items-center">
-//           <Image src="/assets/gif/run.webp" alt="Run Icon" width={20} height={20} className="w-5 h-5" priority />
+//           <Image src="/assets/gif/run.webp" alt="Run Icon" width={20} height={20} className="w-5 h-5" />
 //           <p className="m-2 text-labelNormal">모집이 곧 종료돼요</p>
 //         </div>
 //         {isLoadingCarousel ? (

@@ -77,7 +77,6 @@ const Header: React.FC = () => {
               width={30}
               height={40}
               quality={85}
-              priority
               className="hidden s:block"
               style={{ objectFit: 'contain', width: 'auto', height: 'auto' }}
             />
@@ -88,7 +87,6 @@ const Header: React.FC = () => {
               alt="@gather_hub 로고"
               width={100}
               height={50}
-              priority
               className="s:w-[50px] s:h-[25px]"
               style={{ width: 'auto', height: 'auto' }}
             />

@@ -51,7 +51,6 @@ const LeftNav = () => {
                 fill
                 sizes="(max-width: 768px) 100vw, (max-width: 1068px) 100vw"
                 className="rounded-[12px] object-cover"
-                priority
               />
             </div>
             <ol className="flex text-xs leading-tight text-center text-labelStrong">

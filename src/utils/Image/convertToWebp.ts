@@ -1,8 +1,14 @@
+const IMAGE_QUALITY = 0.93; 
+
 export const convertToWebp = async (
   file: File,
-  maxWidth = 300,
-  maxHeight = 160
+  type: "profile" | "background"
 ): Promise<File> => {
+  const config = {
+    profile: { maxWidth: 800, maxHeight: 800 },
+    background: { maxWidth: 1600, maxHeight: 900 },
+  }[type];
+
   return new Promise((resolve, reject) => {
     const reader = new FileReader();
 
@@ -15,10 +21,8 @@ export const convertToWebp = async (
         let targetHeight = img.height;
 
         // 리사이즈가 필요한 경우에만 비율에 맞게 줄임
-        if (targetWidth > maxWidth || targetHeight > maxHeight) {
-          const widthRatio = maxWidth / targetWidth;
-          const heightRatio = maxHeight / targetHeight;
-          const ratio = Math.min(widthRatio, heightRatio);
+        if (targetWidth > config.maxWidth || targetHeight > config.maxHeight) {
+          const ratio = Math.min(config.maxWidth / targetWidth, config.maxHeight / targetHeight);
           targetWidth = Math.floor(targetWidth * ratio);
           targetHeight = Math.floor(targetHeight * ratio);
         }
@@ -44,9 +48,10 @@ export const convertToWebp = async (
             resolve(webpFile);
           },
           "image/webp",
-          0.95
+          IMAGE_QUALITY
         );
       };
+
 
       img.onerror = () => reject(new Error("이미지 로딩 실패"));
     };

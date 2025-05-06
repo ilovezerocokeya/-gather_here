@@ -19,6 +19,7 @@ const AdCard: React.FC = () => {
     autoplay: true,
     autoplaySpeed: 3000,
     arrows: false,
+    accessibility: false
   };
 
   const slideSets = [
@@ -72,8 +73,8 @@ const AdCard: React.FC = () => {
       <Slider {...settings}>
         {slides.map((slide, index) => (
           <div key={index}>
-            <a href={slide.href} target="_blank" rel="noopener noreferrer">
-              <Image src={slide.src} alt={slide.alt} className="mx-auto rounded-xl" priority />
+            <a href={slide.href} target="_blank" rel="noopener noreferrer" tabIndex={-1}>
+              <Image src={slide.src} alt={slide.alt} className="mx-auto rounded-xl" />
             </a>
           </div>
         ))}

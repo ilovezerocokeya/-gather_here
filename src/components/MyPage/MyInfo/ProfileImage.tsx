@@ -62,6 +62,7 @@ const ProfileImage: React.FC<ProfileImageProps> = ({ onImageChange, onToast }) =
     }
   
     await resetImage();
+    onImageChange?.(DEFAULT_PROFILE_IMAGE);
   };
 
 
@@ -70,10 +71,11 @@ const ProfileImage: React.FC<ProfileImageProps> = ({ onImageChange, onToast }) =
       <label className="block text-subtitle font-baseBold text-labelNeutral ml-10 mb-4">프로필 사진</label>
       <div className="flex flex-col items-start gap-4">
         <ImageUploader
-          key={imageUrl} // 캐시 강제 무효화
+          key={`profile-${imageVersion}`}
           imageUrl={imageUrl}
           onUpload={handleUpload}
           onError={(msg) => setToast({ state: "error", message: msg })}
+          type="profile"
         />
         <button
           type="button"

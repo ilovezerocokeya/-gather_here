@@ -73,8 +73,20 @@ const PrCard: React.FC = () => {
 
   // 가져온 멤버 데이터를 슬라이드에 사용할 형태로 변환
   const slides = useMemo<MemberType[]>(() => {
-    if (!data) return []; // 데이터가 없을 경우 빈 배열 반환
-    return data.pages.flatMap((page) => page.members).slice(0, 10); // 최대 10개의 멤버만 슬라이드에 표시
+    if (!data) return [];
+  
+    const allMembers = data.pages.flatMap((page) => page.members);
+  
+    // 기본 이미지가 아닌 멤버들을 먼저 정렬
+    const withRealImage = allMembers.filter(
+      (m) => m.background_image_url && !m.background_image_url.includes("welcomeImage.svg")
+    );
+    const withDefaultImage = allMembers.filter(
+      (m) => !m.background_image_url || m.background_image_url.includes("welcomeImage.svg")
+    );
+  
+    // 최대 10개로 제한
+    return [...withRealImage, ...withDefaultImage].slice(0, 10);
   }, [data, likedMembers]);
 
   // 데이터 로딩 중일 경우 로딩 메시지 표시
@@ -134,7 +146,6 @@ const PrCard: React.FC = () => {
           width={20} 
           height={20} 
           className="mr-1" 
-          priority
           fetchPriority="high"
         />
         자랑스러운 게더_멤버들을 소개할게요
@@ -143,8 +154,9 @@ const PrCard: React.FC = () => {
       {/* 슬라이더 */}
       <div className="flex justify-center">
         <Slider {...settings} className="w-full max-w-[680px] flex justify-center">
-          {slides.map((member) => {
+          {slides.map((member, index) => {
             const liked = likedMembers?.[member.user_id] || false; // 현재 멤버의 좋아요 상태 확인
+            const isFirstCard = index === 0;
           
             return (
               <div key={member.user_id} className="flex justify-center px-4">
@@ -154,6 +166,7 @@ const PrCard: React.FC = () => {
                   handleToggleLike={() => void handleToggleLike(member.user_id)}
                   secureImageUrl={secureImageUrl}
                   onOpenModal={() => setSelectedMember(member)}
+                  priority={isFirstCard}
                 />
               </div>
             );

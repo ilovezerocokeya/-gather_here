@@ -32,7 +32,7 @@ const RecruitmentTopSection: React.FC<RecruitmentTopSectionProps> = ({
     <>
       {/* 모집 마감 안내 */}
       <div className="flex items-center">
-        <Image src="/assets/gif/run.webp" alt="Run Icon" width={20} height={20} className="w-5 h-5 mb-2" priority />
+        <Image src="/assets/gif/run.webp" alt="Run Icon" width={20} height={20} className="w-5 h-5 mb-2" />
         <p className="m-2 mb-4 text-labelNormal">모집이 곧 종료돼요</p>
       </div>
 

@@ -65,6 +65,7 @@ const BackgroundPicture: React.FC = () => {
           imageUrl={imageUrl}
           onUpload={handleUpload}
           onError={(msg) => setToast({ state: "error", message: msg })}
+          type="background"
         />
         <button
           type="button"

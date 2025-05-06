@@ -42,6 +42,7 @@ export interface CardUIProps {
   onOpenModal: () => void;
   onOpenProfile?: () => void;
   imageVersion?: number;
+  priority?: boolean;
 }
 
 // CardModal 인터페이스

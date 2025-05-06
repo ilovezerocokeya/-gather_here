@@ -15,7 +15,6 @@ const OAuthButtons: React.FC<OAuthButtonsProps> = ({ handleLogin }) => {
               alt="Google Icon" 
               width={24} 
               height={24} 
-              priority
             />
           </div>
           <span className="font-semibold text-[#2B2B2B]">Google로 시작하기</span>
@@ -29,7 +28,6 @@ const OAuthButtons: React.FC<OAuthButtonsProps> = ({ handleLogin }) => {
               alt="Kakao Icon" 
               width={44} 
               height={44} 
-              priority
             />
           </div>
           <span className="font-semibold text-[#2B2B2B]">Kakao로 시작하기</span>

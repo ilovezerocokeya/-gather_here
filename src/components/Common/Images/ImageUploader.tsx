@@ -8,6 +8,7 @@ interface ImageUploaderProps {
   imageUrl: string | null; // 현재 이미지 URL
   onUpload: (file: File, previewUrl: string) => Promise<void>; // 업로드 후 처리 함수
   onError?: (message: string) => void; // 에러 발생 시 처리 함수
+  type: "profile" | "background";
 }
 
 const MAX_FILE_SIZE_MB = 3; // 최대 허용 이미지 크기 (3MB)
@@ -22,7 +23,7 @@ const isValidImage = (file: File) => {
   return !!ext && !!mime && allowedExts.includes(ext) && allowedTypes.includes(mime);
 };
 
-const ImageUploader: React.FC<ImageUploaderProps> = ({ imageUrl, onUpload, onError }) => {
+const ImageUploader: React.FC<ImageUploaderProps> = ({ imageUrl, onUpload, onError, type }) => {
   const [uploading, setUploading] = useState(false); // 업로드 중인지 상태
   const [isDragging, setIsDragging] = useState(false); // 드래그로 이미지 업로드할때 테두리
   const inputRef = useRef<HTMLInputElement | null>(null); // 숨겨진 input 클릭용
@@ -59,17 +60,22 @@ const ImageUploader: React.FC<ImageUploaderProps> = ({ imageUrl, onUpload, onErr
       onError?.(`이미지는 ${MAX_FILE_SIZE_MB}MB 이하만 업로드 가능합니다.`);
       return;
     }
+
     setUploading(true);
     try {
-      const webpFile = await convertToWebp(file);
-      const blobPreview = URL.createObjectURL(webpFile); // 로컬 preview 생성
+      const webpFile = await convertToWebp(file, type);
+      const blobPreview = URL.createObjectURL(webpFile);
+
+      // 이전 preview 해제하고 새로 설정
+      if (previewUrl) URL.revokeObjectURL(previewUrl);
       setPreviewUrl(blobPreview);
-      await onUpload(webpFile, blobPreview); // 업로드 + preview 전달
+
+      await onUpload(webpFile, blobPreview);
     } catch (e) {
       console.error("[ImageUploader] 업로드 실패:", e);
       onError?.("이미지 업로드에 실패했습니다.");
-    
-      // previewUrl 초기화 및 메모리 해제
+
+      // 실패 시 preview 정리
       if (previewUrl) {
         URL.revokeObjectURL(previewUrl);
         setPreviewUrl(null);

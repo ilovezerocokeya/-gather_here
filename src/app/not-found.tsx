@@ -24,7 +24,6 @@ export default function NotFound() {
         alt="Not Found"
         width={330} 
         height={330} 
-        priority
         style={{ marginBottom: '20px' }} 
       />
       <h1 style={{ color: 'white', fontSize: '35px', fontWeight: 'bold', marginBottom: '10px' }}>페이지를 찾을 수 없어요</h1>

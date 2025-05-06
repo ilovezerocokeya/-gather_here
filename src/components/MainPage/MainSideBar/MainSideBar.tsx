@@ -73,7 +73,6 @@ const MainSideBar = () => {
             alt="채팅창 닫기 버튼"
             width={90}
             height={60}
-            priority
             className="w-auto h-auto"
           />
         </button>
@@ -84,7 +83,6 @@ const MainSideBar = () => {
             alt="채팅창 열기 버튼"
             width={90}
             height={60}
-            priority
             className="w-auto h-auto"
           />
         </button>

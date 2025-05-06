@@ -31,7 +31,6 @@ const ProfileExtend: React.FC<ProfileExtendProps> = ({
           width={500}
           height={500}
           quality={90}
-          priority
           className="s:w-[340px] s:h-[340px] h-[500px] w-[500px] object-cover rounded-2xl shadow-lg"
         />
         <button

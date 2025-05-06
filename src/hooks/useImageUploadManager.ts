@@ -8,7 +8,6 @@ import {
   DEFAULT_PROFILE_IMAGE,
   DEFAULT_BACKGROUND_IMAGE,
   getStoragePath,
-  getImageSize,
   stripQuery,
 } from "@/utils/Image/imageUtils";
 import { useUserStore } from "@/stores/useUserStore";
@@ -53,8 +52,7 @@ export function useImageUploadManager(
         await delay(700);
 
         // WebP 변환
-        const { width, height } = getImageSize(type);
-        const webpFile = await convertToWebp(file, width, height);
+        const webpFile = await convertToWebp(file, type);
         console.log("[Upload] WebP 변환 완료:", webpFile.size, "bytes");
 
         // 업로드 (덮어쓰기 허용)

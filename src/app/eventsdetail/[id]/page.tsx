@@ -66,6 +66,7 @@ const EventDetailPage = () => {
               alt="목록으로 돌아가기"
               width={24}
               height={24}
+              loading="lazy"
               className="transform transition-transform duration-300 group-hover:translate-x-1"
             />
           </div>
@@ -81,7 +82,7 @@ const EventDetailPage = () => {
         <div className="bg-fillStrong relative w-full mb-4 rounded-lg py-4 overflow-hidden">
           {event.img_url && (
             <div className="relative w-full mb-4 rounded-lg overflow-hidden" style={{ paddingTop: '56.25%' }}>
-              <Image src={event.img_url} alt={event.title} fill className="object-cover" priority />
+              <Image src={event.img_url} alt={event.title} fill className="object-cover" loading="lazy" />
             </div>
           )}
           <h2 className="font-semibold text-lg text-labelAssistive mt-2 s:mt-4 pt-3 mb-2 s:mb-4 s:border-t-[1px] s:border-fillLight">
@@ -138,7 +139,7 @@ const EventDetailPage = () => {
                 className="shared-button-green self-end s:w-full"
               >
                 <span className="mr-1">신청하러 가기</span>
-                <Image src="/assets/arrowsmall.svg" alt="신청하러 가기 아이콘" width={16} height={16} />
+                <Image src="/assets/arrowsmall.svg" alt="신청하러 가기 아이콘" width={16} height={16} loading="lazy" />
               </Link>
             </div>
           </div>

@@ -2,11 +2,8 @@ import React, { useCallback, useMemo, useState } from 'react';
 import { JobFilterProps } from '@/lib/gatherHub';
 
 const JobFilter: React.FC<JobFilterProps> = ({ selectedJob, handleSelectJob, jobCategories }) => {
-
 const [hoveredJob, setHoveredJob] = useState<string | null>(null);
-
-// useMemo로 jobCategories 메모이제이션
-const memoizedJobCategories = useMemo(() => jobCategories, [jobCategories]);
+const memoizedJobCategories = useMemo(() => jobCategories, [jobCategories]); // useMemo로 jobCategories 메모이제이션
 
 // Mouse Enter와 Leave 핸들러 최적화
 const handleMouseEnter = useCallback((value: string) => {
@@ -33,15 +30,15 @@ return (
     >
       {memoizedJobCategories.map((job) => (
         <li
-        key={job.value}
-        className={`job-item flex items-center justify-start 
-          ${selectedJob === job.value ? 'bg-background text-primary font-bold' : 'text-gray-400'} 
-          ${job.value !== 'all' || hoveredJob === 'all' ? 'hover:bg-background hover:text-primary' : ''} 
-          cursor-pointer rounded-lg p-4 transition-all duration-300`}
-        onClick={() => handleSelectJob(job.value)}
-        onMouseEnter={() => handleMouseEnter(job.value)}
-        onMouseLeave={handleMouseLeave}
-        style={{ userSelect: 'none', width: '100%' }}
+          key={job.value}
+          className={`job-item flex items-center justify-start 
+            ${selectedJob === job.value ? 'bg-background text-primary font-bold' : 'text-gray-300'} 
+            ${job.value !== 'all' || hoveredJob === 'all' ? 'hover:bg-background hover:text-primary' : ''} 
+            cursor-pointer rounded-lg p-4 transition-all duration-300`}
+          onClick={() => handleSelectJob(job.value)}
+          onMouseEnter={() => handleMouseEnter(job.value)}
+          onMouseLeave={handleMouseLeave}
+          style={{ userSelect: 'none', width: '100%' }}
         >
           {selectedJob === job.value && (
             <svg
@@ -60,7 +57,12 @@ return (
             </svg>
           )}
           {/* 직업 이름 */}
-          <span className={`flex-grow text-center ${selectedJob === job.value ? 'text-primary' : ''}`}>
+          <span
+            className={`
+              flex-grow text-center 
+              ${selectedJob === job.value ? 'text-primary font-bold' : 'text-gray-300 hover:text-primary'}
+            `}
+          >
             {job.name}
           </span>
         </li>

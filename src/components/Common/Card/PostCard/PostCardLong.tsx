@@ -48,7 +48,9 @@ const PostCardLong: React.FC<PostCardProps> = ({ post, onRemoveBookmark }) => {
               </span>
             </li>
             <li className="text-baseS text-labelNormal ml-2">
-              <time dateTime="YYYY-MM-DD">~{dayjs(post.deadline).format('YY.MM.DD')}</time>
+            <time dateTime={dayjs(post.deadline).format('YYYY-MM-DD')}>
+              ~{dayjs(post.deadline).format('YY.MM.DD')}
+            </time>
             </li>
             <li className="absolute right-0">
               <LikeButton
@@ -71,13 +73,13 @@ const PostCardLong: React.FC<PostCardProps> = ({ post, onRemoveBookmark }) => {
             <div className="relative w-7 h-7 mr-2">
               <Image
                 src={secureImageUrl(post.user.profile_image_url)}
-                alt="프로필 사진"
+                alt={`${post.user?.nickname ?? '유저'}님의 프로필 사진`}
                 fill
                 className="rounded-md object-cover"
               />
             </div>
           )}
-          <p className="text-sm text-gray-500">{post.user?.nickname}</p>
+          <p className="text-sm text-gray-200">{post.user?.nickname}</p>
         </div>
         <div className="text-base flex items-center justify-between bg-fillNormal p-3 rounded-lg truncate">
           <div className="flex-1 text-left truncate">
@@ -92,7 +94,7 @@ const PostCardLong: React.FC<PostCardProps> = ({ post, onRemoveBookmark }) => {
           </div>
 
           {/* 방식 + 지역 표시 */}
-          <div className="flex flex-wrap items-center justify-start text-sm text-labelNeutral gap-3">
+          <div className="flex flex-wrap items-center justify-start text-sm text-text-gray-200 gap-3">
             {post.place && (
               <span className="px-2 py-1 rounded bg-fillWeak">
                 {post.place}
@@ -112,7 +114,7 @@ const PostCardLong: React.FC<PostCardProps> = ({ post, onRemoveBookmark }) => {
             <div className="flex items-center">
               <Image
                 src="/assets/cardarrow.svg"
-                alt="화살표 아이콘"
+                alt=""
                 width={10}
                 height={10}
                 style={{ width: 'auto', height: 'auto' }}

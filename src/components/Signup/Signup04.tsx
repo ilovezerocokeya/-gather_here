@@ -28,7 +28,6 @@ const Signup04: React.FC = () => {
               width={350}
               height={350}
               className="object-contain s:w-[300px] s:h-[300px]"
-              priority
             />
           </div>
         </div>
