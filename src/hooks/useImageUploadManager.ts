@@ -69,7 +69,6 @@ export function useImageUploadManager(
         if (!publicUrl) throw new Error("공개 URL 생성 실패");
 
         const cleanUrl = stripQuery(publicUrl);
-        console.log("[Upload] 최종 URL:", cleanUrl);
 
         // 우선 로컬 상태에 반영 → UI 먼저 반응
         if (type === "profile") {
@@ -127,7 +126,6 @@ export function useImageUploadManager(
 
       await fetchUserData(userId); // 동기화를 위한 fetch
 
-      console.log("[Reset] 기본 이미지로 초기화 완료");
       onToast("success", "기본 이미지로 변경되었습니다.");
     } catch (err) {
       console.error("[Reset] 기본 이미지 변경 실패:", err);
