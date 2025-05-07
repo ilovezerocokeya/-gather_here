@@ -228,9 +228,9 @@ export const fetchEventsPostsWithDeadLine = async (
   if (category) {
     query.eq('category', category);
   }
-  const { data, error } = await query.throwOnError();
-  if (error) throw new Error(error.message);
-  return data as Tables<'IT_Events'>[];
+  const { data, error } = await query;
+    if (error) throw new Error(error.message);
+    return data as Tables<'IT_Events'>[];
 };
 
 // IT 행사 목록 조회
@@ -257,7 +257,7 @@ export const fetchEventsPosts = async (
 
   // 페이지 범위 설정 (예: 0~4, 5~9)
   query.range(start, start + postsPerPage - 1);
-  const { data, error } = await query.throwOnError();
+  const { data, error } = await query;
   if (error) throw new Error(error.message);
 
   return data as Tables<'IT_Events'>[];
