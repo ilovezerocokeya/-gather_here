@@ -1,3 +1,5 @@
+export const revalidate = 5;
+
 import { createServerSupabaseClient } from "@/utils/supabase/server";
 import HubProfileClientForm from "@/components/MyPage/HubInfo/HubProfileClientForm";
 

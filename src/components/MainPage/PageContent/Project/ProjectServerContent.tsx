@@ -1,3 +1,5 @@
+export const revalidate = 60;
+
 import { fetchPosts, fetchPostsWithDeadLine } from "@/lib/fetchPosts";
 import ProjectClientContent from "./ProjectClientContent";
 

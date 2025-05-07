@@ -1,3 +1,5 @@
+export const revalidate = 10;
+
 import { fetchMembers } from "@/utils/fetchMembers";
 import GatherHubPageClient from "@/components/GatherHub/GatherHubClientPage";
 
