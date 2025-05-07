@@ -4,6 +4,7 @@ import { useLikeStore } from "@/stores/useLikeStore";
 import { useUserStore } from '@/stores/useUserStore';
 import CardUI from "./CardUI"; 
 import CardModal from "./CardModal";
+import Toast from "@/components/Common/Toast/Toast";
 import ProfileExtend from "./ProfileExtend"; 
 import { MemberCardProps } from "@/lib/gatherHub";
 import { techStacks } from "@/lib/techStacks";
@@ -30,6 +31,10 @@ const MemberCard: React.FC<MemberCardProps> = ({
 }) => {
   const [isModalOpen, setIsModalOpen] = useState(false); 
   const [isProfileModalOpen, setIsProfileModalOpen] = useState(false);
+  const [toast, setToast] = useState<{
+    state: "success" | "error" | "warn" | "info" | "custom";
+    message: string;
+  } | null>(null);
 
   const { likedMembers, toggleLike } = useLikeStore(); // 좋아요 상태 관리
   const { userData, imageVersion } = useUserStore(); // 현재 로그인 유저 정보
@@ -41,9 +46,10 @@ const MemberCard: React.FC<MemberCardProps> = ({
   // 좋아요 토글 핸들러
   const handleToggleLike = () => {
     if (!currentUserId) {
-      alert("로그인이 필요합니다.");
+      setToast({ state: "error", message: "로그인이 필요합니다." });
       return;
     }
+
     void toggleLike(user_id, currentUserId);
   };
 
@@ -119,6 +125,13 @@ const MemberCard: React.FC<MemberCardProps> = ({
         secureImageUrl={secureImageUrl}
         imageVersion={imageVersion}
       />
+      {toast && (
+        <Toast
+          state={toast.state}
+          message={toast.message}
+          onClear={() => setToast(null)}
+        />
+      )}
     </>
   );
 };

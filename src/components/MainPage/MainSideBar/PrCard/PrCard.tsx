@@ -17,6 +17,7 @@ import Image from "next/image";
 import Head from "next/head";
 import Script from "next/script";
 import CardSkeleton from "@/components/Common/Skeleton/CardSkeleton";
+import Toast from "@/components/Common/Toast/Toast";
 
 const PrCard: React.FC = () => {
 
@@ -38,28 +39,26 @@ const PrCard: React.FC = () => {
     lazyLoad: "progressive" as const,// 슬라이드 이미지 로딩 최적화
     pauseOnHover: true, // 사용자 경험 개선
   };
-
-  // Zustand 상태 관리에서 좋아요 정보 가져오기
-  const { likedMembers, toggleLike } = useLikeStore();
-
-  // 현재 로그인한 사용자 정보 가져오기
-  const { userData } = useUserStore();
-
-  // 모달 상태 관리
-  const [selectedMember, setSelectedMember] = useState<MemberCardProps | null>(null);
+  const { likedMembers, toggleLike } = useLikeStore(); // Zustand 상태 관리에서 좋아요 정보 가져오기
+  const { userData } = useUserStore(); // 현재 로그인한 사용자 정보 가져오기
+  const [selectedMember, setSelectedMember] = useState<MemberCardProps | null>(null); // 모달 상태 관리
+  const [toast, setToast] = useState<{
+    state: "success" | "error" | "warn" | "info" | "custom";
+    message: string;
+  } | null>(null);
 
   // 좋아요 토글 함수
   const handleToggleLike = async (userId: string) => {
     if (!userData?.user_id) {
-      alert("로그인이 필요합니다."); // UI 알림 추가
+      setToast({ state: "error", message: "로그인이 필요합니다." });
       return;
     }
-  
+
     try {
       await toggleLike(userId, userData.user_id);
     } catch (error) {
-      alert("좋아요 처리 중 오류 발생"); // UI 알림 추가
-      console.error("좋아요 처리 중 오류 발생:", error);
+      setToast({ state: "error", message: "좋아요 처리 중 오류가 발생했어요." });
+      console.error("좋아요 오류:", error);
     }
   };
 
@@ -188,6 +187,14 @@ const PrCard: React.FC = () => {
           )}
         />
       )}
+
+    {toast && (
+      <Toast
+        state={toast.state}
+        message={toast.message}
+        onClear={() => setToast(null)}
+      />
+    )}
     </div>
   );
 };
