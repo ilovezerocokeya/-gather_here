@@ -4,7 +4,6 @@ import { createServerSupabaseClient } from "@/utils/supabase/server";
 import HubProfileClientForm from "@/components/MyPage/HubInfo/HubProfileClientForm";
 
 const HubProfile = async () => {
-  // Supabase 서버 클라이언트 생성
   const supabase = createServerSupabaseClient();
 
   // 현재 로그인된 유저 세션 정보 가져오기

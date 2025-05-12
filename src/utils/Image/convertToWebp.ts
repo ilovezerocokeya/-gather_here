@@ -12,6 +12,7 @@ export const convertToWebp = async (
   return new Promise((resolve, reject) => {
     const reader = new FileReader();
 
+     // 이미지 파일을 base64로 읽음
     reader.onload = (event) => {
       const img = new Image();
       img.src = event.target?.result as string;
@@ -37,7 +38,7 @@ export const convertToWebp = async (
 
         ctx.drawImage(img, 0, 0, targetWidth, targetHeight);
 
-        // WebP 변환
+       // WebP변환 후 File 객체로 반환
         canvas.toBlob(
           (blob) => {
             if (!blob) return reject(new Error("WebP 변환 실패"));

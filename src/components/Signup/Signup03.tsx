@@ -10,36 +10,40 @@ export interface FormValues {
   experience: string;
 }
 
+
 const Signup03: React.FC = () => {
-  const { prevStep } = useSignup();
+  const { prevStep } = useSignup(); // 이전 단계 이동 함수
   const {
     register,
     handleSubmit,
     watch,
     formState: { errors },
     setError,
-  } = useForm<FormValues>(); 
+  } = useForm<FormValues>(); // react-hook-form 설정
 
-  const watchNickname = watch("nickname");
-  const { result: nicknameAvailable, isEmpty } = useCheckNickname(watchNickname);
-  const { onSubmit } = useSubmitProfile();
+  const watchNickname = watch("nickname"); // 입력 중인 닉네임 감시
+  const { result: nicknameAvailable, isEmpty } = useCheckNickname(watchNickname); // 닉네임 중복 여부 확인
+  const { onSubmit } = useSubmitProfile(); // 실제 Supabase로 제출 처리 함수
 
+  // 제출 핸들러
   const onSubmitForm: SubmitHandler<FormValues> = async (data: FormValues) => {
     const isValid = nicknameAvailable?.valid ?? false;
-  
+
     if (!isValid) {
       setError("nickname", {
         message: nicknameAvailable?.message ?? "닉네임 확인이 필요합니다.",
       });
       return;
     }
-  
+
+    // Supabase 업데이트 처리
     await onSubmit(data, isValid, setError);
   };
 
+  // "등록하기" 버튼 누르면 실행되는 함수
   const handleConfirmSkip = async () => {
-    document.body.classList.remove("page-disabled");
-    await handleSubmit(onSubmitForm)();
+    document.body.classList.remove("page-disabled"); // body에 붙은 클래스 제거
+    await handleSubmit(onSubmitForm)(); // react-hook-form 제출 처리
   };
 
   return (

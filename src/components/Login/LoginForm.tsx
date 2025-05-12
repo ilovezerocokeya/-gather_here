@@ -11,12 +11,13 @@ const LoginForm = () => {
   const [error, setError] = useState<string | null>(null);
   const [rememberMe, setRememberMe] = useState<boolean>(false);
 
-  // 컴포넌트 마운트 시 자동 로그인 여부를 localStorage에서 가져오기
+  // 컴포넌트 마운트 시 localStorage에서 자동 로그인 설정값 불러오기
   useEffect(() => {
     const savedRememberMe = localStorage.getItem('rememberMe') === 'true';
     setRememberMe(savedRememberMe);
   }, []);
 
+  // OAuth 로그인 실행 함수 (Google, Kakao)
   const handleLogin = async (provider: 'google' | 'kakao') => {
     setLoading(true);
     setError(null);
@@ -27,9 +28,9 @@ const LoginForm = () => {
     const { data, error } = await supabase.auth.signInWithOAuth({
       provider,
       options: {
-        redirectTo: `${process?.env?.NEXT_PUBLIC_BASE_URL}/api/auth/callback`,
+        redirectTo: `${process?.env?.NEXT_PUBLIC_BASE_URL}/api/auth/callback`, // 인증 콜백 URL
         queryParams: {
-          prompt: 'select_account',
+          prompt: 'select_account', // 계정 선택을 유도
         },
       },
     });
@@ -41,6 +42,7 @@ const LoginForm = () => {
       return;
     }
 
+    // 성공적으로 인증 요청이 시작되었으면 홈으로 이동
     if (data) {
       router.push('/');
     } else {

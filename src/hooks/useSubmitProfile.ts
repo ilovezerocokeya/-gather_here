@@ -11,10 +11,10 @@ import { secureImageUrl } from "@/utils/Image/imageUtils";
 
 const useSubmitProfile = () => {
   
-  const { nextStep } = useSignup(); // 회원가입 단계 관련 상태
-  const { setUser, user } = useAuth(); // 사용자 인증 관련 상태
-  const { userData, setUserData } = useUserStore(); // 사용자 프로필 관련 상태 및 업데이트 함수
-  const profileData = userData ?? defaultUserData; // 프로필 기본값 설정
+  const { nextStep } = useSignup();
+  const { setUser, user } = useAuth();
+  const { userData, setUserData } = useUserStore();
+  const profileData = userData ?? defaultUserData;
 
   // 프로필 이미지 URL을 context 기반으로 설정
   const setProfileImageUrl = useCallback((url: string) => {

@@ -11,7 +11,7 @@ interface ImageUploaderProps {
   type: "profile" | "background";
 }
 
-const MAX_FILE_SIZE_MB = 3; // 최대 허용 이미지 크기 (3MB)
+const MAX_FILE_SIZE_MB = 3;
 
 // 확장자 + MIME 타입 둘 다 검사해서 안전하게 막기
 const isValidImage = (file: File) => {
@@ -29,6 +29,7 @@ const ImageUploader: React.FC<ImageUploaderProps> = ({ imageUrl, onUpload, onErr
   const inputRef = useRef<HTMLInputElement | null>(null); // 숨겨진 input 클릭용
   const [previewUrl, setPreviewUrl] = useState<string | null>(null); // local preview용 URL
 
+  // 기존에 만든 preview URL이 있다면 메모리 해제
   useEffect(() => {
     return () => {
       if (previewUrl) {
@@ -48,7 +49,7 @@ const ImageUploader: React.FC<ImageUploaderProps> = ({ imageUrl, onUpload, onErr
     if (file) await validateAndUpload(file);
   };
 
-  // 파일 형식 검사
+  // 이미지 유효성 검사 및 WebP 변환 + 업로드 처리
   const validateAndUpload = async (file: File) => {
     if (!isValidImage(file)) {
       onError?.("이미지 업로드는 jpg, jpeg, png, webp 형식만 가능합니다.");
@@ -63,6 +64,7 @@ const ImageUploader: React.FC<ImageUploaderProps> = ({ imageUrl, onUpload, onErr
 
     setUploading(true);
     try {
+      // WebP로 변환 (type에 따라 사이즈 조정)
       const webpFile = await convertToWebp(file, type);
       const blobPreview = URL.createObjectURL(webpFile);
 
@@ -85,7 +87,7 @@ const ImageUploader: React.FC<ImageUploaderProps> = ({ imageUrl, onUpload, onErr
     }
   };
 
-  // 드래그가 시작되었을 때
+  // 드래그 시 테두리 강조
   const handleDragOver = (e: React.DragEvent<HTMLDivElement>) => {
     e.preventDefault();
     setIsDragging(true);
@@ -96,7 +98,7 @@ const ImageUploader: React.FC<ImageUploaderProps> = ({ imageUrl, onUpload, onErr
   };
 
 
-  // 드래그 앤 드롭으로 파일이 들어왔을 때
+  // 드래그 앤 드롭 시 파일 처리
   const handleDrop = async (e: React.DragEvent<HTMLDivElement>) => {
     e.preventDefault();
     setIsDragging(false); // 드래그 종료 처리
@@ -133,7 +135,7 @@ const ImageUploader: React.FC<ImageUploaderProps> = ({ imageUrl, onUpload, onErr
       <div className="absolute inset-0 bg-black/70 z-10 pointer-events-none transition-all duration-300 group-hover:bg-black/80" />
 
 
-      {/* 기본 아이콘 + 텍스트 (항상 표시) */}
+      {/* 기본 아이콘 + 텍스트 */}
       {!uploading && (
         <div className="absolute inset-0 z-20 flex flex-col items-center justify-center transition-opacity duration-300">
           <Image

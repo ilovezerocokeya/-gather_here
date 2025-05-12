@@ -16,8 +16,6 @@ export const getLikeCount = async (likedUserId: string): Promise<number> => {
   return count ?? 0;
 };
 
-
-
  // 게시물 좋아요 수 가져오기
  export const getPostLikeCount = async (postId: string): Promise<number> => {
     const { count, error } = await supabase

@@ -55,12 +55,10 @@ const MainDetailClient: React.FC<MainDetailClientProps> = ({ post, user }) => {
     }
 
     const result = await deletePost(post.post_id, userData.user_id);
-
     if (!result.success) {
       setToast({ state: 'error', message: result.error ?? '게시글 삭제에 실패했습니다.' });
       return;
     }
-
     setToast({ state: 'success', message: '게시글이 삭제되었습니다.' });
     router.push('/');
   };

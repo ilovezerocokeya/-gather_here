@@ -6,7 +6,7 @@ import Image from 'next/image';
 interface PostFormButtonsProps {
   onExit: () => void;
   onSaveDraft: () => void;
-  mode?: 'create' | 'edit'; // default: create
+  mode?: 'create' | 'edit';
 }
 
 const PostFormButtons = ({

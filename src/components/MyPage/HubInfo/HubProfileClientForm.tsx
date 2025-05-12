@@ -19,7 +19,7 @@ interface HubProfileClientFormProps {
 }
 
 const HubProfileClientForm: React.FC<HubProfileClientFormProps> = ({ initialIsActive,  initialData }) => {
-  const [state, dispatch] = useReducer(hubProfileReducer, initialData); // 허브 프로필 상태를 useReducer로 관리
+  const [state, dispatch] = useReducer(hubProfileReducer, initialData);
   const { userData } = useUserStore();
   const { likeCount, setLikeCount } = useLikeCountStore();
 

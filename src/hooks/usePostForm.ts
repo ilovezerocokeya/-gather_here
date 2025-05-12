@@ -9,35 +9,41 @@ interface UsePostFormReturn {
   handleMultiSelectChange: (key: 'targetPosition' | 'techStack') => (selected: Option[]) => void;
   setAllFields: (values: Partial<PostFormState>) => void;
   resetForm: () => void;
-  saveDraft: () => Promise<void>; 
+  saveDraft: () => Promise<void>;
   loadDraft: () => Promise<void>;
 }
 
 export const usePostForm = (defaultValues?: Partial<PostFormState>): UsePostFormReturn => {
+  // 상태 초기화
   const [state, dispatch] = useReducer(
     postFormReducer,
     defaultValues ? { ...initialFormState, ...defaultValues } : initialFormState
   );
 
+  // 단일 입력 필드 변경 핸들러
   const handleInputChange =
     (key: keyof PostFormState) =>
     (e: ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
       dispatch({ type: 'SET_FIELD', key, value: e.target.value });
     };
 
+  // 다중 선택 필드 변경 핸들러
   const handleMultiSelectChange =
     (key: 'targetPosition' | 'techStack') => (selected: Option[]) => {
       dispatch({ type: 'SET_MULTISELECT', key, value: selected });
     };
 
+  // 전체 필드 일괄 업데이트
   const setAllFields = (values: Partial<PostFormState>) => {
     dispatch({ type: 'SET_ALL', value: values });
   };
 
+  // 폼 초기화
   const resetForm = () => {
     dispatch({ type: 'RESET_FORM' });
   };
 
+  // Supabase 유저 ID를 캐싱하여 draft 저장 키 생성
   let cachedUserId: string | null = null;
 
   const getDraftKey = async (): Promise<string | null> => {
@@ -50,17 +56,21 @@ export const usePostForm = (defaultValues?: Partial<PostFormState>): UsePostForm
     return null;
   };
 
+  // 현재 폼 상태를 localStorage에 저장
   const saveDraft = async () => {
     const key = await getDraftKey();
     if (!key) return;
+
     const filteredState = Object.fromEntries(
       Object.entries(state).filter(([, v]) =>
         Array.isArray(v) ? v.length > 0 : !!v
       )
     ) as Partial<PostFormState>;
+
     localStorage.setItem(key, JSON.stringify(filteredState));
   };
 
+  // localStorage에서 draft 불러와 상태 복원
   const loadDraft = async () => {
     const key = await getDraftKey();
     if (!key) return;

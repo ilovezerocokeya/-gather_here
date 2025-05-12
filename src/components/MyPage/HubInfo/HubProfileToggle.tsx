@@ -13,10 +13,10 @@ interface HubProfileToggleProps {
 }
 
 const HubProfileToggle: React.FC<HubProfileToggleProps> = ({ initialIsActive, state, }) => {
-    const { user } = useAuth(); // 인증된 사용자 정보
-    const { fetchUserData } = useUserStore(); // 사용자 정보 갱신 함수
-    const [isHubCardActive, setIsHubCardActive] = useState(initialIsActive); // 현재 허브카드 등록 여부 상태
-    const [isLoading, setIsLoading] = useState(false); // 서버 요청 중 로딩 상태
+    const { user } = useAuth(); 
+    const { fetchUserData } = useUserStore();
+    const [isHubCardActive, setIsHubCardActive] = useState(initialIsActive);
+    const [isLoading, setIsLoading] = useState(false);
 
     // 토스트 메시지 상태
     const [toast, setToast] = useState<{ state: "success" | "error" | ""; message: string }>({
@@ -73,9 +73,8 @@ const HubProfileToggle: React.FC<HubProfileToggleProps> = ({ initialIsActive, st
       } else {
         setIsHubCardActive(nextState);
         showToast("success", nextState ? "프로필이 등록되었습니다." : "프로필이 삭제되었습니다.");
-  
-        // 사용자 상태 최신화
-        void fetchUserData(user.id);
+        
+        void fetchUserData(user.id); // 사용자 상태 최신화
   
         // 변경 사항 적용을 위해 새로고침
         setTimeout(() => {

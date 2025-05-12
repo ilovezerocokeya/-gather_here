@@ -4,26 +4,11 @@ import { useUserStore } from '@/stores/useUserStore';
 import JobFilter from './JobFilter';
 import HubRegister from './HubRegister';
 import LoginModal from './LoginModal';
-import { JobDirectoryProps } from '@/lib/gatherHub'; 
+import { JobDirectoryProps, jobCategories } from '@/lib/gatherHub'; 
 
 const JobDirectory: React.FC<JobDirectoryProps> = ({ setFilteredJob, className }) => {
-  
-  // 직업군 리스트
-  const jobCategories = useMemo(() => [
-    { name: '전체보기', value: 'all', hoverClass: 'hover:bg-primary hover:text-black' },
-    { name: '프론트엔드', value: '프론트엔드', hoverClass: 'hover:bg-primaryStrong hover:text-black' },
-    { name: '백엔드', value: '백엔드', hoverClass: 'hover:bg-accentOrange hover:text-black' },
-    { name: 'IOS', value: 'IOS', hoverClass: 'hover:bg-accentMaya hover:text-black' },
-    { name: '안드로이드', value: '안드로이드', hoverClass: 'hover:bg-accentPurple hover:text-black' },
-    { name: '데브옵스', value: '데브옵스', hoverClass: 'hover:bg-accentRed hover:text-black' },
-    { name: '디자인', value: '디자인', hoverClass: 'hover:bg-accentMint hover:text-black' },
-    { name: 'PM', value: 'PM', hoverClass: 'hover:bg-accentColumbia hover:text-black' },
-    { name: '기획', value: '기획', hoverClass: 'hover:bg-accentPink hover:text-black' },
-    { name: '마케팅', value: '마케팅', hoverClass: 'hover:bg-accentYellow hover:text-black' }
-  ], []);
-  
-  // 사용자 인증 정보 및 사용자 데이터 가져오기
-  const { isAuthenticated } = useAuth();
+
+  const { isAuthenticated } = useAuth(); 
   const { userData } = useUserStore();
   const [selectedJob, setSelectedJob] = useState<string>(() => localStorage.getItem('selectedJob') ?? 'all');
   const isHubRegistered = useMemo(() => userData?.hubCard ?? false, [userData]); 

@@ -5,24 +5,24 @@ import ExperienceLevelButton from "./components/ExperienceLevelButton";
 import { useSignup } from "@/provider/user/UserSignupProvider";
 import { useUserStore } from "@/stores/useUserStore";
 
-const experienceLevels = ["1년 미만", "1년", "2년", "3년", "4년", "5년", "6년", "7년", "8년 이상"];
+const experienceLevels = ["1년 미만", "1년", "2년", "3년", "4년", "5년", "6년", "7년", "8년 이상"]; // 선택 가능한 경력 옵션 목록
 
 const Signup02: React.FC = () => {
+  const { nextStep, prevStep } = useSignup(); // 회원가입 단계 이동 함수
+  const { userData, setUserData } = useUserStore(); // 전역 유저 상태 및 설정 함수
+  const [selectedExperience, setSelectedExperience] = useState<string>(""); // 현재 선택한 경력 상태
 
-  const { nextStep, prevStep } = useSignup();
-  const { userData, setUserData } = useUserStore(); 
-  const [selectedExperience, setSelectedExperience] = useState<string>("");
-
+  // 경력 버튼 선택 시 호출되는 함수
   const handleExperienceSelection = (experience: string) => {
-    setSelectedExperience(experience);
+    setSelectedExperience(experience); // 로컬 상태 반영
 
     if (!userData) return; // null 방어
     setUserData({
       ...userData,
-      experience,
+      experience, // 전역 유저 상태에 경력 반영
     });
 
-    nextStep();
+    nextStep(); // 다음 단계로 이동
   };
 
   return (

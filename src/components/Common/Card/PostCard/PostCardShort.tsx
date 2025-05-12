@@ -18,18 +18,15 @@ interface PostCardProps {
 
 const PostCardShort: React.FC<PostCardProps> = ({ post, onRemoveBookmark }) => {
   const { userData } = useUserStore();
-  const [isMounted, setIsMounted] = useState<boolean>(false); // 클라이언트 마운트 여부를 판단
+  const [isMounted, setIsMounted] = useState<boolean>(false);  // 클라이언트 사이드 렌더링 여부 확인용
   const displayDaysLeft = isMounted ? getDisplayDaysLeft(post.deadline) : ''; // 마감일까지 남은 날짜 계산
 
   useEffect(() => {
-     // 컴포넌트가 마운트된 이후에만 표시되도록 플래그 설정
-    setIsMounted(true);
-    return () => {
-      setIsMounted(false); // 언마운트 시 정리
-    };
+    setIsMounted(true);  // 컴포넌트가 마운트된 이후에만 표시되도록 플래그 설정
+    return () =>  setIsMounted(false); // 언마운트 시 정리
   }, [post]);
 
-  // XSS 방지를 위해 게시글 본문을 정제하여 HTML로 렌더링
+   // 게시글 본문을 sanitize해서 XSS 방지 후 렌더링
   const sanitizedContent = useMemo(() => {
       if (!isMounted || typeof window === 'undefined') return '';
       return cleanContent(post.content);
@@ -38,6 +35,7 @@ const PostCardShort: React.FC<PostCardProps> = ({ post, onRemoveBookmark }) => {
     return (
       <div className="w-full h-full max-w-container-l m:max-w-container-m s:max-w-container-s post-card">
         <div className="p-5 h-64 text-center bg-fillStrong rounded-2xl">
+          {/* 상단 정보: 마감일, 카테고리, 좋아요 */}
           <div className="flex justify-between items-center">
             {isMounted && (
               <ul className="flex items-center">
@@ -62,16 +60,19 @@ const PostCardShort: React.FC<PostCardProps> = ({ post, onRemoveBookmark }) => {
               />
             </div>
           </div>
-  
+
+          {/* 게시글 정보 (제목 + 본문 + 작성자 + 요약 정보) */}
           <Link href={`/maindetail/${post.post_id}`}>
             <h2 className="text-left text-subtitle font-semibold truncate mt-3 text-labelStrong">
               {post.title}
             </h2>
   
+            {/* 본문 미리보기 */}
             <div className="hidden sm:block mt-2 mb-3 h-11 overflow-hidden text-left font-thin line-clamp-2 text-labelNeutral">
               <div dangerouslySetInnerHTML={{ __html: sanitizedContent }} />
             </div>
-  
+
+            {/* 작성자 정보 (sm 이상에서만 표시) */}
             <div className="mt-1">
               <div className="flex items-center mb-4">
                 <div className="hidden sm:flex items-center">
@@ -91,6 +92,7 @@ const PostCardShort: React.FC<PostCardProps> = ({ post, onRemoveBookmark }) => {
                 </div>
               </div>
   
+              {/* 직군, 인원 */}
               <div className="flex items-center justify-between bg-fillNormal p-2 rounded-lg min-h-[20px]">
                 <div className="flex-1 truncate text-left">
                   {post.target_position?.length > 0 && (

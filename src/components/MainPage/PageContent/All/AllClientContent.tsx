@@ -20,8 +20,9 @@ interface AllClientContentProps {
 
 const AllClientContent: React.FC<AllClientContentProps> = ({ initialPosts }) => {
   const { searchWord } = useSearch();
-  const debouncedSearchWord = useDebounce(searchWord, 300);
+  const debouncedSearchWord = useDebounce(searchWord, 300); // 검색어 입력 디바운스 처리
 
+  // 게시글 무한스크롤 쿼리
   const {
     data,
     isFetching,
@@ -39,13 +40,12 @@ const AllClientContent: React.FC<AllClientContentProps> = ({ initialPosts }) => 
       pages: [initialPosts],
       pageParams: [1],
     },
-    staleTime: 60000,
+    staleTime: 60000, // 1분 동안은 캐시 유지
   });
 
   const canRestore = !isFetching && !isFetchingNextPage;
-
-  // 스크롤 복원 및 저장 훅 적용
-  useScrollRestoration("all-page-scroll", canRestore);
+  
+  useScrollRestoration("all-page-scroll", canRestore);   // 스크롤 복원 및 저장 훅 적용
 
   // 무한 스크롤 감지
   useEffect(() => {
@@ -53,8 +53,8 @@ const AllClientContent: React.FC<AllClientContentProps> = ({ initialPosts }) => 
       hasNextPage: !!hasNextPage,
       isFetchingNextPage,
       fetchNextPage,
-      threshold: 300,
-      throttleMs: 300,
+      threshold: 300, // 300px 남았을 때 트리거
+      throttleMs: 300, // 호출 간 딜레이
     });
 
     window.addEventListener("scroll", handleScroll);

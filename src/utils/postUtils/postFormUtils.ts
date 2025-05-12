@@ -3,6 +3,7 @@ import type { Database } from '@/types/supabase';
 
 export type SupabasePostRow = Database['public']['Tables']['Posts']['Row'];
 
+// Supabase에서 가져온 게시글 데이터를 폼 상태(PostFormState) 형태로 변환
 export const convertPostToFormState = (
   data: SupabasePostRow
 ): Partial<PostFormState> => ({
@@ -26,6 +27,7 @@ export const convertPostToFormState = (
   content: data.content ?? '',
 });
 
+// 폼 상태(PostFormState)를 Supabase에 저장 가능한 payload로 변환
 export const convertFormStateToPostPayload = (
   state: PostFormState,
   userId: string

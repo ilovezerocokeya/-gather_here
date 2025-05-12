@@ -1,21 +1,7 @@
 "use client";
 
 import React, { useState } from "react";
-
-// 플랫폼 목록
-const platforms = [
-  { value: "behance", label: "비핸스" },
-  { value: "github", label: "깃허브" },
-  { value: "instagram", label: "인스타그램" },
-  { value: "brunch", label: "브런치" },
-  { value: "linkedin", label: "링크드인" },
-  { value: "notion", label: "노션" },
-  { value: "pinterest", label: "핀터레스트" },
-  { value: "medium", label: "미디엄" },
-  { value: "tistory", label: "티스토리" },
-  { value: "facebook", label: "페이스북" },
-  { value: "youtube", label: "유튜브" },
-];
+import { platformOptions } from "@/lib/generalOptionStacks";
 
 // URL prefix 자동 보정
 const normalizeURL = (url: string) => {
@@ -60,9 +46,9 @@ const AdditionalLinkField = ({
         className="w-1/3 shared-select-gray-2 border-[1px] border-fillLight"
       >
         <option value="">링크 선택</option>
-        {platforms.map((platform) => (
-          <option key={platform.value} value={platform.value}>
-            {platform.label}
+        {platformOptions.map((platformOptions) => (
+          <option key={platformOptions.value} value={platformOptions.value}>
+            {platformOptions.label}
           </option>
         ))}
       </select>

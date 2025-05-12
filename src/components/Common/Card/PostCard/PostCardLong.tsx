@@ -18,16 +18,15 @@ interface PostCardProps {
 
 const PostCardLong: React.FC<PostCardProps> = ({ post, onRemoveBookmark }) => {
   const { userData } = useUserStore();
-  const [isMounted, setIsMounted] = useState<boolean>(false); // 클라이언트 마운트 여부를 판단
+  const [isMounted, setIsMounted] = useState<boolean>(false); // 클라이언트 사이드 렌더링 여부 확인용
   const displayDaysLeft = isMounted ? getDisplayDaysLeft(post.deadline) : ''; // 마감일까지 남은 날짜 계산
 
   useEffect(() => {
-    // 컴포넌트가 마운트된 이후에만 표시되도록 플래그 설정
-    setIsMounted(true); 
+    setIsMounted(true);  // 컴포넌트가 마운트된 이후에만 표시되도록 플래그 설정
     return () => setIsMounted(false); // 언마운트 시 정리
   }, []);
 
-   // XSS 방지를 위해 게시글 본문을 정제하여 HTML로 렌더링
+  // 게시글 본문을 sanitize해서 XSS 방지 후 렌더링
   const sanitizedContent = useMemo(() => {
     if (!isMounted || typeof window === 'undefined') return '';
     return cleanContent(post.content);
@@ -35,7 +34,7 @@ const PostCardLong: React.FC<PostCardProps> = ({ post, onRemoveBookmark }) => {
 
   return (
     <div className="w-auto p-5 bg-fillStrong rounded-2xl mb-4">
-      <div className="flex justify-between items-center" />
+      {/* 상단 정보 바 (마감일, 카테고리, 날짜, 좋아요 버튼) */}
       <div className="flex justify-between items-center">
         {isMounted && (
           <ul className="flex items-center relative w-full">
@@ -53,6 +52,7 @@ const PostCardLong: React.FC<PostCardProps> = ({ post, onRemoveBookmark }) => {
             </time>
             </li>
             <li className="absolute right-0">
+              {/* 관심글 추가/제거 버튼 */}
               <LikeButton
                 postId={post.post_id}
                 currentUser={userData}
@@ -63,11 +63,15 @@ const PostCardLong: React.FC<PostCardProps> = ({ post, onRemoveBookmark }) => {
           </ul>
         )}
       </div>
+      {/* 게시글 제목, 본문, 유저 정보 영역 */}
       <Link href={`/maindetail/${post.post_id}`}>
         <h2 className="text-left text-subtitle mt-3 font-semibold text-labelStrong truncate w-3/4">{post.title}</h2>
+        
+        {/* 게시글 본문 미리보기 (2줄 제한) */}
         <div className="mt-2 mb-4 h-[45px] s:h-11 xs:h-14 overflow-hidden text-left text-labelNeutral font-thin">
           <div className="line-clamp-2" dangerouslySetInnerHTML={{ __html: sanitizedContent }} />
         </div>
+        {/* 작성자 프로필 이미지 + 닉네임 */}
         <div className="flex items-center mb-4">
           {post.user?.profile_image_url && (
             <div className="relative w-7 h-7 mr-2">
@@ -81,7 +85,9 @@ const PostCardLong: React.FC<PostCardProps> = ({ post, onRemoveBookmark }) => {
           )}
           <p className="text-sm text-gray-200">{post.user?.nickname}</p>
         </div>
+        {/* 직군, 방식, 지역, 인원수 등 하단 정보 */}
         <div className="text-base flex items-center justify-between bg-fillNormal p-3 rounded-lg truncate">
+          {/* 직군 정보 */}
           <div className="flex-1 text-left truncate">
             {post.target_position.map((position, index) => (
               <span key={index} className={`${jobTitleClassMap[position] || 'text-default'}`}>
@@ -107,6 +113,7 @@ const PostCardLong: React.FC<PostCardProps> = ({ post, onRemoveBookmark }) => {
             )}
           </div>
 
+          {/* 모집 인원수 */}
           <div className="flex items-center flex-none">
             <div className={`mr-2 ${jobTitleClassMap[post.target_position[0]] || 'text-default'}`}>
               {post.recruitmentCount}명

@@ -12,6 +12,7 @@ import { jobTitleClassMap } from "@/lib/postFormOptions";
 
 const defaultImage = "/assets/header/user.svg";
 
+// 직군에 따른 텍스트 색상 클래스 반환
 const getJobTitleClass = (job_title: string) => {
   const lower = job_title?.toLowerCase() ?? "";
   return (
@@ -20,14 +21,12 @@ const getJobTitleClass = (job_title: string) => {
 };
 
 const LeftNav = () => {
-  const { user } = useAuth(); // 인증된 유저 정보 가져오기
+  const { user } = useAuth(); 
   const { userData, loading, profileImageUrl, imageVersion, fetchUserData } = useUserStore();
-  const pathname = usePathname(); // 현재 경로 확인
-  
-  // 프로필 이미지 URL에 버전을 붙여 캐시 무효화
-  const profileImage = `${secureImageUrl(profileImageUrl ?? defaultImage)}?v=${imageVersion}`;
+  const pathname = usePathname();
+  const profileImage = `${secureImageUrl(profileImageUrl ?? defaultImage)}?v=${imageVersion}`; // 프로필 이미지에 캐시 무효화를 위한 버전 쿼리 추가
 
-  // 유저 정보가 있을 경우 상태 초기화
+  // user가 존재할 경우 전역 유저 데이터 패칭
   useEffect(() => {
     if (user?.id) {
       void fetchUserData(user.id);
@@ -38,10 +37,12 @@ const LeftNav = () => {
 
   return (
     <aside className="sticky top-0 p-6 s:p-0 w-[250px] max-h-[540px] flex flex-col items-start gap-3 rounded-[20px] bg-fillStrong text-fontWhite shadow-sm s:hidden">
+      {/* 유저 정보 로딩 중이면 스켈레톤 표시 */}
       {loading ? (
         <LeftNavLoader />
       ) : userData ? (
         <>
+          {/* 유저 정보 표시 */}
           <div className="flex flex-col items-center gap-3 mb-1 pb-5 w-full border-b border-labelAssistive">
             <div className="w-48 h-48 rounded-[12px] bg-fillLight flex justify-center items-center relative">
               <Image
@@ -67,10 +68,9 @@ const LeftNav = () => {
       ) : (
         <div className="text-fillStrong">사용자 정보 없음</div>
       )}
-
-      {/* 메뉴 */}
       <nav>
         <ul className="w-full">
+          {/* 프로필 관리 */}
           <li className="mb-3">
             <span className="block w-full text-lg text-labelNeutral font-baseBold">프로필 관리</span>
             <ul className="ml-4 mt-2">
@@ -97,6 +97,7 @@ const LeftNav = () => {
             </ul>
           </li>
 
+          {/* 북마크 관리 */}
           <li className="mb-3">
             <span className="block w-full text-lg text-labelNeutral font-baseBold">북마크 관리</span>
             <ul className="ml-4 mt-2">
@@ -123,6 +124,7 @@ const LeftNav = () => {
             </ul>
           </li>
 
+          {/* 작성 글 */}
           <li className="mb-3">
             <Link
               href="/mypage/myposts"

@@ -1,6 +1,4 @@
 import PostEditServer from "@/components/PostEdit/PostEditServer";
-
-
 interface PageProps {
   params: { id: string };
 }

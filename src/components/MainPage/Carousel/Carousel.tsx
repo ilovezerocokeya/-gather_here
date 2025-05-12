@@ -11,10 +11,11 @@ import PostCardShort from "@/components/Common/Card/PostCard/PostCardShort";
 import { PostWithUser } from "@/types/posts/Post.type";
 
 interface CarouselProps {
-  posts: PostWithUser[];
+  posts: PostWithUser[]; // 전체 모집글 리스트
 }
 
 const Carousel: React.FC<CarouselProps> = ({ posts }) => {
+  // 모집글이 없을 경우 안내 메시지 출력
   if (!posts || posts.length === 0) {
     return (
       <div className="text-center text-white py-8">
@@ -23,9 +24,11 @@ const Carousel: React.FC<CarouselProps> = ({ posts }) => {
     );
   }
 
+  // 오늘 날짜 기준으로 자정 설정
   const today = new Date();
   today.setHours(0, 0, 0, 0);
 
+  // 마감일까지 0~8일 이내인 모집글 필터링
   const filteredPosts = posts.filter((post) => {
     if (!post.deadline) return false;
 
@@ -38,6 +41,7 @@ const Carousel: React.FC<CarouselProps> = ({ posts }) => {
     return diffDays >= 0 && diffDays <= 8;
   });
 
+  // 필터링된 모집글이 없는 경우
   if (filteredPosts.length === 0) {
     return (
       <div className="text-center text-white py-8">

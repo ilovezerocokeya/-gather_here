@@ -11,6 +11,7 @@ import hanghae2 from "@/../public/Main/AD/hanghae2.png";
 import Image from "next/image";
 
 const AdCard: React.FC = () => {
+  // 슬라이더 설정
   const settings = {
     infinite: true,
     speed: 600,
@@ -22,6 +23,7 @@ const AdCard: React.FC = () => {
     accessibility: false
   };
 
+  // 광고 이미지
   const slideSets = [
     [
       {
@@ -64,6 +66,7 @@ const AdCard: React.FC = () => {
   const [slides, setSlides] = useState(slideSets[0]);
 
   useEffect(() => {
+     // 랜덤 슬라이드 세트 하나를 선택하여 상태로 설정
     const randomIndex = Math.floor(Math.random() * slideSets.length);
     setSlides(slideSets[randomIndex]);
   }, []);

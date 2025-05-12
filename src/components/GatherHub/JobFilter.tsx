@@ -1,9 +1,8 @@
-import React, { useCallback, useMemo, useState } from 'react';
-import { JobFilterProps } from '@/lib/gatherHub';
+import React, { useCallback, useState } from 'react';
+import { JobFilterProps, jobCategories } from '@/lib/gatherHub';
 
-const JobFilter: React.FC<JobFilterProps> = ({ selectedJob, handleSelectJob, jobCategories }) => {
+const JobFilter: React.FC<JobFilterProps> = ({ selectedJob, handleSelectJob }) => {
 const [hoveredJob, setHoveredJob] = useState<string | null>(null);
-const memoizedJobCategories = useMemo(() => jobCategories, [jobCategories]); // useMemo로 jobCategories 메모이제이션
 
 // Mouse Enter와 Leave 핸들러 최적화
 const handleMouseEnter = useCallback((value: string) => {
@@ -28,7 +27,7 @@ return (
         zIndex: 10, 
       }}
     >
-      {memoizedJobCategories.map((job) => (
+      {jobCategories.map((job) => (
         <li
           key={job.value}
           className={`job-item flex items-center justify-start 
@@ -78,7 +77,7 @@ return (
         onChange={(e) => handleSelectJob(e.target.value)}
         style={{ userSelect: 'none' }}
       >
-        {memoizedJobCategories.map((job) => (
+        {jobCategories.map((job) => (
           <option key={job.value} value={job.value}>
             {job.name}
           </option>

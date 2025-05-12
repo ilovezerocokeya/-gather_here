@@ -1,7 +1,6 @@
 import { UserData } from "@/types/userData";
 import { supabase } from "@/utils/supabase/client"; 
 
-//유저 데이터를 업데이트하는 커스텀 훅
 export const useUpdateUserData = (
   userData: UserData | null,
   setUserData: React.Dispatch<React.SetStateAction<UserData | null>>
@@ -9,11 +8,9 @@ export const useUpdateUserData = (
 
   // 특정 필드(answers)만 업데이트하는 함수
   const updateUserAnswers = async (answers: Partial<UserData>) => {
-    //  유저 데이터가 없거나, user_id가 없는 경우 업데이트 불가능
-    if (!userData?.user_id) return;
     
-    // 업데이트할 필드가 없는 경우 불필요한 요청 방지
-    if (Object.keys(answers).length === 0) return; 
+    if (!userData?.user_id) return; //  유저 데이터가 없거나, user_id가 없는 경우 업데이트 불가능
+    if (Object.keys(answers).length === 0) return;  // 업데이트할 필드가 없는 경우 불필요한 요청 방지
   
     try {
       // user_id가 일치하는 사용자 데이터 업데이트

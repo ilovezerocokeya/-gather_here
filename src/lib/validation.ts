@@ -1,8 +1,10 @@
+// 셀렉트 옵션 타입 정의
 interface Option {
   value: string;
   label: string;
 }
 
+// 게시글 임시 저장 타입
 export interface DraftType {
   title: string;
   category: string;
@@ -11,13 +13,14 @@ export interface DraftType {
   duration: string;
   totalMembers: string;
   personalLink: string;
-  targetPosition: Option[];
+  targetPosition: Option[];    
   recruitmentCount: string;
-  techStack: Option[];
+  techStack: Option[];         
   deadline: string;
   content: string;
 }
 
+// 게시글 필수 항목 검증 함수
 export const validateDraft = (draft: DraftType): string | null => {
   if (!draft.title.trim()) return '제목을 입력해주세요.';
   if (!draft.category.trim()) return '분류를 선택해주세요.';

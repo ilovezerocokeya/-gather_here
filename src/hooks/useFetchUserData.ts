@@ -3,9 +3,9 @@ import { supabase } from "@/utils/supabase/client";
 import { UserData, defaultUserData } from "@/types/userData";
 
 export const useFetchUserData = () => {
-  const [userData, setUserData] = useState<UserData | null>(null);  // 유저 데이터를 저장하는 상태 
-  const [loading, setLoading] = useState<boolean>(false); // API 요청이 진행 중인지 나타내는 로딩 상태
-  const [error, setError] = useState<string | null>(null); // API 요청 중 발생한 에러 메시지를 저장하는 상태
+  const [userData, setUserData] = useState<UserData | null>(null);
+  const [loading, setLoading] = useState<boolean>(false); 
+  const [error, setError] = useState<string | null>(null); 
 
   // 사용자 데이터를 가져오는 함수
   const fetchUserData = useCallback(async (userId: string) => {

@@ -8,11 +8,9 @@ const HubRegister: React.FC<HubRegisterProps> = ({ isAuthenticated, isHubRegiste
    // 버튼 클릭 시 실행되는 함수
    const handleAddCard = () => {
     if (!isAuthenticated) {
-      // 로그인하지 않은 경우, 로그인 모달 열기
       openLoginModal();
     } else {
-      // 이미 Hub에 등록한 경우 "/mypage/"로 이동, 아니면 "/mypage"로 이동
-      router.push(isHubRegistered ? '/mypage/' : '/mypage');
+      router.push(isHubRegistered ? '/mypage/' : '/mypage'); 
     }
   };
 
@@ -25,7 +23,7 @@ const HubRegister: React.FC<HubRegisterProps> = ({ isAuthenticated, isHubRegiste
                   hover:scale-110 active:scale-95 hover:animate-bounce hover:bg-fillLight cursor-pointer z-[9999]"
         onClick={handleAddCard}
         style={{
-          zIndex: 9999, // 버튼이 항상 최상위로 배치되도록 설정
+          zIndex: 9999,
           userSelect: 'none',
         }}
       >

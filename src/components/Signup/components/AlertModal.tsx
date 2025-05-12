@@ -17,13 +17,10 @@ const AlertModal: React.FC<ModalProps> = ({ isOpen, onCancel, onConfirm }) => {
     };
 
     if (isOpen) {
-      // 모달이 열리면 스크롤 막기
-      document.body.style.overflow = 'hidden';
-      // Esc 키 이벤트 리스너 추가
-      window.addEventListener("keydown", handleEsc);
+      document.body.style.overflow = 'hidden'; // 모달이 열리면 스크롤 막기
+      window.addEventListener("keydown", handleEsc); // Esc 키 이벤트 리스너 추가
     } else {
-      // 모달이 닫히면 스크롤 복구
-      document.body.style.overflow = 'auto';
+      document.body.style.overflow = 'auto'; // 모달이 닫히면 스크롤 복구
     }
 
     return () => {

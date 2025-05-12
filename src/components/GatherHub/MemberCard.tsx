@@ -7,7 +7,7 @@ import CardModal from "./CardModal";
 import Toast from "@/components/Common/Toast/Toast";
 import ProfileExtend from "./ProfileExtend"; 
 import { MemberCardProps } from "@/lib/gatherHub";
-import { techStacks } from "@/lib/techStacks";
+import { techStacks } from "@/lib/generalOptionStacks";
 import { stripQuery } from "@/utils/Image/imageUtils";
 import { secureImageUrl } from "@/utils/Image/imageUtils";
 
@@ -36,12 +36,11 @@ const MemberCard: React.FC<MemberCardProps> = ({
     message: string;
   } | null>(null);
 
-  const { likedMembers, toggleLike } = useLikeStore(); // 좋아요 상태 관리
-  const { userData, imageVersion } = useUserStore(); // 현재 로그인 유저 정보
-
+  const { likedMembers, toggleLike } = useLikeStore(); 
+  const { userData, imageVersion } = useUserStore(); 
   const currentUserId = userData?.user_id;
-  const isMyCard = currentUserId === user_id; // 해당 카드가 본인의 카드인지 여부
-  const liked = likedMembers[user_id] || false; // 현재 카드가 좋아요 되어 있는지 여부
+  const isMyCard = currentUserId === user_id;
+  const liked = likedMembers[user_id] || false;
 
   // 좋아요 토글 핸들러
   const handleToggleLike = () => {

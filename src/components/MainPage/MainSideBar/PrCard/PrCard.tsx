@@ -11,7 +11,7 @@ import { fetchMembers } from "@/utils/fetchMembers";
 import { MemberCardProps, MemberType } from "@/lib/gatherHub";
 import CardUI from "@/components/GatherHub/CardUI";
 import CardModal from "@/components/GatherHub/CardModal";
-import { techStacks } from "@/lib/techStacks";
+import { techStacks } from "@/lib/generalOptionStacks";
 import { secureImageUrl } from "@/utils/Image/imageUtils";
 import Image from "next/image";
 import Head from "next/head";
@@ -29,19 +29,19 @@ const PrCard: React.FC = () => {
 
   // 슬라이더 설정
   const settings = {
-    infinite: true, // 무한 루프 활성화
-    speed: 600, // 슬라이드 전환 속도 (ms)
-    slidesToShow: 1, // 한 번에 표시할 슬라이드 개수
-    slidesToScroll: 1, // 한 번에 이동할 슬라이드 개수
-    autoplay: true, // 자동 재생 활성화
-    autoplaySpeed: 4000, // 자동 전환 속도 (ms)
-    arrows: false, // 화살표 버튼 비활성화
-    lazyLoad: "progressive" as const,// 슬라이드 이미지 로딩 최적화
-    pauseOnHover: true, // 사용자 경험 개선
+    infinite: true,
+    speed: 600, 
+    slidesToShow: 1, 
+    slidesToScroll: 1,
+    autoplay: true,
+    autoplaySpeed: 4000,
+    arrows: false,
+    lazyLoad: "progressive" as const,
+    pauseOnHover: true,
   };
-  const { likedMembers, toggleLike } = useLikeStore(); // Zustand 상태 관리에서 좋아요 정보 가져오기
-  const { userData } = useUserStore(); // 현재 로그인한 사용자 정보 가져오기
-  const [selectedMember, setSelectedMember] = useState<MemberCardProps | null>(null); // 모달 상태 관리
+  const { likedMembers, toggleLike } = useLikeStore(); 
+  const { userData } = useUserStore(); 
+  const [selectedMember, setSelectedMember] = useState<MemberCardProps | null>(null);
   const [toast, setToast] = useState<{
     state: "success" | "error" | "warn" | "info" | "custom";
     message: string;
@@ -62,7 +62,7 @@ const PrCard: React.FC = () => {
     }
   };
 
-  // React Query를 사용하여 데이터 가져오기 (무한 스크롤 방식)
+  // React Query를 사용하여 데이터 가져오기
   const { data, isLoading, isError } = useInfiniteQuery({
     queryKey: ["members"], 
     queryFn: ({ pageParam = 1 }) => fetchMembers(pageParam),

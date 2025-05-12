@@ -27,8 +27,7 @@ export function useImageUploadManager(
     fetchUserData,
   } = useUserStore();
 
-  const defaultImage =  type === "profile" ? DEFAULT_PROFILE_IMAGE : DEFAULT_BACKGROUND_IMAGE;
-
+  const defaultImage =  type === "profile" ? DEFAULT_PROFILE_IMAGE : DEFAULT_BACKGROUND_IMAGE; // 기본 이미지 URL
   const delay = (ms: number) => new Promise((res) => setTimeout(res, ms));  // 비동기 지연을 위한 유틸 함수
 
   // 이미지 업로드 핸들러
@@ -48,8 +47,7 @@ export function useImageUploadManager(
           console.warn("[Upload] 기존 이미지 삭제 실패 (계속 진행):", removeError.message);
         }
 
-        // 캐시 무효화를 위한 딜레이
-        await delay(700);
+        await delay(700); // 캐시 무효화를 위한 딜레이
 
         // WebP 변환
         const webpFile = await convertToWebp(file, type);

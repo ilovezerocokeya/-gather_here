@@ -25,7 +25,7 @@ const LoginModal: React.FC<LoginModalProps> = ({ isModalOpen, closeModal }) => {
           &times;
         </button>
 
-        {/* 로그인 폼 (배경 스타일 제거된 컴포넌트) */}
+        {/* 로그인 폼 */}
         <LoginForm />
       </div>
     </>,

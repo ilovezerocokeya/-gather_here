@@ -6,8 +6,8 @@ import { useLikeStore } from "@/stores/useLikeStore";
 import { useUserStore } from '@/stores/useUserStore';
 
 const MemberList: React.FC<MemberListProps> = ({ filteredMembers }) => {
-  const { likedMembers, toggleLike } = useLikeStore(); // 좋아요 상태 가져오기
-  const { userData } = useUserStore(); // 로그인된 사용자 정보 가져오기
+  const { likedMembers, toggleLike } = useLikeStore();
+  const { userData } = useUserStore(); 
 
   return (
     <div className="flex-grow grid grid-cols-1 z-10 md:grid-cols-2 lg:grid-cols-3 gap-10 justify-items-center mx-auto">

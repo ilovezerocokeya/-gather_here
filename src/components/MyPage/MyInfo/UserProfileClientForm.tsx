@@ -1,12 +1,13 @@
 "use client";
 
-import { useState, useTransition } from "react";
+import { useReducer, useState, useTransition } from "react";
 import { useRouter } from "next/navigation";
 import Toast from "@/components/Common/Toast/Toast";
 import { updateProfile } from "@/components/MyPage/MyInfo/actions/updateProfile";
 import useCheckNickname from "@/hooks/useCheckNickname";
 import ProfileImage from "@/components/MyPage/MyInfo/ProfileImage"; 
 import { useUserStore } from "@/stores/useUserStore";
+import { userProfileReducer, createInitialState } from "./reducer/useProfileReducer";
 
 interface UserProfileClientFormProps {
   initialData: {
@@ -35,29 +36,31 @@ const extractFormData = (form: HTMLFormElement) => {
       state: "success" | "error" | "warn" | "info" | "custom";
       message: string;
     } | null>(null);
-    const [isCancelModalOpen, setIsCancelModalOpen] = useState(false);
-    const [isSaveModalOpen, setIsSaveModalOpen] = useState(false);
-    const [nickname, setNickname] = useState(initialData.nickname);
+
     const { userData } = useUserStore();
-    const [isChanged, setIsChanged] = useState(false);
-    const { result: nicknameAvailable, isEmpty } = useCheckNickname(nickname);
-    const [updatedImageUrl, setUpdatedImageUrl] = useState<string | null>(null);
-    const [localInitialData, setLocalInitialData] = useState(initialData); // 저장 이후 비교 기준이 될 로컬 상태 추가
+    const [state, dispatch] = useReducer(userProfileReducer, createInitialState({
+      email: initialData.email,
+      nickname: initialData.nickname,
+      jobTitle: initialData.jobTitle,
+      experience: initialData.experience,
+      profileImageUrl: initialData.profileImageUrl,
+    }));
+
+    const { result: nicknameAvailable, isEmpty } = useCheckNickname(state.nickname);
 
     // 변경 여부를 localInitialData 기준으로 감지
     const checkFormChanged = (form: HTMLFormElement) => {
       const { nickname, jobTitle, experience } = extractFormData(form);
       return (
-        nickname !== localInitialData.nickname ||
-        jobTitle !== localInitialData.jobTitle ||
-        experience !== localInitialData.experience ||
-        (updatedImageUrl !== null && updatedImageUrl !== localInitialData.profileImageUrl)
+        nickname !== state.localInitialData.nickname ||
+        jobTitle !== state.localInitialData.jobTitle ||
+        experience !== state.localInitialData.experience ||
+        (state.updatedImageUrl !== null && state.updatedImageUrl !== state.localInitialData.profileImageUrl)
       );
     };
 
     const handleFormChange = (e: React.FormEvent<HTMLFormElement>) => {
-      const changed = checkFormChanged(e.currentTarget);
-      setIsChanged(changed);
+      dispatch({ type: "SET_CHANGED", payload: checkFormChanged(e.currentTarget) });
     };
 
 
@@ -65,11 +68,12 @@ const extractFormData = (form: HTMLFormElement) => {
     const handleCancelClick = (e: React.FormEvent<HTMLFormElement>) => {
       const { nickname, jobTitle, experience } = extractFormData(e.currentTarget);
       const changed =
-        nickname !== localInitialData.nickname ||
-        jobTitle !== localInitialData.jobTitle ||
-        experience !== localInitialData.experience;
+        nickname !== state.localInitialData.nickname ||
+        jobTitle !== state.localInitialData.jobTitle ||
+        experience !== state.localInitialData.experience;
+  
       if (changed) {
-        setIsCancelModalOpen(true);
+        dispatch({ type: "TOGGLE_CANCEL_MODAL", payload: true });
       } else {
         router.push("/");
       }
@@ -78,44 +82,51 @@ const extractFormData = (form: HTMLFormElement) => {
     // 제출 시 updateProfile
     const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
       e.preventDefault();
+    
+      // form 요소에서 현재 입력된 값들 추출
       const { nickname, jobTitle, experience } = extractFormData(e.currentTarget);
   
       startTransition(() => {
+        // Supabase에 사용자 프로필 정보 업데이트 요청
         updateProfile({
           nickname,
           jobTitle,
           experience,
-          profileImageUrl: updatedImageUrl ?? userData?.profile_image_url ?? "",
+          profileImageUrl: state.updatedImageUrl ?? userData?.profile_image_url ?? "", // 새 이미지가 있으면 사용, 없으면 기존 이미지 유지
         })
           .then(async () => {
+            // 최신 사용자 데이터 재요청 → 전역 상태 업데이트
             const { fetchUserData, userData } = useUserStore.getState();
-            if (userData?.user_id) {
-              await fetchUserData(userData.user_id);
-            }
-  
-            // 저장 후 로컬 초기 상태도 갱신
-            setLocalInitialData({
-              email: localInitialData.email, // 이메일은 변하지 않으니 그대로 유지
-              nickname,
-              jobTitle,
-              experience,
-              profileImageUrl: updatedImageUrl ?? userData?.profile_image_url ?? "",
+            if (userData?.user_id) await fetchUserData(userData.user_id);
+    
+            // reducer에 저장된 초기 상태도 새 값으로 갱신
+            dispatch({
+              type: "UPDATE_INITIAL_DATA",
+              payload: {
+                email: state.localInitialData.email, // 이메일은 변경되지 않음
+                nickname,
+                jobTitle,
+                experience,
+                profileImageUrl: state.updatedImageUrl ?? userData?.profile_image_url ?? "",
+              },
             });
-  
-            // 상태 초기화
-            setIsChanged(false);
-            setNickname(nickname);
-            setUpdatedImageUrl(null);
-  
+     
+            dispatch({ type: "SET_CHANGED", payload: false });
+            dispatch({ type: "SET_NICKNAME", payload: nickname });
+            dispatch({ type: "SET_IMAGE_URL", payload: null });
+            dispatch({ type: "TOGGLE_SAVE_MODAL", payload: true });  
             setToast({ state: "success", message: "프로필이 저장되었습니다." });
-            setIsSaveModalOpen(true);
           })
           .catch((err) => {
-            const message = err instanceof Error ? err.message : "알 수 없는 오류가 발생했습니다.";
-            setToast({ state: "error", message });
+            // 실패 시 에러 메시지 토스트
+            setToast({
+              state: "error",
+              message: err instanceof Error ? err.message : "알 수 없는 오류가 발생했습니다.",
+            });
           });
       });
     };
+  
 
     return (
         <section>
@@ -123,12 +134,12 @@ const extractFormData = (form: HTMLFormElement) => {
             className="space-y-10"
             onSubmit={handleSubmit}
             onReset={handleCancelClick}
-            onChange={handleFormChange} // ✅ 변경 감지 추가
+            onChange={handleFormChange}
           >
             <fieldset>
               {/* 프로필 이미지 업로드 컴포넌트 */}
               <ProfileImage
-                onImageChange={(url) => setUpdatedImageUrl(url)}
+                onImageChange={(url) => dispatch({ type: "SET_IMAGE_URL", payload: url })}
                 onToast={(state, message) => setToast({ state, message })}
               />
               {/* 닉네임, 직군, 경력 입력란 */}
@@ -159,7 +170,7 @@ const extractFormData = (form: HTMLFormElement) => {
                     name="nickname"
                     type="text"
                     defaultValue={initialData.nickname}
-                    onChange={(e) => setNickname(e.target.value)}
+                    onChange={(e) => dispatch({ type: "SET_NICKNAME", payload: e.target.value })}
                     placeholder="닉네임을 입력해주세요."
                     className={`
                       w-full shared-input-gray-2 border
@@ -170,10 +181,10 @@ const extractFormData = (form: HTMLFormElement) => {
                   />
                   <p
                     className={`text-baseXs mt-1 ${
-                      nickname && nicknameAvailable?.valid ? "text-statusPositive" : "text-statusDestructive"
+                      state.nickname && nicknameAvailable?.valid ? "text-statusPositive" : "text-statusDestructive"
                     }`}
                   >
-                    {nickname && nicknameAvailable?.message}
+                    {state.nickname && nicknameAvailable?.message}
                   </p>
                 </div>
                   
@@ -240,12 +251,12 @@ const extractFormData = (form: HTMLFormElement) => {
                   type="submit"
                   disabled={
                     isPending ||
-                    !isChanged ||
-                    nickname.trim() === "" ||
+                    !state.isChanged ||
+                    state.nickname.trim() === "" ||
                     nicknameAvailable?.valid !== true
                   }
                   className={`w-[65px] shared-button-green ${
-                    isPending || !isChanged || nickname.trim() === "" || nicknameAvailable?.valid !== true
+                    isPending || !state.isChanged || state.nickname.trim() === "" || nicknameAvailable?.valid !== true
                       ? "!bg-fillLight !text-labelDisabled !border-fillLight !cursor-not-allowed"
                       : ""
                   }`}
@@ -265,13 +276,13 @@ const extractFormData = (form: HTMLFormElement) => {
           )}
 
           {/* 저장 완료 모달 */}
-          {isSaveModalOpen && (
+          {state.isSaveModalOpen && (
             <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-60 z-50">
               <div className="bg-fillStrong p-6 rounded-xl text-center min-w-[320px]">
                 <h2 className="text-lg font-baseBold text-fontWhite mb-2">저장되었습니다.</h2>
                 <p className="text-labelNeutral text-baseS mb-5">변경 사항이 성공적으로 저장되었습니다.</p>
                 <div className="flex gap-2 justify-center">
-                  <button className="shared-button-green w-1/2" onClick={() => setIsSaveModalOpen(false)}>
+                  <button className="shared-button-green w-1/2" onClick={() => dispatch({ type: "TOGGLE_SAVE_MODAL", payload: false })}>
                     확인
                   </button>
                   <button className="shared-button-gray w-1/2" onClick={() => router.push("/")}>
@@ -283,7 +294,7 @@ const extractFormData = (form: HTMLFormElement) => {
           )}
           
           {/* 취소 확인 모달 */}
-          {isCancelModalOpen && (
+          {state.isCancelModalOpen && (
             <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-60 z-50">
               <div className="bg-fillStrong p-6 rounded-xl text-center min-w-[320px]">
                 <h2 className="text-lg font-baseBold text-fontWhite mb-2">수정 중인 내용이 있어요.</h2>
@@ -291,7 +302,7 @@ const extractFormData = (form: HTMLFormElement) => {
                 <div className="flex gap-2 justify-center">
                   <button
                     className="shared-button-gray w-1/2"
-                    onClick={() => setIsCancelModalOpen(false)}
+                    onClick={() => dispatch({ type: "TOGGLE_CANCEL_MODAL", payload: false })}
                   >
                     마저 쓸래요
                   </button>
