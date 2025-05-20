@@ -45,7 +45,7 @@ const Signup04: React.FC = () => {
         <div className="s:bottom-8 bottom-9 w-full px-4 mt-10 flex justify-center">
           <button
             onClick={handleExplore}
-            className="s:w-[300px] w-[350px] h-[45px] bg-[#343437] text-primary py-2 rounded-md transition-transform hover:scale-105 hover:text-white active:scale-95"
+            className="s:w-[300px] w-[350px] h-[45px] bg-[#343437] text-primary py-2 rounded-md transition-transform md:hover:scale-105 md:hover:text-white active:scale-95"
           >
             둘러보기
           </button>

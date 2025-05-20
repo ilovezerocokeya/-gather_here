@@ -1,16 +1,14 @@
 "use client";
 
-import React, { useMemo, useState } from "react";
+import React, { useMemo } from "react";
 import ImageUploader from "@/components/Common/Images/ImageUploader";
 import { useUserStore } from "@/stores/useUserStore";
 import { useImageUploadManager } from "@/hooks/useImageUploadManager";
-import Toast from "@/components/Common/Toast/Toast";
-import {
-  stripQuery,
-  DEFAULT_BACKGROUND_IMAGE,
-} from "@/utils/Image/imageUtils";
+import { useToastStore } from "@/stores/useToastStore";
+import { stripQuery, DEFAULT_BACKGROUND_IMAGE } from "@/utils/Image/imageUtils";
 
 const BackgroundPicture: React.FC = () => {
+  const { showToast } = useToastStore();
   const {
     userData,
     backgroundImageUrl,
@@ -19,15 +17,11 @@ const BackgroundPicture: React.FC = () => {
     incrementImageVersion,
   } = useUserStore();
 
-  const [toast, setToast] = useState<{
-    state: "success" | "error" | "warn" | "info" | "custom";
-    message: string;
-  } | null>(null);
+
 
    // 이미지 업로드 및 초기화 관련 로직 제공 훅
    const { uploadImage, resetImage } = useImageUploadManager(
     userData?.user_id ?? null,
-    (state, msg) => setToast({ state, message: msg }),
     "background"
   );
 
@@ -64,25 +58,17 @@ const BackgroundPicture: React.FC = () => {
         <ImageUploader
           imageUrl={imageUrl}
           onUpload={handleUpload}
-          onError={(msg) => setToast({ state: "error", message: msg })}
+          onError={(msg) => showToast(msg, "error")}
           type="background"
         />
         <button
           type="button"
           onClick={() => void handleReset()}
-          className="mt-4 px-4 py-2 ml-7 bg-primary text-black rounded-md hover:bg-gray-700 transition-all duration-200 text-sm"
+          className="mt-4 px-4 py-2 ml-7 bg-primary text-black rounded-md md:hover:bg-gray-700 transition-all duration-200 text-sm"
         >
           기본 이미지로 변경
         </button>
       </div>
-
-      {toast && (
-        <Toast
-          state={toast.state}
-          message={toast.message}
-          onClear={() => setToast(null)}
-        />
-      )}
     </div>
   );
 };

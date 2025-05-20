@@ -144,7 +144,7 @@ const HubProfileForm: React.FC<{
           <button
             type="button"
             onClick={() => setShowFirstLink(true)}
-            className="text-labelNeutral hover:text-primary mt-2 text-sm flex items-center"
+            className="text-labelNeutral md:hover:text-primary mt-2 text-sm flex items-center"
           >
             <span className="mr-2">+</span> 추가 링크
           </button>
@@ -165,7 +165,7 @@ const HubProfileForm: React.FC<{
             <button
               type="button"
               onClick={() => setShowSecondLink(true)}
-              className="text-labelNeutral hover:text-primary mt-2 text-sm flex items-center"
+              className="text-labelNeutral md:hover:text-primary mt-2 text-sm flex items-center"
             >
               <span className="mr-2">+</span> 추가 링크 2
             </button>

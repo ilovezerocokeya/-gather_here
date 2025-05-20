@@ -19,7 +19,7 @@ const PostFormButtons = ({
       <button
         type="button"
         onClick={onExit}
-        className="text-labelNeutral flex items-center space-x-2 transition hover:text-primary active:scale-95"
+        className="text-labelNeutral flex items-center space-x-2 transition md:hover:text-primary active:scale-95"
       >
         <Image src="/assets/back.svg" alt="Back" width={24} height={24} />
         <span className="font-medium">나가기</span>
@@ -30,7 +30,7 @@ const PostFormButtons = ({
         </button>
         <button
           type="submit"
-          className="shared-button-green transition-all duration-150 hover:brightness-110 active:scale-95"
+          className="shared-button-green transition-all duration-150 md:hover:brightness-110 active:scale-95"
         >
           {mode === 'edit' ? '수정 완료' : '등록'}
         </button>

@@ -23,13 +23,21 @@ const SearchModal = forwardRef<SearchModalRef>((props, ref) => {
         setIsOpen(false);
       }
     };
-
+  
+    const handleEscapeKey = (event: KeyboardEvent) => {
+      if (event.key === "Escape") {
+        setIsOpen(false);
+      }
+    };
+  
     if (isOpen) {
       document.addEventListener("mousedown", handleOutsideClick);
+      document.addEventListener("keydown", handleEscapeKey);
     }
-
+  
     return () => {
       document.removeEventListener("mousedown", handleOutsideClick);
+      document.removeEventListener("keydown", handleEscapeKey);
     };
   }, [isOpen]);
 
@@ -44,7 +52,7 @@ const SearchModal = forwardRef<SearchModalRef>((props, ref) => {
     <div className="fixed inset-0 bg-black bg-opacity-50 ease-in-out backdrop-blur-sm z-10">
       <div
         ref={modalRef}
-        className="mx-auto max-w-container-l m:max-w-container-m s:max-w-container-s w-full h-[78px] p-5 bg-fillStrong rounded-[20px] flex-col justify-start items-start inline-flex mt-[20px] absolute inset-x-0 inset-y-32 z-50"
+        className="mx-auto max-w-container-l m:max-w-container-m s:max-w-container-s w-full h-[58px] p-5 bg-primary rounded-[20px] flex-col justify-start items-start inline-flex mt-[60px] md:mt-[80px] absolute inset-x-0 inset-y-32 z-99"
       >
         <div className="self-stretch justify-start items-center gap-5 inline-flex">
           <div data-svg-wrapper>
@@ -57,36 +65,45 @@ const SearchModal = forwardRef<SearchModalRef>((props, ref) => {
               />
             </svg>
           </div>
-          <div className="grow shrink basis-0 h-[38px] justify-between items-center flex">
-            <div className="justify-start items-center flex">
-              <form className="relative items-center s:w-full" onSubmit={onSubmit}>
-                <label htmlFor="input" className="sr-only">
-                  검색창
-                </label>
-                <input
-                  type="text"
-                  id="input"
-                  name="search"
-                  placeholder="검색어를 입력해보세요"
-                  className="w-full h-[60px] bg-fillStrong text-fontWhite text-[28px] font-normal font-['Pretendard'] leading-[37.80px] focus:outline-none"
-                  value={searchWord}
-                  onChange={(evt: React.ChangeEvent<HTMLInputElement>) => setSearchWord(evt.target.value)}
-                />
-              </form>
-            </div>
-            <button onClick={() => setSearchWord("")} type="button" aria-label="검색어 지우기">
-              <div data-svg-wrapper>
-                <svg width="28" height="28" viewBox="0 0 28 28" fill="none" xmlns="http://www.w3.org/2000/svg">
-                  <rect width="28" height="28" rx="7" fill="#28282A" />
-                  <path
-                    fillRule="evenodd"
-                    clipRule="evenodd"
-                    d="M7.64645 7.64645C7.84171 7.45118 8.15829 7.45118 8.35355 7.64645L14 13.2929L19.6464 7.64645C19.8417 7.45118 20.1583 7.45118 20.3536 7.64645C20.5488 7.84171 20.5488 8.15829 20.3536 8.35355L14.7071 14L20.3536 19.6464C20.5488 19.8417 20.5488 20.1583 20.3536 20.3536C20.1583 20.5488 19.8417 20.5488 19.6464 20.3536L14 14.7071L8.35355 20.3536C8.15829 20.5488 7.84171 20.5488 7.64645 20.3536C7.45118 20.1583 7.45118 19.8417 7.64645 19.6464L13.2929 14L7.64645 8.35355C7.45118 8.15829 7.45118 7.84171 7.64645 7.64645Z"
-                    fill="#5E5E5E"
-                  />
-                </svg>
-              </div>
-            </button>
+          <div className="grow shrink basis-0 h-[20px] flex items-center">
+            <form className="relative w-full" onSubmit={onSubmit}>
+              <label htmlFor="input" className="sr-only">검색창</label>
+
+              <input
+                type="text"
+                id="input"
+                name="search"
+                placeholder="검색어를 입력해보세요"
+                className="w-full h-full pr-10 bg-primary text-black text-[20px] md:text-[28px] placeholder:text-[16px] md:placeholder:text-[28px] font-normal font-['Pretendard'] leading-[30px] md:leading-[37.8px] focus:outline-none rounded-md"
+                value={searchWord}
+                onChange={(evt) => setSearchWord(evt.target.value)}
+              />
+
+              {searchWord && (
+                <button
+                  onClick={() => setSearchWord("")}
+                  type="button"
+                  aria-label="검색어 지우기"
+                  className="absolute right-3 top-1/2 transform -translate-y-1/2 w-5 h-5 flex items-center justify-center"
+                >
+                  <svg
+                    width="16"
+                    height="16"
+                    viewBox="0 0 24 24"
+                    fill="none"
+                    xmlns="http://www.w3.org/2000/svg"
+                  >
+                    <path
+                      d="M18 6L6 18M6 6L18 18"
+                      stroke="#5E5E5E"
+                      strokeWidth="2"
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                    />
+                  </svg>
+                </button>
+              )}
+            </form>
           </div>
         </div>
       </div>

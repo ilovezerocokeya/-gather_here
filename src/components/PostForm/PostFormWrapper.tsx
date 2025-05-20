@@ -9,7 +9,7 @@ import PostFormRecruit from './PostFormRecruit';
 import PostFormEditor from './PostFormEditor';
 import PostFormButtons from './PostFormButtons';
 import PostFormModals from './PostFormModals';
-import Toast from '@/components/Common/Toast/Toast';
+import { useToastStore } from "@/stores/useToastStore";
 import { convertFormStateToPostPayload } from '@/utils/postUtils/postFormUtils';
 import { useEffect, useState } from 'react';
 import { PostFormState } from './postFormTypes';
@@ -35,16 +35,7 @@ const PostFormWrapper = ({ mode, defaultValues, postId }: PostFormWrapperProps) 
   // 모달 및 토스트 상태
   const [showLoginModal, setShowLoginModal] = useState(false);
   const [showExitModal, setShowExitModal] = useState(false);
-  const [toast, setToast] = useState<{
-    state: 'success' | 'error' | 'warn' | 'info' | 'custom';
-    message: string;
-  } | null>(null);
-
-  // 토스트 메시지 표시 유틸
-  const showToast = (state: 'success' | 'error' | 'warn' | 'info' | 'custom', message: string, duration = 2000) => {
-    setToast({ state, message });
-    setTimeout(() => setToast(null), duration);
-  };
+  const { showToast } = useToastStore();
 
   // 로그인 여부 확인 (비로그인 시 로그인 모달 노출)
   const getUserOrShowLogin = async () => {
@@ -60,7 +51,7 @@ const PostFormWrapper = ({ mode, defaultValues, postId }: PostFormWrapperProps) 
   const handleSubmit = async () => {
     // 필수값 누락 등 기본 유효성 검사
     const errorMessage = validateDraft(state);
-    if (errorMessage) return showToast('error', errorMessage);
+    if (errorMessage) return showToast(errorMessage, "error");
 
     // 로그인 유저 확인 (비로그인 상태면 로그인 모달 띄움)
     const user = await getUserOrShowLogin();
@@ -79,14 +70,12 @@ const PostFormWrapper = ({ mode, defaultValues, postId }: PostFormWrapperProps) 
       // 실패 처리
       if (error) {
         console.error('게시글 생성 오류:', error.message);
-        return showToast('error', '게시글 생성에 실패했어요.');
+        return showToast("게시글 생성에 실패했어요." , "error");
       }
 
       // 성공 시: 로컬 draft 삭제 및 상세 페이지 이동
-      if (data?.[0]?.post_id) {
-        clearDraftFromStorage(user.id);
-        router.push(`/maindetail/${data[0].post_id}`);
-      }
+      clearDraftFromStorage(user.id);
+      router.push(`/maindetail/${data[0].post_id}?justPosted=true`);
     } else if (mode === 'edit' && postId) {
       // 기존 게시글 수정 요청
       const { error } = await supabase
@@ -96,7 +85,7 @@ const PostFormWrapper = ({ mode, defaultValues, postId }: PostFormWrapperProps) 
 
       if (error) {
         console.error('게시글 수정 오류:', error.message);
-        return showToast('error', '게시글 수정에 실패했어요.');
+        return showToast("게시글 수정에 실패했어요." , "error");
       }
 
       // 수정 성공 시 해당 게시글 상세 페이지로 이동
@@ -116,12 +105,12 @@ const PostFormWrapper = ({ mode, defaultValues, postId }: PostFormWrapperProps) 
     });
 
     if (!hasContent) {
-      showToast('warn', '작성된 내용이 없어요!');
+      showToast("작성된 내용이 없어요!" , "warn");
       return;
     }
 
     saveDraftToStorage(data.user.id, state);
-    showToast('success', '임시 저장 완료!');
+    showToast("임시 저장 완료!" , "success");
   };
 
   // 수정 모드에서 변경 사항이 있는지 확인
@@ -152,7 +141,7 @@ const PostFormWrapper = ({ mode, defaultValues, postId }: PostFormWrapperProps) 
       const storedDraft = loadDraftFromStorage(data.user.id);
       if (storedDraft) {
         setAllFields(storedDraft);
-        showToast('info', '이전에 작성 중이던 글을 불러왔어요.');
+        showToast("이전에 작성 중이던 글을 불러왔어요." , "info");
       }
     };
     void init();
@@ -170,7 +159,7 @@ const PostFormWrapper = ({ mode, defaultValues, postId }: PostFormWrapperProps) 
       />
 
       {/* 본문 영역 */}
-      <div className="w-full max-w-[744px] mx-auto px-4 pt-6 pb-12">
+      <div className="w-full max-w-[744px] mx-auto px-4 s:pt-6 pb-12">
         <form onSubmit={(e) => { e.preventDefault(); void handleSubmit(); }} className="space-y-4">
           <PostFormInputs state={state} handleInputChange={handleInputChange} />
           <PostFormRecruit
@@ -194,9 +183,6 @@ const PostFormWrapper = ({ mode, defaultValues, postId }: PostFormWrapperProps) 
           />
         </form>
       </div>
-
-      {/* 토스트 메시지 */}
-      {toast && <Toast state={toast.state} message={toast.message} onClear={() => setToast(null)} />}
     </>
   );
 };

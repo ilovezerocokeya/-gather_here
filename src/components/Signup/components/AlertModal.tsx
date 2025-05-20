@@ -56,13 +56,13 @@ const AlertModal: React.FC<ModalProps> = ({ isOpen, onCancel, onConfirm }) => {
         <div className="flex justify-between">
           <button
             onClick={onCancel}
-            className="bg-[#3a3a3d] text-primary px-4 py-2 w-[48%] rounded-md text-sm font-semibold transition-colors duration-200 hover:bg-#88888f hover:text-white"
+            className="bg-[#3a3a3d] text-primary px-4 py-2 w-[48%] rounded-md text-sm font-semibold transition-colors duration-200 md:hover:bg-#88888f md:hover:text-white"
           >
             마저 쓸래요
           </button>
           <button
             onClick={onConfirm}
-            className="bg-[#b4e373] text-[#343437] px-4 py-2 w-[48%] rounded-md text-sm font-semibold transition-colors duration-200 hover:bg-[#9cb97a] hover:text-white"
+            className="bg-[#b4e373] text-[#343437] px-4 py-2 w-[48%] rounded-md text-sm font-semibold transition-colors duration-200 md:hover:bg-[#9cb97a] md:hover:text-white"
           >
             나갈래요
           </button>

@@ -3,6 +3,7 @@ import './globals.css';
 import CombinedProviders from '@/provider/CombinedProviders';
 import Header from '@/components/Common/Header/Header';
 import 'react-toastify/dist/ReactToastify.css';
+import Toast from '@/components/Common/Toast/Toast'; 
 import type { Metadata } from 'next';
 import React from 'react';
 
@@ -73,11 +74,12 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="ko" className={pretendard.className}>
-      <body className="bg-background text-fontWhite">
+      <body className="bg-background text-fontWhite pt-[54px]">
         <CombinedProviders>
           <Header />
           {children}
           {login}
+           <Toast />
         </CombinedProviders>
       </body>
     </html>

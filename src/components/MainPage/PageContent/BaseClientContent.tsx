@@ -63,7 +63,6 @@ const BaseClientContent: React.FC<BaseClientContentProps> = ({
       pages: [initialPosts],
       pageParams: [1],
     },
-    staleTime: 10000,
     refetchOnMount: "always",
     refetchOnReconnect: true,
     refetchInterval: false,

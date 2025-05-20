@@ -1,7 +1,7 @@
 import { Dispatch, SetStateAction } from "react";
 
-// 멤버 카드 인터페이스
-export interface MemberCardProps {
+// 멤버 타입 정의
+export interface MemberType {
   user_id: string;
   nickname: string;
   job_title: string;
@@ -18,13 +18,13 @@ export interface MemberCardProps {
   answer2: string;
   answer3: string;
   liked: boolean;
-  toggleLike: (userId: string, currentUserId: string) => void;
   tech_stacks: string[];
   imageVersion?: number;
 }
 
 // CardUI에서만 필요한 추가 속성
 export interface CardUIProps {
+  user_id: string;
   nickname: string;
   job_title: string;
   experience: string;
@@ -37,9 +37,8 @@ export interface CardUIProps {
   second_link_type?: string;
   second_link?: string;
   liked: boolean;
-  handleToggleLike: () => void;
-  secureImageUrl: (url: string) => string;
-  onOpenModal: () => void;
+  handleToggleLike?: () => void;
+  onOpenModal?: () => void;
   onOpenProfile?: () => void;
   imageVersion?: number;
   priority?: boolean;
@@ -48,7 +47,6 @@ export interface CardUIProps {
 // CardModal 인터페이스
 export interface CardModalProps {
   isModalOpen: boolean;
-  closeModal: () => void;
   nickname: string;
   job_title: string;
   experience: string;
@@ -64,24 +62,20 @@ export interface CardModalProps {
   first_link?: string;
   second_link_type?: string;
   second_link?: string;
-  selectedTechStacks: { id: string; name: string; image: string }[];
+  tech_stacks: string[];
+  selectedTechStacks?: TechStackOption[];
+  closeModal?: () => void;
   handleToggleLike?: () => void;
-  secureImageUrl: (url: string) => string;
   imageVersion?: number;
 }
-
-export interface ProfileExtendProps {
-  isOpen: boolean;
-  closeModal: () => void;
-  profileImageUrl: string;
-  nickname: string;
-  secureImageUrl: (url: string) => string;
-  imageVersion?: number;
+export interface TechStackOption {
+  id: string;
+  name: string;
+  image: string;
 }
-
 // useMemberData에서 사용하는 훅 반환 타입
 export interface UseMemberDataReturn {
-  filteredMembers: MemberCardProps[];
+  filteredMembers: MemberType[];
   isLoading: boolean;
   isError: boolean;
   fetchNextPage: () => Promise<unknown>;
@@ -94,14 +88,14 @@ export interface UseMemberDataReturn {
 // GatherHubPageClient에서 사용하는 Props 타입
 export interface GatherHubPageClientProps {
   initialData: {
-    members: MemberCardProps[];
+    members: MemberType[];
     nextPage: number | undefined;
   };
 }
 
 // MemberList 컴포넌트에서 사용하는 Props 타입
 export interface MemberListProps {
-  filteredMembers: MemberCardProps[];
+  filteredMembers: MemberType[];
 }
 
 // JobDirectory에서 사용하는 Props 타입
@@ -132,31 +126,9 @@ export interface LoginModalProps {
 
 // fetchMember API 응답 데이터 타입 정의
 export interface FetchMembersResponse {
-  members: MemberCardProps[]; // 가져온 멤버 목록
+  members: MemberType[]; // 가져온 멤버 목록
   nextPage?: number; // 다음 페이지 번호
-}
-
-// 멤버 타입 정의
-export interface MemberType {
-  user_id: string;
-  nickname: string;
-  job_title: string;
-  experience: string;
-  background_image_url: string;
-  profile_image_url: string;
-  blog: string;
-  first_link_type?: string;
-  first_link?: string;
-  second_link_type?: string;
-  second_link?: string;
-  description: string;
-  answer1: string;
-  answer2: string;
-  answer3: string;
-  liked: boolean;
-  toggleLike: (userId: string, currentUserId: string) => void;
-  tech_stacks: string[];
-  imageVersion?: number;
+  totalPages: number; // 전체 페이지 번호
 }
 
 export interface JobCategoryOption {

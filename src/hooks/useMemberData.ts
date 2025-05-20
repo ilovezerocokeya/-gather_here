@@ -5,11 +5,11 @@ import { useLikeStore } from "@/stores/useLikeStore";
 import { useUserStore } from "@/stores/useUserStore";
 import { fetchMembers } from "@/utils/fetchMembers";
 import { ReactQueryInfiniteScrollHandler } from "@/utils/scroll/InfinityScroll";
-import { MemberCardProps, UseMemberDataReturn } from "@/lib/gatherHub";
+import { MemberType, UseMemberDataReturn } from "@/lib/gatherHub";
 
 // 초기 데이터를 받아서 무한스크롤 적용
 export const useMemberData = (
-  initialMembers: MemberCardProps[],
+  initialMembers: MemberType[],
 ): UseMemberDataReturn => {
   const { userData } = useUserStore();
   const { likedMembers, hydrate, syncLikesWithServer } = useLikeStore();
@@ -35,6 +35,7 @@ export const useMemberData = (
         {
           members: initialMembers,
           nextPage: initialMembers.length === 10 ? 2 : undefined,
+          totalPages: 1,
         },
       ],
       pageParams: [1],

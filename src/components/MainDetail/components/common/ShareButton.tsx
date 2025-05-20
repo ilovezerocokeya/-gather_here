@@ -1,12 +1,11 @@
 import React, { useState } from "react";
-import Toast from "@/components/Common/Toast/Toast";
+import { useToastStore } from "@/stores/useToastStore";
+
 
 const ShareButton: React.FC = () => {
   const [isClicked, setIsClicked] = useState(false); // 버튼 클릭 시 효과용 상태
-  const [toast, setToast] = useState<{
-    state: "success" | "error" | "warn" | "info" | "custom";
-    message: string;
-  } | null>(null);
+  const { showToast } = useToastStore();
+
 
   // 현재 페이지 URL을 클립보드에 복사
   const handleShare = () => {
@@ -14,12 +13,12 @@ const ShareButton: React.FC = () => {
     navigator.clipboard
       .writeText(url)
       .then(() => {
-        setToast({ state: "success", message: "URL 복사 완료하였습니다!" });
+        showToast("URL 복사 완료하였습니다!" , "success" );
         setIsClicked(true);
         setTimeout(() => setIsClicked(false), 1000);
       })
       .catch(() => {
-        setToast({ state: "error", message: "URL 복사에 실패했습니다." });
+        showToast("URL 복사에 실패했습니다." , "error" );
       });
   };
 
@@ -43,14 +42,6 @@ const ShareButton: React.FC = () => {
         </svg>
       </button>
 
-      {/* Toast 메시지 출력 */}
-      {toast && (
-        <Toast
-          state={toast.state}
-          message={toast.message}
-          onClear={() => setToast(null)}
-        />
-      )}
     </>
   );
 };

@@ -2,15 +2,18 @@ import React from 'react';
 import { useRouter } from 'next/navigation';
 import { HubRegisterProps } from '@/lib/gatherHub';
 
-const HubRegister: React.FC<HubRegisterProps> = ({ isAuthenticated, isHubRegistered, openLoginModal }) => {
+const HubRegister: React.FC<HubRegisterProps> = ({
+  isAuthenticated,
+  isHubRegistered,
+  openLoginModal,
+}) => {
   const router = useRouter();
-  
-   // 버튼 클릭 시 실행되는 함수
-   const handleAddCard = () => {
+
+  const handleAddCard = () => {
     if (!isAuthenticated) {
       openLoginModal();
     } else {
-      router.push(isHubRegistered ? '/mypage/' : '/mypage'); 
+      router.push(isHubRegistered ? '/mypage/' : '/mypage');
     }
   };
 
@@ -18,13 +21,16 @@ const HubRegister: React.FC<HubRegisterProps> = ({ isAuthenticated, isHubRegiste
     <div className="relative group">
       <button
         aria-label="로그인 모달 or 마이페이지 이동 버튼"
-        className="fixed bottom-[40px] right-5 sm:right-10 w-12 h-12 sm:w-14 sm:h-14 bg-fillStrong text-primary text-lg 
-                  rounded-2xl shadow-xl hover:shadow-2xl transform transition-all duration-300 ease-out 
-                  hover:scale-110 active:scale-95 hover:animate-bounce hover:bg-fillLight cursor-pointer z-[9999]"
         onClick={handleAddCard}
+        className="fixed bottom-[40px] right-5 sm:right-10 w-12 h-12 sm:w-14 sm:h-14
+                   bg-fillStrong text-primary text-lg rounded-2xl shadow-xl
+                   transition-all duration-300 ease-out transform active:scale-95 cursor-pointer z-[9999]
+                   animate-float md:animate-none md:hover:animate-bounce 
+                   hover:bg-primary hover:text-black"
         style={{
           zIndex: 9999,
           userSelect: 'none',
+          willChange: 'transform',
         }}
       >
         <svg
@@ -33,7 +39,7 @@ const HubRegister: React.FC<HubRegisterProps> = ({ isAuthenticated, isHubRegiste
           viewBox="0 0 24 24"
           strokeWidth={1.5}
           stroke="currentColor"
-          className="w-6 h-6 sm:w-8 sm:h-8 m-auto text-bright"
+          className="w-6 h-6 sm:w-8 sm:h-8 m-auto"
         >
           <path
             strokeLinecap="round"

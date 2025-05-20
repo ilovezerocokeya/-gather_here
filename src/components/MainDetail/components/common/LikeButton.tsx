@@ -1,9 +1,8 @@
 'use client';
 
-import React, { useEffect, useState } from 'react';
+import React, { useEffect } from 'react';
 import { UserData } from '@/types/userData';
-import Toast from '@/components/Common/Toast/Toast';
-import { createPortal } from 'react-dom';
+import { useToastStore } from "@/stores/useToastStore";
 import { usePostLikeStore } from '@/stores/usePostLikeStore';
 
 interface LikeButtonProps {
@@ -16,10 +15,7 @@ interface LikeButtonProps {
 const LikeButton: React.FC<LikeButtonProps> = ({ postId, currentUser, category, onRemoveBookmark }) => {
   const { likePosts, fetchLikeStatus, toggleLike, hydrate } = usePostLikeStore(); 
   const liked = likePosts[postId] ?? false;
-  const [toast, setToast] = useState<{
-    state: 'success' | 'error' | 'warn' | 'info' | 'custom';
-    message: string;
-  } | null>(null);
+  const { showToast } = useToastStore();
 
   // 유저 정보가 변경되면 로컬 스토리지에서 좋아요 상태 복구
   useEffect(() => {
@@ -38,7 +34,7 @@ const LikeButton: React.FC<LikeButtonProps> = ({ postId, currentUser, category, 
   // 좋아요 버튼 클릭 핸들러
   const handleLike = async () => {
     if (!currentUser) {
-      setToast({ state: 'error', message: '로그인이 필요합니다!' });
+      showToast("로그인이 필요합니다.", "error");
       return;
     }
 
@@ -51,14 +47,13 @@ const LikeButton: React.FC<LikeButtonProps> = ({ postId, currentUser, category, 
       }
 
       // 성공 알림
-      setToast({
-        state: 'success',
-        message: likedNow ? '게시글을 좋아요 했습니다!' : '게시글 좋아요를 취소했습니다.',
-      });
+      showToast(
+        likedNow ? "게시글을 좋아요 했습니다!" : "게시글 좋아요를 취소했습니다.",
+        "success"
+      );
     } catch (error) {
-
-      // 에러 발생 시 알림
-      setToast({ state: 'error', message: (error as Error).message });
+      const errorMessage = error instanceof Error ? error.message : "알 수 없는 오류가 발생했습니다.";
+      showToast(errorMessage, "error");
     }
   };
 
@@ -77,17 +72,6 @@ const LikeButton: React.FC<LikeButtonProps> = ({ postId, currentUser, category, 
           />
         </svg>
       </button>
-      
-       {/* 토스트 */}
-      {toast &&
-        createPortal(
-          <Toast
-            state={toast.state}
-            message={toast.message}
-            onClear={() => setToast(null)}
-          />,
-          document.body
-        )}
     </>
   );
 };

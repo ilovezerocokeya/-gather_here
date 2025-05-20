@@ -52,7 +52,7 @@ const MainSideBar = () => {
   return (
     <>
       <div className="col-span-1 m:hidden">
-        <div className="sticky top-4">
+        <div className="sticky top-[170px] z-10">
           <PRCard />
           {/* <Calender /> */}
           <Footer />

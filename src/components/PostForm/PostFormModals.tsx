@@ -34,13 +34,13 @@ const PostFormModals = ({
           <div className="flex justify-center space-x-4">
             <button
               onClick={() => setShowExitModal(false)}
-              className="px-4 py-2 rounded-lg bg-fillNeutral text-primary hover:bg-opacity-80 transition"
+              className="px-4 py-2 rounded-lg bg-fillNeutral text-primary md:hover:bg-opacity-80 transition"
             >
               마저 쓸래요
             </button>
             <button
               onClick={onExitConfirm}
-              className="px-4 py-2 rounded-lg bg-primary text-fillNeutral hover:bg-opacity-90 transition"
+              className="px-4 py-2 rounded-lg bg-primary text-fillNeutral md:hover:bg-opacity-90 transition"
             >
               나갈래요
             </button>

@@ -1,8 +1,8 @@
 "use client";
 
-import { useReducer, useState, useTransition } from "react";
+import { useReducer, useTransition } from "react";
 import { useRouter } from "next/navigation";
-import Toast from "@/components/Common/Toast/Toast";
+import { useToastStore } from "@/stores/useToastStore";
 import { updateProfile } from "@/components/MyPage/MyInfo/actions/updateProfile";
 import useCheckNickname from "@/hooks/useCheckNickname";
 import ProfileImage from "@/components/MyPage/MyInfo/ProfileImage"; 
@@ -32,11 +32,7 @@ const extractFormData = (form: HTMLFormElement) => {
   const UserProfileClientForm: React.FC<UserProfileClientFormProps> = ({ initialData }) => {
     const router = useRouter();
     const [isPending, startTransition] = useTransition();
-    const [toast, setToast] = useState<{
-      state: "success" | "error" | "warn" | "info" | "custom";
-      message: string;
-    } | null>(null);
-
+    const { showToast } = useToastStore();
     const { userData } = useUserStore();
     const [state, dispatch] = useReducer(userProfileReducer, createInitialState({
       email: initialData.email,
@@ -115,14 +111,16 @@ const extractFormData = (form: HTMLFormElement) => {
             dispatch({ type: "SET_NICKNAME", payload: nickname });
             dispatch({ type: "SET_IMAGE_URL", payload: null });
             dispatch({ type: "TOGGLE_SAVE_MODAL", payload: true });  
-            setToast({ state: "success", message: "프로필이 저장되었습니다." });
+            showToast("프로필이 저장되었습니다." , "success");
           })
-          .catch((err) => {
-            // 실패 시 에러 메시지 토스트
-            setToast({
-              state: "error",
-              message: err instanceof Error ? err.message : "알 수 없는 오류가 발생했습니다.",
-            });
+          .catch((error) => {
+            console.error("업로드 실패:", error);
+            showToast(
+              error instanceof Error
+                ? `에러: ${error.message}`
+                : "예상치 못한 오류가 발생했습니다.",
+              "error"
+            );
           });
       });
     };
@@ -140,7 +138,6 @@ const extractFormData = (form: HTMLFormElement) => {
               {/* 프로필 이미지 업로드 컴포넌트 */}
               <ProfileImage
                 onImageChange={(url) => dispatch({ type: "SET_IMAGE_URL", payload: url })}
-                onToast={(state, message) => setToast({ state, message })}
               />
               {/* 닉네임, 직군, 경력 입력란 */}
               <div className="grid grid-cols-2 m:grid-cols-1 gap-10 pb-11 border-b-[1px] border-fillNormal">
@@ -266,14 +263,6 @@ const extractFormData = (form: HTMLFormElement) => {
               </div>
             </fieldset>
           </form>
-    
-          {toast && (
-            <Toast
-              state={toast.state}
-              message={toast.message}
-              onClear={() => setToast(null)}
-            />
-          )}
 
           {/* 저장 완료 모달 */}
           {state.isSaveModalOpen && (

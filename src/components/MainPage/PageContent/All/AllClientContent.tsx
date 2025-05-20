@@ -1,7 +1,6 @@
 "use client";
 
 import React, { useMemo, useEffect } from "react";
-import Image from "next/image";
 import { useInfiniteQuery } from "@tanstack/react-query";
 import { fetchPosts } from "@/lib/fetchPosts";
 import { PostWithUser } from "@/types/posts/Post.type";
@@ -40,7 +39,6 @@ const AllClientContent: React.FC<AllClientContentProps> = ({ initialPosts }) => 
       pages: [initialPosts],
       pageParams: [1],
     },
-    staleTime: 60000, // 1분 동안은 캐시 유지
   });
 
   const canRestore = !isFetching && !isFetchingNextPage;
@@ -95,11 +93,6 @@ const AllClientContent: React.FC<AllClientContentProps> = ({ initialPosts }) => 
 
   return (
     <InitialLoadingWrapper>
-      <div className="flex items-center">
-        <Image src="/assets/gif/puzzle.webp" alt="Puzzle Icon" width={20} height={20} className="mb-3" />
-        <p className="m-2 mb-4 text-labelNormal">나에게 꼭 맞는 동료들을 찾아보세요</p>
-      </div>
-
       {filteredPosts.length === 0 ? (
         <p style={{ textAlign: "center", color: "white" }}>해당 조건에 맞는 게시물이 없습니다</p>
       ) : (

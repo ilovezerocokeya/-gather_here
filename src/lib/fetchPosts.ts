@@ -89,21 +89,30 @@ export const fetchPosts = async (
   return formatted;
 };
 
-// 마감일 기반 게시글 조회
-export const fetchPostsWithDeadLine = async (days: number, category?: string): Promise<PostWithUser[]> => {
-  const today = new Date(); // 오늘 날짜 생성
+// 마감일이 오늘부터 7일 이내인 게시글만 불러오는 함수
+export const fetchPostsWithDeadLine = async (
+  days: number, // 조회할 마감일 범위
+  category?: string // 카테고리 필터 (스터디, 프로젝트 등)
+): Promise<PostWithUser[]> => {
+  const now = new Date();
+  const kstOffset = 9 * 60 * 60 * 1000; // 한국 시간은 UTC보다 9시간 빠름
 
-  // 오늘 기준으로 전달받은 days 만큼 더한 미래 날짜 계산
-  const futureDate = new Date(today);
-  futureDate.setDate(today.getDate() + days);
+  // 오늘 날짜를 KST 기준 자정으로 맞춤
+  const todayKST = new Date(now.getTime() + kstOffset);
+  todayKST.setHours(0, 0, 0, 0); // 오늘 00:00
 
-  // 날짜를 YYYY-MM-DD 형식 문자열로 변환 (시간 제거)
-  const formattedToday = today.toISOString().split('T')[0];
-  const formattedFutureDate = futureDate.toISOString().split('T')[0];
+  // D일 뒤 날짜의 마지막 순간 (23:59:59)까지 포함
+  const futureKST = new Date(todayKST);
+  futureKST.setDate(futureKST.getDate() + days);
+  futureKST.setHours(23, 59, 59, 999);
 
-  // 마감일(deadline)이 오늘~미래날짜 사이에 있는 Posts 조회 (유저 정보 포함)
+  // Supabase는 UTC 기준이므로 KST 기준 시간을 ISO 문자열로 변환
+  const formattedToday = todayKST.toISOString();
+  const formattedFuture = futureKST.toISOString();
+
+  // deadline이 오늘 ~ D-8일 이내인 게시글만 가져오는 쿼리
   const query = supabase
-    .from('Posts')
+    .from("Posts")
     .select(
       `
       *,
@@ -114,32 +123,31 @@ export const fetchPostsWithDeadLine = async (days: number, category?: string): P
       )
     `
     )
-    .gte('deadline', formattedToday)
-    .lte('deadline', formattedFutureDate)
-    .order('deadline', { ascending: true });
+    .gte("deadline", formattedToday) // 오늘 자정 이후부터
+    .lte("deadline", formattedFuture) // D일 후 자정까지
+    .order("deadline", { ascending: true }) // 마감일 빠른 순
+    .order("created_at", { ascending: false }); // 동일 마감일 내에서는 최신 글 우선
 
-  // category 필터가 존재할 경우 쿼리에 추가
+  // 카테고리 필터가 있으면 적용
   if (category) {
-    query.eq('category', category);
+    query.eq("category", category);
   }
 
+  // 쿼리 실행
   const { data, error } = await query;
-
   if (error) throw new Error(error.message);
 
-  // Supabase join 결과로 인해 user가 배열일 수 있어 단일 객체로 정제
-  const formatted = (data ?? []).map((post) => {
+  // Supabase join 결과는 user가 배열로 올 수도 있어 정제 처리
+  return (data ?? []).map((post) => {
     const user = Array.isArray(post.user)
-      ? (post.user[0] as PostWithUser['user'])
-      : (post.user as PostWithUser['user']);
+      ? (post.user[0] as PostWithUser["user"])
+      : (post.user as PostWithUser["user"]);
 
     return {
-      ...(post as Omit<PostWithUser, 'user'>),
+      ...(post as Omit<PostWithUser, "user">),
       user,
     };
   });
-
-  return formatted;
 };
 
 // 관심 게시글 및 관심 IT행사 조회]
@@ -223,7 +231,7 @@ export const fetchEventsPostsWithDeadLine = async (
     .select('*')
     .gte('apply_done', formattedToday)
     .lte('apply_done', formattedFutureDate)
-    .order('apply_start', { ascending: false });
+    .order('created_at', { ascending: false })
 
   if (category) {
     query.eq('category', category);

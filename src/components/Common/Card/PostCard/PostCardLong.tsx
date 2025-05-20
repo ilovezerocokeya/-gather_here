@@ -53,12 +53,14 @@ const PostCardLong: React.FC<PostCardProps> = ({ post, onRemoveBookmark }) => {
             </li>
             <li className="absolute right-0">
               {/* 관심글 추가/제거 버튼 */}
-              <LikeButton
-                postId={post.post_id}
-                currentUser={userData}
-                category={post.category}
-                onRemoveBookmark={onRemoveBookmark}
-              />
+              <div className="transition-transform duration-200 md:hover:rotate-[8deg] md:hover:scale-110">
+                <LikeButton
+                  postId={post.post_id}
+                  currentUser={userData}
+                  category={post.category}
+                  onRemoveBookmark={onRemoveBookmark}
+                  />
+              </div>
             </li>
           </ul>
         )}
@@ -69,7 +71,10 @@ const PostCardLong: React.FC<PostCardProps> = ({ post, onRemoveBookmark }) => {
         
         {/* 게시글 본문 미리보기 (2줄 제한) */}
         <div className="mt-2 mb-4 h-[45px] s:h-11 xs:h-14 overflow-hidden text-left text-labelNeutral font-thin">
-          <div className="line-clamp-2" dangerouslySetInnerHTML={{ __html: sanitizedContent }} />
+          <div 
+            className="line-clamp-2 transition-all duration-300 ease-in-out md:hover:scale-[1.015] 
+            md:hover:tracking-wide origin-left" dangerouslySetInnerHTML={{ __html: sanitizedContent }}
+          />
         </div>
         {/* 작성자 프로필 이미지 + 닉네임 */}
         <div className="flex items-center mb-4">
@@ -85,8 +90,9 @@ const PostCardLong: React.FC<PostCardProps> = ({ post, onRemoveBookmark }) => {
           )}
           <p className="text-sm text-gray-200">{post.user?.nickname}</p>
         </div>
+
         {/* 직군, 방식, 지역, 인원수 등 하단 정보 */}
-        <div className="text-base flex items-center justify-between bg-fillNormal p-3 rounded-lg truncate">
+        <div className="text-base flex items-center justify-between bg-fillNormal p-3 rounded-lg truncate md:hover:text-primary transition-colors duration-200">
           {/* 직군 정보 */}
           <div className="flex-1 text-left truncate">
             {post.target_position.map((position, index) => (

@@ -9,7 +9,7 @@ import { useUserStore } from '@/stores/useUserStore';
 import { Post, User } from '@/types/posts/Post.type';
 import { UserData } from '@/types/userData';
 import { deletePost } from '@/components/MainDetail/actions/deletePost';
-import Toast from '@/components/Common/Toast/Toast'; 
+import { useToastStore } from "@/stores/useToastStore";
 
 
 interface MainDetailClientProps {
@@ -23,10 +23,7 @@ const MainDetailClient: React.FC<MainDetailClientProps> = ({ post, user }) => {
   const [showOptions, setShowOptions] = useState(false);
   const [showDeleteModal, setShowDeleteModal] = useState(false);
   const optionsRef = useRef<HTMLDivElement>(null); // 옵션 메뉴의 ref
-  const [toast, setToast] = useState<{
-    state: 'success' | 'error' | 'warn' | 'info' | 'custom';
-    message: string;
-  } | null>(null);
+  const { showToast } = useToastStore();
   
   // 옵션 메뉴 토글 핸들러
   const handleMoreOptions = (e?: React.MouseEvent) => {
@@ -50,16 +47,16 @@ const MainDetailClient: React.FC<MainDetailClientProps> = ({ post, user }) => {
   // 게시글 삭제 처리
   const handleDelete = async () => {
     if (!userData) {
-      setToast({ state: 'error', message: '로그인이 필요합니다.' });
+      showToast("로그인이 필요합니다.", "error");
       return;
     }
 
     const result = await deletePost(post.post_id, userData.user_id);
     if (!result.success) {
-      setToast({ state: 'error', message: result.error ?? '게시글 삭제에 실패했습니다.' });
+      showToast("게시글 삭제에 실패했습니다." , "error");
       return;
     }
-    setToast({ state: 'success', message: '게시글이 삭제되었습니다.' });
+    showToast("게시글이 삭제되었습니다." , "success");
     router.push('/');
   };
 
@@ -110,14 +107,6 @@ const MainDetailClient: React.FC<MainDetailClientProps> = ({ post, user }) => {
             </div>
           </div>
         </CommonModal>
-      )}
-
-      {toast && (
-        <Toast
-          state={toast.state}
-          message={toast.message}
-          onClear={() => setToast(null)}
-        />
       )}
     </>
   );

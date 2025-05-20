@@ -25,21 +25,23 @@ const Carousel: React.FC<CarouselProps> = ({ posts }) => {
   }
 
   // 오늘 날짜 기준으로 자정 설정
-  const today = new Date();
-  today.setHours(0, 0, 0, 0);
+  const now = new Date();
+  const kstOffset = 9 * 60 * 60 * 1000;
+  const todayKST = new Date(now.getTime() + kstOffset);
+  todayKST.setHours(0, 0, 0, 0);
 
   // 마감일까지 0~8일 이내인 모집글 필터링
   const filteredPosts = posts.filter((post) => {
-    if (!post.deadline) return false;
+  if (!post.deadline) return false;
 
-    const deadlineDate = new Date(post.deadline);
-    deadlineDate.setHours(0, 0, 0, 0);
+  const deadlineDate = new Date(post.deadline);
+  deadlineDate.setHours(0, 0, 0, 0);
 
-    const diffTime = deadlineDate.getTime() - today.getTime();
-    const diffDays = diffTime / (1000 * 60 * 60 * 24);
+  const diffTime = deadlineDate.getTime() - todayKST.getTime();
+  const diffDays = diffTime / (1000 * 60 * 60 * 24);
 
-    return diffDays >= 0 && diffDays <= 8;
-  });
+  return diffDays >= 0 && diffDays <= 8;
+});
 
   // 필터링된 모집글이 없는 경우
   if (filteredPosts.length === 0) {
@@ -56,15 +58,15 @@ const Carousel: React.FC<CarouselProps> = ({ posts }) => {
         modules={[Navigation, Pagination, A11y]}
         spaceBetween={12}
         slidesPerView={3}
-        navigation
+        slidesPerGroup={3}
         loop={true}
         pagination={{ clickable: true }}
-        className="w-full swiper"
+        navigation
         breakpoints={{
-          280: { slidesPerView: 1 },
-          336: { slidesPerView: 1 },
-          769: { slidesPerView: 3 },
-          1068: { slidesPerView: 3 },
+          280: { slidesPerView: 1, slidesPerGroup: 1 },
+          336: { slidesPerView: 1, slidesPerGroup: 1 },
+          769: { slidesPerView: 3, slidesPerGroup: 3 },
+          1068: { slidesPerView: 3, slidesPerGroup: 3 },
         }}
       >
         {filteredPosts.map((post, index) => (

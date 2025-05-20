@@ -4,7 +4,7 @@ import { useState } from "react";
 import { supabase } from "@/utils/supabase/client";
 import { useAuth } from "@/provider/user/UserAuthProvider";
 import { useUserStore } from '@/stores/useUserStore';
-import Toast from "@/components/Common/Toast/Toast";
+import { useToastStore } from "@/stores/useToastStore";
 import type { HubProfileState } from "@/components/MyPage/HubInfo/reducer/hubProfileReducer";
 
 interface HubProfileToggleProps {
@@ -17,18 +17,8 @@ const HubProfileToggle: React.FC<HubProfileToggleProps> = ({ initialIsActive, st
     const { fetchUserData } = useUserStore();
     const [isHubCardActive, setIsHubCardActive] = useState(initialIsActive);
     const [isLoading, setIsLoading] = useState(false);
+    const { showToast } = useToastStore();
 
-    // 토스트 메시지 상태
-    const [toast, setToast] = useState<{ state: "success" | "error" | ""; message: string }>({
-      state: "",
-      message: "",
-    });
-  
-    // 토스트 메시지 출력 함수
-    const showToast = (state: "success" | "error", message: string) => {
-      setToast({ state, message });
-    };
-  
     // Supabase에 사용자 프로필 업데이트 요청
     const updateUserProfile = async (active: boolean) => {
       if (!user?.id) {
@@ -59,7 +49,7 @@ const HubProfileToggle: React.FC<HubProfileToggleProps> = ({ initialIsActive, st
   
       // 등록을 시도하는데 포트폴리오 링크가 없을 경우 에러 처리
       if (!isHubCardActive && !state.blog) {
-        showToast("error", "포트폴리오 링크를 작성해주세요!");
+        showToast("포트폴리오 링크를 작성해주세요!" , "error");
         return;
       }
   
@@ -69,10 +59,10 @@ const HubProfileToggle: React.FC<HubProfileToggleProps> = ({ initialIsActive, st
       const { error } = await updateUserProfile(nextState);
   
       if (error) {
-        showToast("error", `저장에 실패했습니다: ${error.message}`);
+        showToast("저장에 실패했습니다" , "error");
       } else {
         setIsHubCardActive(nextState);
-        showToast("success", nextState ? "프로필이 등록되었습니다." : "프로필이 삭제되었습니다.");
+        showToast(nextState ? "프로필이 등록되었습니다." : "프로필이 삭제되었습니다.", "success");
         
         void fetchUserData(user.id); // 사용자 상태 최신화
   
@@ -109,15 +99,6 @@ const HubProfileToggle: React.FC<HubProfileToggleProps> = ({ initialIsActive, st
               ${isLoading ? "opacity-50 cursor-not-allowed" : ""}`}
           ></div>
         </label>
-  
-        {/* 토스트 메시지 표시 영역 */}
-        {toast.state && (
-          <Toast
-            state={toast.state}
-            message={toast.message}
-            onClear={() => setToast({ state: "", message: "" })}
-          />
-        )}
       </div>
     );
   };

@@ -1,11 +1,18 @@
-import React, { useCallback, useEffect, useState } from "react";
+"use client";
+
+import React, { useEffect, useMemo, useState } from "react";
 import { createPortal } from "react-dom";
 import Image from "next/image";
 import Link from "next/link";
-import { CardModalProps } from '@/lib/gatherHub';
+import { CardModalProps } from "@/lib/gatherHub";
 import { stripQuery } from "@/utils/Image/imageUtils";
+import { useUserStore } from "@/stores/useUserStore";
+import { techStacks } from "@/lib/generalOptionStacks";
+import { useToastStore } from "@/stores/useToastStore";
+import { useLikeStore } from "@/stores/useLikeStore";
+import { secureImageUrl } from "@/utils/Image/imageUtils";
 
-const CardModal: React.FC<CardModalProps> = ({
+const CardModalClient: React.FC<CardModalProps> = ({
   isModalOpen,
   closeModal,
   nickname,
@@ -15,7 +22,6 @@ const CardModal: React.FC<CardModalProps> = ({
   profile_image_url,
   background_image_url,
   blog,
-  liked,
   answer1,
   answer2,
   answer3,
@@ -24,54 +30,74 @@ const CardModal: React.FC<CardModalProps> = ({
   second_link_type,
   second_link,
   handleToggleLike,
-  secureImageUrl,
-  selectedTechStacks,
-  imageVersion
+  imageVersion,
+  tech_stacks,
 }) => {
-
+  const { userData } = useUserStore();
   const [hasMounted, setHasMounted] = useState(false);
+  const { likedMembers } = useLikeStore();
+  const liked = likedMembers[userData?.user_id ?? ""] ?? false;
+  const { showToast } = useToastStore();
+
+  const selectedTechStacks = useMemo(() => {
+    if (!tech_stacks || !Array.isArray(tech_stacks)) return [];
+    return techStacks.filter((stack) => tech_stacks.includes(stack.id));
+  }, [tech_stacks]);
 
   // hydration mismatch 방지를 위한 마운트 체크
-  useEffect(() => {
-    setHasMounted(true);
-  }, []);
-
-  const handleEsc = useCallback((event: KeyboardEvent) => {
-    if (event.key === "Escape") closeModal();
-  }, [closeModal]);
+   useEffect(() => {
+     setHasMounted(true);
+   }, []);
 
   useEffect(() => {
-     // 모달이 열릴 때 터치 이벤트 막기
-  const preventTouchScroll = (e: TouchEvent) => {
-    e.preventDefault();
-  };
-
+    const preventScroll = (e: TouchEvent) => {
+      e.preventDefault();
+    };
+  
+    const preventKeys = (e: KeyboardEvent) => {
+      if (e.key === "Escape") closeModal?.();
+    };
+  
     if (isModalOpen) {
-      // 모달이 열려 있을 때 페이지 스크롤을 막음
-      document.documentElement.style.overflow = 'hidden';
-      document.body.style.overflow = 'hidden';
-      document.addEventListener("touchmove", preventTouchScroll, { passive: false });
-      window.addEventListener("keydown", handleEsc);
-    } else {
-       // 모달이 닫힐 때 스크롤을 다시 허용
-       document.documentElement.style.overflow = '';
-       document.body.style.overflow = '';
-       document.removeEventListener("touchmove", preventTouchScroll);
+      // 데스크탑 스크롤 방지
+      document.body.style.overflow = "hidden";
+      document.body.style.position = "fixed";
+      document.body.style.top = `-${window.scrollY}px`;
+      document.body.style.width = "100%";
+  
+      // 모바일 스크롤 방지
+      document.addEventListener("touchmove", preventScroll, { passive: false });
+      window.addEventListener("keydown", preventKeys);
+    }
+  
+    return () => {
+      // 스크롤 복원
+      const scrollY = document.body.style.top;
+      document.body.style.overflow = "";
+      document.body.style.position = "";
+      document.body.style.top = "";
+      document.body.style.width = "";
+      window.scrollTo(0, parseInt(scrollY || "0") * -1);
+  
+      // 모바일 스크롤 복원
+      document.removeEventListener("touchmove", preventScroll);
+      window.removeEventListener("keydown", preventKeys);
+    };
+  }, [isModalOpen, closeModal]);
+
+  // 북마크 클릭 시 처리
+  const onToggleLike = () => {
+    if (!userData?.user_id) {
+      showToast("로그인이 필요합니다.", "error");
+      return;
     }
 
-    return () => {
-      // 이벤트 리스너를 정리하여 메모리 누수를 방지
-      document.documentElement.style.overflow = '';
-      document.body.style.overflow = '';
-      document.removeEventListener("touchmove", preventTouchScroll);
-      window.removeEventListener("keydown", handleEsc);
+    handleToggleLike?.();
   };
-}, [isModalOpen, handleEsc]);
 
   // 모달이 닫혀 있을 경우 렌더링하지 않음
   if (!isModalOpen || !hasMounted) return null;
-  
-  
+
   return createPortal(
     <div
       className="fixed inset-0 bg-black bg-opacity-80 flex justify-center items-center z-50 transition-opacity duration-300 ease-in-out"
@@ -89,7 +115,7 @@ const CardModal: React.FC<CardModalProps> = ({
       >
         {/* 닫기 버튼 */}
         <button
-          className="absolute top-4 right-4 bg-primary text-black text-xl font-bold rounded-full w-8 h-8 flex items-center justify-center shadow-xl hover:bg-white hover:scale-110 transition-transform duration-200 ease-in-out z-50"
+          className="absolute top-4 right-4 bg-primary text-black text-xl font-bold rounded-full w-8 h-8 flex items-center justify-center shadow-xl md:hover:bg-white md:hover:scale-110 transition-transform duration-200 ease-in-out z-50"
           onClick={closeModal}
           style={{ userSelect: "none" }}
         >
@@ -139,25 +165,23 @@ const CardModal: React.FC<CardModalProps> = ({
           {/* 버튼 영역 */}
           <div className="absolute top-[-25px] right-[20px] flex items-center space-x-4 p-2">
             <button
-              onClick={handleToggleLike}
+              onClick={onToggleLike}
               className={`p-3 rounded-xl transition flex items-center space-x-2 ${
                 liked ? "bg-gray-800 text-white" : "bg-[#28282a] text-white"
-              } hover:bg-gray-900`}
-              style={{ userSelect: "none" }}
+              } md:hover:bg-gray-900 md:hover:-rotate-3 md:hover:scale-102.5`}
             >
               <Image
                 src={liked ? "/assets/bookmark2.svg" : "/assets/bookmark1.svg"}
                 alt="북마크"
                 width={16}
                 height={16}
-                loading="lazy"
               />
-              <span className={`hidden md:block`}>북마크 저장하기</span>
+              <span className="hidden md:block">북마크 저장하기</span>
             </button>
 
             <div className="relative group">
               <button
-                  className="bg-[#28282a] text-white px-4 py-3 rounded-xl hover:bg-gray-900 transition flex items-center space-x-2"
+                  className="bg-[#28282a] text-white px-4 py-3 rounded-xl md:hover:bg-gray-900 transition flex items-center space-x-2"
                   style={{ userSelect: "none", cursor: "not-allowed" }}
                   disabled
               >
@@ -172,7 +196,7 @@ const CardModal: React.FC<CardModalProps> = ({
                 </span>
               
                 {/* 말풍선 */}
-                <div className="absolute top-[100%] s:left-[50%] left-[65%] transform -translate-x-1/2 min-w-[140px] px-3 py-2 bg-[orange] text-black text-sm rounded-lg opacity-0 group-hover:opacity-100 transition-opacity duration-300 shadow-lg">
+                <div className="absolute s:top-[50px] top-[100%] s:left-[-5px] left-[65%] transform -translate-x-1/2 min-w-[120px] px-3 py-2 bg-[orange] text-black text-sm rounded-lg opacity-0 group-hover:opacity-100 transition-opacity duration-300 shadow-lg">
                   현재 개발 중인 <br /> 기능 입니다.
                   <div className="absolute top-[-6px] s:left-[70%] left-1/2 transform -translate-x-1/2 w-3 h-3 bg-[orange] rotate-45"></div>
                 </div>
@@ -351,4 +375,4 @@ const CardModal: React.FC<CardModalProps> = ({
   );
 };
 
-export default CardModal;
+export default CardModalClient;

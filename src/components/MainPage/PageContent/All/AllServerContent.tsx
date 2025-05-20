@@ -1,5 +1,3 @@
-export const revalidate = 10;
-
 import AllClientContent from "@/components/MainPage/PageContent/All/AllClientContent";
 import { fetchPosts } from "@/lib/fetchPosts";
 

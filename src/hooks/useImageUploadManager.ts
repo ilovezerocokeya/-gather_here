@@ -4,21 +4,13 @@ import { useCallback } from "react";
 import { supabase } from "@/utils/supabase/client";
 import { convertToWebp } from "@/utils/Image/convertToWebp";
 import { updateUserImage } from "@/components/MyPage/MyInfo/actions/updateUserImage";
-import {
-  DEFAULT_PROFILE_IMAGE,
-  DEFAULT_BACKGROUND_IMAGE,
-  getStoragePath,
-  stripQuery,
-} from "@/utils/Image/imageUtils";
+import { useToastStore } from "@/stores/useToastStore";
+import { DEFAULT_PROFILE_IMAGE, DEFAULT_BACKGROUND_IMAGE, getStoragePath, stripQuery } from "@/utils/Image/imageUtils";
 import { useUserStore } from "@/stores/useUserStore";
 
 type UploadType = "profile" | "background";
 
-export function useImageUploadManager(
-  userId: string | null,
-  onToast: (state: "success" | "error" | "info", message: string) => void,
-  type: UploadType
-) {
+export function useImageUploadManager(userId: string | null, type: UploadType) {
   const {
     imageVersion,
     incrementImageVersion,
@@ -27,8 +19,10 @@ export function useImageUploadManager(
     fetchUserData,
   } = useUserStore();
 
+  const { showToast } = useToastStore();
   const defaultImage =  type === "profile" ? DEFAULT_PROFILE_IMAGE : DEFAULT_BACKGROUND_IMAGE; // 기본 이미지 URL
   const delay = (ms: number) => new Promise((res) => setTimeout(res, ms));  // 비동기 지연을 위한 유틸 함수
+
 
   // 이미지 업로드 핸들러
   const uploadImage = useCallback(
@@ -83,27 +77,24 @@ export function useImageUploadManager(
         
         await fetchUserData(userId); // 동기화를 위한 fetch
 
-        onToast("success", "이미지가 변경되었습니다.");
+        showToast("이미지가 변경되었습니다.", "success");
         return publicUrl;
       } catch (err) {
           const errorMessage =
-            err instanceof Error
-              ? err.message
-              : "알 수 없는 오류가 발생했습니다.";
-        
+            err instanceof Error ? err.message : "알 수 없는 오류가 발생했습니다.";
           console.error("[Upload] 업로드 실패:", errorMessage);
-          onToast("error", `이미지 업로드 실패: ${errorMessage}`);
+          showToast(`이미지 업로드 실패: ${errorMessage}`, "error");
           return null;
       }
     },
     [
       userId,
-      onToast,
       type,
       incrementImageVersion,
       setProfileImageUrl,
       setBackgroundImageUrl,
       fetchUserData,
+      showToast,
     ]
   );
 
@@ -124,19 +115,20 @@ export function useImageUploadManager(
 
       await fetchUserData(userId); // 동기화를 위한 fetch
 
-      onToast("success", "기본 이미지로 변경되었습니다.");
+      showToast("기본 이미지로 변경되었습니다.", "success");
     } catch (err) {
       console.error("[Reset] 기본 이미지 변경 실패:", err);
-      onToast("error", "기본 이미지 변경에 실패했습니다.");
+      showToast("기본 이미지 변경에 실패했습니다.", "error");
     }
   }, [
     userId,
-    onToast,
     type,
+    defaultImage,
     incrementImageVersion,
     setProfileImageUrl,
     setBackgroundImageUrl,
     fetchUserData,
+    showToast
   ]);
 
   return {

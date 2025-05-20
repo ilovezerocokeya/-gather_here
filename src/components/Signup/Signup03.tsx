@@ -52,7 +52,7 @@ const Signup03: React.FC = () => {
         {prevStep && (
           <button 
             onClick={prevStep} 
-            className="absolute left-9 top-10 text-primary transition-transform duration-300 ease-in-out hover:text-[white] hover:scale-110"
+            className="absolute left-9 top-10 text-primary transition-transform duration-300 ease-in-out md:hover:text-[white] md:hover:scale-110"
           >
             &larr;
           </button>
@@ -118,7 +118,7 @@ const Signup03: React.FC = () => {
               type="submit"
               className={`
                 s:w-[300px] w-[350px] h-[45px] mt-24 py-3 flex justify-center items-center rounded-2xl
-                transition-transform transform hover:scale-105 active:scale-95 active:bg-gray-800 active:text-gray-200
+                transition-transform transform md:hover:scale-105 active:scale-95 active:bg-gray-800 active:text-gray-200
                 bg-[#343437]
                 ${
                   watchNickname && watchNickname.trim() !== "" && nicknameAvailable?.valid

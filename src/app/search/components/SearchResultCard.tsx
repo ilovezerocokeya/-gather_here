@@ -1,58 +1,87 @@
 import { Tables } from '@/types/supabase';
 import dayjs from 'dayjs';
+import Link from 'next/link';
 
-const SearchResultCard = ({ post }: { post: Tables<'Posts'> }) => {
+type PostWithUser = Tables<'Posts'> & {
+  _highlight?: {
+    title?: string;
+    content?: string;
+    target_position?: string[];
+    location?: string;
+    place?: string;
+  };
+};
+
+interface SearchResultCardProps {
+  post: PostWithUser;
+}
+
+const SearchResultCard = ({ post }: SearchResultCardProps) => {
+  const today = dayjs();
+  const deadline = dayjs(post.deadline);
+  const daysLeft = deadline.diff(today, 'day');
+
+  if (daysLeft < 0) return null;
+
+  const titleHTML = post._highlight?.title ?? post.title ?? '';
+  const contentHTML = post._highlight?.content ?? post.content ?? '';
+  const positions = post._highlight?.target_position ?? post.target_position ?? [];
+  const locationHTML = post._highlight?.location ?? post.location ?? '';
+  const placeHTML = post._highlight?.place ?? post.place ?? '';
+
   return (
-    <div className="w-[335px] h-64 p-5 bg-[#141415] rounded-[20px] flex-col justify-center items-center gap-3 inline-flex">
-      <div className="self-stretch justify-between items-center inline-flex">
-        <div className="justify-start items-center gap-2 flex">
-          <div className="px-2 py-1 bg-[#3b3d3f] rounded-full flex-col justify-center items-center inline-flex">
-            <div className="justify-center items-center gap-1 inline-flex">
-              <div className="text-[#c3e88d] text-xs font-semibold font-['Pretendard'] leading-none">
-                D-N{dayjs(post.deadline).format('YY.MM.DD (ddd)')}
+    <Link href={`/maindetail/${post.post_id}`}>
+      <div className="w-[340px] h-[180px] bg-[#1b1c1d] rounded-2xl shadow-lg p-5 flex flex-col justify-between gap-2 hover:ring-2 hover:ring-[#c3e88d] transition duration-150">
+        
+        {/* 마감일 */}
+        <div className="flex justify-between items-center text-xs">
+          <span className="bg-[#3b3d3f] text-[#c3e88d] px-2 py-1 rounded-full font-semibold">
+            D-{daysLeft}
+          </span>
+          <span className="text-[#c4c4c4]">~{deadline.format('MM.DD')}</span>
+        </div>
+
+        {/* 제목 */}
+        <div
+          className="text-lg font-semibold text-white truncate"
+          dangerouslySetInnerHTML={{ __html: titleHTML }}
+        />
+
+        {/* 본문 */}
+        <div
+          className="text-sm text-[#aaaaaa] line-clamp-2 leading-relaxed"
+          dangerouslySetInnerHTML={{ __html: contentHTML }}
+        />
+
+        {/* 직군, 장소, 지역 */}
+        {(positions.length > 0 || placeHTML || locationHTML) && (
+          <div className="flex flex-wrap gap-x-3 gap-y-1 items-center text-xs text-[#bbbbbb]">
+            
+            {positions.map((pos, idx) => (
+              <span
+                key={`position-${idx}`}
+                className="font-medium px-2 py-1 rounded-full bg-[#2d2d2f] text-[#fac66a]"
+                dangerouslySetInnerHTML={{ __html: pos }}
+              />
+            ))}
+
+            {placeHTML && (
+              <div className="flex items-center">
+                <strong className="text-white mr-1">장소:</strong>
+                <span dangerouslySetInnerHTML={{ __html: placeHTML }} />
               </div>
-            </div>
+            )}
+
+            {locationHTML && (
+              <div className="flex items-center">
+                <strong className="text-white mr-1">지역:</strong>
+                <span dangerouslySetInnerHTML={{ __html: locationHTML }} />
+              </div>
+            )}
           </div>
-          <div className="text-[#c4c4c4] text-sm font-normal font-['Pretendard'] leading-[21px]">~MM. DD.</div>
-        </div>
-        <div className="w-6 h-6 p-1 justify-center items-center flex">
-          <div className="justify-center items-center flex" />
-        </div>
+        )}
       </div>
-      <div className="self-stretch h-[83px] flex-col justify-start items-start gap-1 flex">
-        <div className="self-stretch text-[#f7f7f7] text-xl font-semibold font-['Pretendard'] leading-7">
-          {post.title}
-        </div>
-        <div className="self-stretch h-[51px] text-[#919191] text-base font-medium font-['Pretendard'] leading-relaxed">
-          {post.content}
-        </div>
-      </div>
-      <div className="self-stretch justify-start items-center gap-2 inline-flex">
-        <div className="h-6 p-1.5 bg-[#3b3d3f] rounded-md justify-center items-center gap-1.5 flex" />
-        <div className="text-[#919191] text-sm font-normal font-['Pretendard'] leading-[21px]">User</div>
-      </div>
-      <div className="self-stretch p-3 bg-[#212121] rounded-[10px] shadow-[0px_2px_8px_0px_rgba(0,0,0,0.12)] justify-between items-center inline-flex">
-        <div className="grow shrink basis-0 h-[25px] justify-start items-center gap-4 flex">
-          <div className="grow shrink basis-0 h-[25px] justify-between items-center flex">
-            <div className="justify-start items-center gap-2 flex">
-              <div className="justify-start items-center gap-2 flex">
-                <div className="text-[#c792e9] text-lg font-medium font-['Pretendard'] leading-[25.20px]">직군</div>
-              </div>
-              <div className="justify-start items-center gap-2 flex">
-                <div className="w-px h-4 bg-[#28282a] rounded-[999px]" />
-                <div className="text-[#fac66a] text-lg font-medium font-['Pretendard'] leading-[25.20px]">직군</div>
-              </div>
-              <div className="justify-start items-center gap-2 flex">
-                <div className="w-px h-4 bg-[#28282a] rounded-[999px]" />
-                <div className="text-[#82aaff] text-lg font-medium font-['Pretendard'] leading-[25.20px]">직군</div>
-              </div>
-            </div>
-            <div className="text-[#f7f7f7] text-lg font-medium font-['Pretendard'] leading-[25.20px]"></div>
-          </div>
-          <div className="justify-center items-center flex" />
-        </div>
-      </div>
-    </div>
+    </Link>
   );
 };
 

@@ -64,7 +64,6 @@ const config: Config = {
         accentPink: "#FAA6C9",
         accentYellow: "#FFE350",
       },
-      /* box shadow */
       boxShadow: {
         custom:
           "0px 2px 8px 0px rgba(0, 0, 0, 0.12), 0px 1px 4px 0px rgba(0, 0, 0, 0.08), 0px 0px 1px 0px rgba(0, 0, 0, 0.08)",
@@ -74,9 +73,14 @@ const config: Config = {
           "0%, 100%": { transform: "translateY(-10%)" },
           "50%": { transform: "translateY(0)" },
         },
+        float: {
+          "0%, 100%": { transform: "translateY(0)" },
+          "50%": { transform: "translateY(-4px)" },
+        },
       },
       animation: {
         bounce: "bounce 0.5s infinite",
+        float: "float 3s ease-in-out infinite",
       },
     },
   },
@@ -85,7 +89,6 @@ const config: Config = {
       animation: ["hover"],
     },
   },
-
   plugins: [require("tailwind-scrollbar-hide")],
 };
 

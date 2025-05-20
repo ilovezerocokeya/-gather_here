@@ -77,7 +77,7 @@ const LeftNav = () => {
               <li className="mb-2">
                 <Link
                   href="/mypage"
-                  className={`block w-full hover:text-primary ${
+                  className={`block w-full md:hover:text-primary ${
                     pathname === "/mypage" ? "text-primary font-baseBold" : "text-labelNeutral"
                   }`}
                 >
@@ -87,7 +87,7 @@ const LeftNav = () => {
               <li className="mb-2">
                 <Link
                   href="/mypage/hubprofile"
-                  className={`block w-full hover:text-primary ${
+                  className={`block w-full md:hover:text-primary ${
                     pathname === "/mypage/hubprofile" ? "text-primary font-baseBold" : "text-labelNeutral"
                   }`}
                 >
@@ -104,7 +104,7 @@ const LeftNav = () => {
               <li className="mb-2">
                 <Link
                   href="/mypage/myinterests"
-                  className={`block w-full hover:text-primary ${
+                  className={`block w-full md:hover:text-primary ${
                     pathname === "/mypage/myinterests" ? "text-primary font-baseBold" : "text-labelNeutral"
                   }`}
                 >
@@ -114,7 +114,7 @@ const LeftNav = () => {
               <li className="mb-2">
                 <Link
                   href="/mypage/mypeople"
-                  className={`block w-full hover:text-primary ${
+                  className={`block w-full md:hover:text-primary ${
                     pathname === "/mypage/mypeople" ? "text-primary font-baseBold" : "text-labelNeutral"
                   }`}
                 >
@@ -128,7 +128,7 @@ const LeftNav = () => {
           <li className="mb-3">
             <Link
               href="/mypage/myposts"
-              className={`block w-full text-lg hover:text-primary ${
+              className={`block w-full text-lg md:hover:text-primary ${
                 pathname === "/mypage/myposts" ? "text-primary font-baseBold" : "text-labelNeutral"
               }`}
             >

@@ -8,16 +8,16 @@ import { useInfiniteQuery } from "@tanstack/react-query";
 import { useLikeStore } from "@/stores/useLikeStore";
 import { useUserStore } from '@/stores/useUserStore';
 import { fetchMembers } from "@/utils/fetchMembers";
-import { MemberCardProps, MemberType } from "@/lib/gatherHub";
-import CardUI from "@/components/GatherHub/CardUI";
-import CardModal from "@/components/GatherHub/CardModal";
+import { MemberType } from "@/lib/gatherHub";
+import CardUI from "@/components/GatherHub/CardUIServer";
+import CardModalServer from "@/components/GatherHub/CardModalServer";
 import { techStacks } from "@/lib/generalOptionStacks";
-import { secureImageUrl } from "@/utils/Image/imageUtils";
 import Image from "next/image";
 import Head from "next/head";
 import Script from "next/script";
 import CardSkeleton from "@/components/Common/Skeleton/CardSkeleton";
-import Toast from "@/components/Common/Toast/Toast";
+import { useToastStore } from "@/stores/useToastStore";
+
 
 const PrCard: React.FC = () => {
 
@@ -41,23 +41,21 @@ const PrCard: React.FC = () => {
   };
   const { likedMembers, toggleLike } = useLikeStore(); 
   const { userData } = useUserStore(); 
-  const [selectedMember, setSelectedMember] = useState<MemberCardProps | null>(null);
-  const [toast, setToast] = useState<{
-    state: "success" | "error" | "warn" | "info" | "custom";
-    message: string;
-  } | null>(null);
+  const [selectedMember, setSelectedMember] = useState<MemberType | null>(null);
+  const { showToast } = useToastStore();
+
 
   // 좋아요 토글 함수
   const handleToggleLike = async (userId: string) => {
     if (!userData?.user_id) {
-      setToast({ state: "error", message: "로그인이 필요합니다." });
+      showToast("로그인이 필요합니다.", "error");
       return;
     }
 
     try {
       await toggleLike(userId, userData.user_id);
     } catch (error) {
-      setToast({ state: "error", message: "좋아요 처리 중 오류가 발생했어요." });
+      showToast("좋아요 처리 중 오류가 발생했어요." , "error" );
       console.error("좋아요 오류:", error);
     }
   };
@@ -138,7 +136,7 @@ const PrCard: React.FC = () => {
       </Script>
 
       {/* 섹션 제목 */}
-      <h2 className="flex items-center my-3 text-labelNormal">
+      <h2 className="flex items-center my-3 text-labelNormal ml-4">
         <Image 
           src="/assets/gif/mic.webp" 
           alt="마이크 아이콘" 
@@ -163,7 +161,6 @@ const PrCard: React.FC = () => {
                   {...member}
                   liked={liked}
                   handleToggleLike={() => void handleToggleLike(member.user_id)}
-                  secureImageUrl={secureImageUrl}
                   onOpenModal={() => setSelectedMember(member)}
                   priority={isFirstCard}
                 />
@@ -176,25 +173,17 @@ const PrCard: React.FC = () => {
 
       {/* 모달 */}
       {selectedMember && (
-        <CardModal
+        <CardModalServer
           isModalOpen={!!selectedMember} // 모달이 열려 있는지 확인
           closeModal={() => setSelectedMember(null)} // 모달 닫기 함수
           {...selectedMember} // 선택된 멤버의 정보 전달
           handleToggleLike={() => void handleToggleLike(selectedMember.user_id)}
-          secureImageUrl={secureImageUrl}
           selectedTechStacks={techStacks.filter((stack) =>
             selectedMember.tech_stacks?.includes(stack.id)
           )}
         />
       )}
 
-    {toast && (
-      <Toast
-        state={toast.state}
-        message={toast.message}
-        onClear={() => setToast(null)}
-      />
-    )}
     </div>
   );
 };
