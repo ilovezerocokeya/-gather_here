@@ -51,10 +51,14 @@ const SearchModal = forwardRef<SearchModalRef>((props, ref) => {
 
   return createPortal(
     <div className="fixed inset-0 bg-black bg-opacity-50 ease-in-out backdrop-blur-sm z-10">
-      <div
-        ref={modalRef}
-        className=" absolute top-[calc(50%-140px)] left-0 right-0 mx-auto -translate-y-1/2 max-w-container-l m:max-w-container-m s:max-w-container-s
-        w-full h-[58px] p-5 bg-primary rounded-[20px] flex-col justify-start items-start inline-flex z-99"
+      <div 
+        ref={modalRef} 
+        className="absolute top-[10%] s:top-[15%]
+          left-0 right-0 mx-auto -translate-y-1/2
+          max-w-container-l m:max-w-container-m s:max-w-container-s
+          w-full h-[58px] p-5 bg-primary rounded-[20px]
+          flex-col justify-start items-start inline-flex z-99
+        "
       >
         <div className="self-stretch justify-start items-center gap-5 inline-flex">
           <div data-svg-wrapper>
