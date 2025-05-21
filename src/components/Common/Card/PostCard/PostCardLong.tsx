@@ -7,7 +7,6 @@ import Link from 'next/link';
 import dayjs from 'dayjs';
 import LikeButton from '@/components/MainDetail/components/common/LikeButton';
 import { secureImageUrl } from '@/utils/Image/imageUtils';
-import { useUserStore } from '@/stores/useUserStore';
 import { jobTitleClassMap } from '@/lib/postFormOptions';
 import { getDisplayDaysLeft, cleanContent } from '@/utils/mainDetailUtils';
 
@@ -17,7 +16,6 @@ interface PostCardProps {
 }
 
 const PostCardLong: React.FC<PostCardProps> = ({ post, onRemoveBookmark }) => {
-  const { userData } = useUserStore();
   const [isMounted, setIsMounted] = useState<boolean>(false); // 클라이언트 사이드 렌더링 여부 확인용
   const displayDaysLeft = isMounted ? getDisplayDaysLeft(post.deadline) : ''; // 마감일까지 남은 날짜 계산
 
@@ -56,7 +54,6 @@ const PostCardLong: React.FC<PostCardProps> = ({ post, onRemoveBookmark }) => {
               <div className="transition-transform duration-200 md:hover:rotate-[8deg] md:hover:scale-110">
                 <LikeButton
                   postId={post.post_id}
-                  currentUser={userData}
                   category={post.category}
                   onRemoveBookmark={onRemoveBookmark}
                   />

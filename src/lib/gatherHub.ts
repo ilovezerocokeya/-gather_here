@@ -46,6 +46,7 @@ export interface CardUIProps {
 
 // CardModal 인터페이스
 export interface CardModalProps {
+  user_id: string;
   isModalOpen: boolean;
   nickname: string;
   job_title: string;

@@ -44,7 +44,8 @@ const SearchModal = forwardRef<SearchModalRef>((props, ref) => {
   // 검색 폼 제출 핸들러
   const onSubmit = (e: FormEvent<HTMLFormElement>) => {
     handleSearch(e);
-  };
+    setIsOpen(false); // 검색 후 모달 닫기
+};
 
   if (!isOpen) return null;
 
@@ -52,7 +53,8 @@ const SearchModal = forwardRef<SearchModalRef>((props, ref) => {
     <div className="fixed inset-0 bg-black bg-opacity-50 ease-in-out backdrop-blur-sm z-10">
       <div
         ref={modalRef}
-        className="mx-auto max-w-container-l m:max-w-container-m s:max-w-container-s w-full h-[58px] p-5 bg-primary rounded-[20px] flex-col justify-start items-start inline-flex mt-[60px] md:mt-[80px] absolute inset-x-0 inset-y-32 z-99"
+        className=" absolute top-[calc(50%-140px)] left-0 right-0 mx-auto -translate-y-1/2 max-w-container-l m:max-w-container-m s:max-w-container-s
+        w-full h-[58px] p-5 bg-primary rounded-[20px] flex-col justify-start items-start inline-flex z-99"
       >
         <div className="self-stretch justify-start items-center gap-5 inline-flex">
           <div data-svg-wrapper>

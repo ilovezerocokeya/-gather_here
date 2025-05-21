@@ -6,7 +6,6 @@ import Image from 'next/image';
 import Link from 'next/link';
 import LikeButton from '@/components/MainDetail/components/common/LikeButton';
 import { secureImageUrl } from '@/utils/Image/imageUtils';
-import { useUserStore } from '@/stores/useUserStore';
 import { jobTitleClassMap } from '@/lib/postFormOptions';
 import { getDisplayDaysLeft, cleanContent } from '@/utils/mainDetailUtils';
 
@@ -17,20 +16,21 @@ interface PostCardProps {
 }
 
 const PostCardShort: React.FC<PostCardProps> = ({ post, onRemoveBookmark }) => {
-  const { userData } = useUserStore();
-  const [isMounted, setIsMounted] = useState<boolean>(false);  // 클라이언트 사이드 렌더링 여부 확인용
-  const displayDaysLeft = isMounted ? getDisplayDaysLeft(post.deadline) : ''; // 마감일까지 남은 날짜 계산
+  const [isMounted, setIsMounted] = useState(false);
 
   useEffect(() => {
-    setIsMounted(true);  // 컴포넌트가 마운트된 이후에만 표시되도록 플래그 설정
-    return () =>  setIsMounted(false); // 언마운트 시 정리
-  }, [post]);
+    setIsMounted(true);
+    return () => setIsMounted(false);
+  }, []);
 
-   // 게시글 본문을 sanitize해서 XSS 방지 후 렌더링
+  // 본문 내용 sanitize 처리 (XSS 방지)
   const sanitizedContent = useMemo(() => {
-      if (!isMounted || typeof window === 'undefined') return '';
-      return cleanContent(post.content);
-    }, [isMounted, post.content]);
+    if (!isMounted || typeof window === 'undefined') return '';
+    return cleanContent(post.content);
+  }, [isMounted, post.content]);
+
+  // 마감일 계산
+  const displayDaysLeft = isMounted ? getDisplayDaysLeft(post.deadline) : '';
 
     return (
       <div className="w-full h-full max-w-container-l m:max-w-container-m s:max-w-container-s post-card">
@@ -54,7 +54,6 @@ const PostCardShort: React.FC<PostCardProps> = ({ post, onRemoveBookmark }) => {
             <div className="relative w-8 h-8 flex items-center justify-center">
               <LikeButton
                 postId={post.post_id}
-                currentUser={userData}
                 category={post.category}
                 onRemoveBookmark={onRemoveBookmark}
               />

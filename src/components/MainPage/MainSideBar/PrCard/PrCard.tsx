@@ -9,7 +9,7 @@ import { useLikeStore } from "@/stores/useLikeStore";
 import { useUserStore } from '@/stores/useUserStore';
 import { fetchMembers } from "@/utils/fetchMembers";
 import { MemberType } from "@/lib/gatherHub";
-import CardUI from "@/components/GatherHub/CardUIServer";
+import CardUIServer from "@/components/GatherHub/CardUIServer";
 import CardModalServer from "@/components/GatherHub/CardModalServer";
 import { techStacks } from "@/lib/generalOptionStacks";
 import Image from "next/image";
@@ -157,7 +157,7 @@ const PrCard: React.FC = () => {
           
             return (
               <div key={member.user_id} className="flex justify-center px-4">
-                <CardUI
+                <CardUIServer
                   {...member}
                   liked={liked}
                   handleToggleLike={() => void handleToggleLike(member.user_id)}

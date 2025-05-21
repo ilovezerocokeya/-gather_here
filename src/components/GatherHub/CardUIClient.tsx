@@ -5,10 +5,12 @@ import Link from "next/link";
 import Head from "next/head";
 import { stripQuery } from "@/utils/Image/imageUtils";
 import { CardUIProps } from "@/lib/gatherHub";
+import { supabase } from "@/utils/supabase/client"; 
 import { useUserStore } from "@/stores/useUserStore";
 import { useLikeStore } from "@/stores/useLikeStore";
 import { useToastStore } from "@/stores/useToastStore"; 
 import { secureImageUrl } from "@/utils/Image/imageUtils";
+import { useCallback } from "react";
 
 const CardUIClient: React.FC<CardUIProps> = ({
   user_id,
@@ -24,16 +26,35 @@ const CardUIClient: React.FC<CardUIProps> = ({
   second_link_type,
   second_link,
   onOpenModal,
-  handleToggleLike,
   imageVersion,
   priority,
 }) => {
   const { userData } = useUserStore();
+  const { toggleLike, likedMembers } = useLikeStore();
   const currentUserId = userData?.user_id;
   const isMyCard = currentUserId === user_id;
-  const liked = useLikeStore().likedMembers[user_id] ?? false;
   const { showToast } = useToastStore();
+  const liked = likedMembers[user_id] ?? false;
   
+  // 좋아요 버튼 클릭 핸들러
+      const handleLikeClick = useCallback(async () => {
+      const { data: { session } 
+        } = await supabase.auth.getSession();
+      const currentUserId = session?.user?.id;
+  
+      if (!currentUserId) {
+        showToast("로그인이 필요합니다.", "error");
+        return;
+      }
+  
+      try {
+        await toggleLike(user_id, currentUserId);
+      } catch (error) {
+        console.error("좋아요 실패:", error);
+        showToast("좋아요 처리 중 오류가 발생했어요", "error");
+      }
+    }, [toggleLike, user_id, showToast]);
+    
   // 프로필 이미지 URL 생성
   const versionedProfileImage = `${stripQuery(secureImageUrl(profile_image_url))}${
     isMyCard ? `?v=${imageVersion ?? 0}` : ''
@@ -44,15 +65,6 @@ const CardUIClient: React.FC<CardUIProps> = ({
   }`;
 
   const isFallbackImage = stripQuery(versionedBackgroundImage).includes("welcomeImage.svg");
-
-  // 좋아요 버튼 클릭 핸들러
-  const handleLikeClick = () => {
-    if (!currentUserId) {
-      showToast("로그인이 필요합니다.", "error");
-      return;
-    }
-    handleToggleLike?.(); // 좋아요 상태 토글 실행
-  };
 
   return (
     <>
@@ -68,10 +80,10 @@ const CardUIClient: React.FC<CardUIProps> = ({
       >
         {/* 좋아요 버튼 */}
         <div className="absolute top-3 right-3 z-10 flex">
-        <button
+        <button 
           onClick={(e) => {
-            e.stopPropagation();
-            handleLikeClick();
+          e.stopPropagation();
+          void handleLikeClick();
           }}
           className="p-1 rounded-[9px] bg-[#141415] border border-[#2d2d2f] shadow-lg 
           transition-transform duration-200 

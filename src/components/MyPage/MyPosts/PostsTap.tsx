@@ -29,7 +29,7 @@ const PostsTap: React.FC = () => {
   const [isModalOpen, setIsModalOpen] = useState<boolean>(false);
   const [postIdToDelete, setPostIdToDelete] = useState<string | null>(null);
   const { setLikeCount, getLikeCount } = usePostLikeCountStore();
-  const postsPerPage = 10;
+  const postsPerPage = 6;
 
 
   // 게시글 데이터 로딩
@@ -197,7 +197,7 @@ const PostsTap: React.FC = () => {
       </div>
       
       <div className="flex flex-col">
-        <div className="s:w-full mt-5 grid s:grid-cols-1 m:grid-cols-2 grid-cols-3 gap-6">
+        <div className="s:w-full mt-4 grid s:grid-cols-1 m:grid-cols-2 grid-cols-3 gap-8">
           {loading ? (
             Array(3)
             .fill(0)
@@ -206,7 +206,7 @@ const PostsTap: React.FC = () => {
             getCurrentPosts().map((post) => (
               <div key={post.post_id} className="s:w-full h-[261px] relative group mb-4 sm:mb-0">
                 <PostCardShort post={post} />
-                <div className="text-sm text-labelNeutral mt-2 text-center">
+                <div className="text-sm text-labelNeutral mt-1 text-center">
                 작성글 ❤️ {getLikeCount(post.post_id)}
                 </div>
                 {user?.id === post.user_id && (

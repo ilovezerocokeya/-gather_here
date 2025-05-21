@@ -1,22 +1,23 @@
 import { create } from 'zustand';
 import { supabase } from '@/utils/supabase/client';
 
-// 타입 정의
+// Zustand 스토어 타입 정의
 interface PostLikeStoreState {
-  likePosts: Record<string, boolean>;
+  likePosts: Record<string, boolean>; // key: postId, value: liked 여부
   fetchLikeStatus: (userId: string, postId: string) => Promise<void>;
   toggleLike: (userId: string, postId: string, category: string) => Promise<boolean>;
   hydrate: (userId: string) => void;
-  reset: (userId: string) => void;
+  reset: () => void;
 }
 
-// 로컬 스토리지 키 생성 함수
+// 유저별 로컬스토리지 키 생성 함수
 const getLocalStorageKey = (userId: string) => `likePosts_${userId}`;
 
+// 게시글 좋아요 관련 전역 상태 관리 스토어 정의
 export const usePostLikeStore = create<PostLikeStoreState>((set, get) => ({
   likePosts: {},
 
-  // 로컬 스토리지로부터 좋아요 상태 복구
+  // 로그인 시 로컬 스토리지로부터 좋아요 상태 복원
   hydrate: (userId) => {
     if (!userId) return;
     const stored = localStorage.getItem(getLocalStorageKey(userId));
@@ -24,10 +25,11 @@ export const usePostLikeStore = create<PostLikeStoreState>((set, get) => ({
     set({ likePosts: parsed });
   },
 
-  // 서버에서 좋아요 상태 조회 후 로컬에도 저장
+  // 특정 게시글에 대한 좋아요 상태를 Supabase에서 조회 → 상태 저장
   fetchLikeStatus: async (userId, postId) => {
-    const { data, error } = await supabase.from('Interests')
-      .select('*')
+    const { data, error } = await supabase
+      .from('Interests')
+      .select('user_id') // 최소 필드만 선택
       .eq('user_id', userId)
       .eq('post_id', postId);
 
@@ -41,50 +43,56 @@ export const usePostLikeStore = create<PostLikeStoreState>((set, get) => ({
     }
   },
 
-  // 좋아요 토글 
+  // 좋아요 토글 핸들러 (Optimistic UI 적용)
   toggleLike: async (userId, postId, category) => {
     const liked = get().likePosts[postId];
     const previousLikePosts = { ...get().likePosts };
 
-    // Optimistic UI: 상태 먼저 바꿈
-    set((state) => {
-      const updated = { ...state.likePosts, [postId]: !liked };
-      localStorage.setItem(getLocalStorageKey(userId), JSON.stringify(updated));
-      return { likePosts: updated };
-    });
+    // Optimistic UI: 먼저 반영
+    const nextState = { ...previousLikePosts, [postId]: !liked };
+    set({ likePosts: nextState });
+    localStorage.setItem(getLocalStorageKey(userId), JSON.stringify(nextState));
 
     try {
       if (!liked) {
-        const { error } = await supabase.from('Interests').insert({
-          user_id: userId,
-          post_id: postId,
-          category,
-        });
+        // Conflict 방지: insert 전에 존재 여부 확인
+        const { data: existing, error: checkError } = await supabase
+          .from('Interests')
+          .select('user_id')
+          .eq('user_id', userId)
+          .eq('post_id', postId)
+          .maybeSingle();
 
-        if (error) throw new Error('좋아요 등록 중 오류가 발생했습니다.');
+        if (checkError) throw new Error('좋아요 상태 확인 중 오류 발생');
+
+        if (!existing) {
+          const { error: insertError } = await supabase.from('Interests').insert({
+            user_id: userId,
+            post_id: postId,
+            category,
+          });
+          if (insertError) throw new Error('좋아요 등록 중 오류가 발생했습니다.');
+        }
       } else {
-        const { error } = await supabase.from('Interests')
+        const { error: deleteError } = await supabase.from('Interests')
           .delete()
           .eq('user_id', userId)
           .eq('post_id', postId);
-
-        if (error) throw new Error('좋아요 취소 중 오류가 발생했습니다.');
+        if (deleteError) throw new Error('좋아요 취소 중 오류가 발생했습니다.');
       }
 
-      // 성공했으면 반전된 liked 반환
       return !liked;
-    } catch (error) {
+    } catch (err) {
       // 실패 시 롤백
       set({ likePosts: previousLikePosts });
       localStorage.setItem(getLocalStorageKey(userId), JSON.stringify(previousLikePosts));
-      throw error; // 에러는 그대로 던져서 버튼 쪽에서 catch
+      throw err;
     }
   },
 
-
   // 로그아웃 시 상태 초기화
-  reset: (userId) => {
+  reset: () => {
     set({ likePosts: {} });
-    localStorage.removeItem(getLocalStorageKey(userId));
+    // 로컬 스토리지는 유저 로그아웃 후 따로 제거할 수 있도록 UI에서 직접 처리해도 무방
   },
 }));

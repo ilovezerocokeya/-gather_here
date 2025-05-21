@@ -1,18 +1,19 @@
 "use client";
 
-import React, { useEffect, useMemo, useState } from "react";
+import React, { useCallback, useEffect, useMemo, useState } from "react";
 import { createPortal } from "react-dom";
 import Image from "next/image";
 import Link from "next/link";
 import { CardModalProps } from "@/lib/gatherHub";
 import { stripQuery } from "@/utils/Image/imageUtils";
-import { useUserStore } from "@/stores/useUserStore";
+import { supabase } from "@/utils/supabase/client"; 
 import { techStacks } from "@/lib/generalOptionStacks";
 import { useToastStore } from "@/stores/useToastStore";
 import { useLikeStore } from "@/stores/useLikeStore";
 import { secureImageUrl } from "@/utils/Image/imageUtils";
 
 const CardModalClient: React.FC<CardModalProps> = ({
+  user_id,
   isModalOpen,
   closeModal,
   nickname,
@@ -29,14 +30,12 @@ const CardModalClient: React.FC<CardModalProps> = ({
   first_link,
   second_link_type,
   second_link,
-  handleToggleLike,
   imageVersion,
   tech_stacks,
 }) => {
-  const { userData } = useUserStore();
   const [hasMounted, setHasMounted] = useState(false);
-  const { likedMembers } = useLikeStore();
-  const liked = likedMembers[userData?.user_id ?? ""] ?? false;
+  const { toggleLike, likedMembers } = useLikeStore();
+  const liked = likedMembers[user_id] ?? false;
   const { showToast } = useToastStore();
 
   const selectedTechStacks = useMemo(() => {
@@ -85,15 +84,24 @@ const CardModalClient: React.FC<CardModalProps> = ({
     };
   }, [isModalOpen, closeModal]);
 
-  // 북마크 클릭 시 처리
-  const onToggleLike = () => {
-    if (!userData?.user_id) {
+   // 좋아요 버튼 클릭 핸들러
+    const handleLikeClick = useCallback(async () => {
+    const { data: { session } 
+      } = await supabase.auth.getSession();
+    const currentUserId = session?.user?.id;
+
+    if (!currentUserId) {
       showToast("로그인이 필요합니다.", "error");
       return;
     }
 
-    handleToggleLike?.();
-  };
+    try {
+      await toggleLike(user_id, currentUserId);
+    } catch (error) {
+      console.error("좋아요 실패:", error);
+      showToast("좋아요 처리 중 오류가 발생했어요", "error");
+    }
+  }, [toggleLike, user_id, showToast]);
 
   // 모달이 닫혀 있을 경우 렌더링하지 않음
   if (!isModalOpen || !hasMounted) return null;
@@ -165,7 +173,10 @@ const CardModalClient: React.FC<CardModalProps> = ({
           {/* 버튼 영역 */}
           <div className="absolute top-[-25px] right-[20px] flex items-center space-x-4 p-2">
             <button
-              onClick={onToggleLike}
+              onClick={(e) => {
+              e.stopPropagation();
+              void handleLikeClick();
+              }}
               className={`p-3 rounded-xl transition flex items-center space-x-2 ${
                 liked ? "bg-gray-800 text-white" : "bg-[#28282a] text-white"
               } md:hover:bg-gray-900 md:hover:-rotate-3 md:hover:scale-102.5`}

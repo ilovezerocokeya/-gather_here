@@ -17,7 +17,7 @@ export const GET = async (req: NextRequest) => {
 
     const offset = (page - 1) * limit;
 
-    // ✅ 기본 조건
+    // 기본 조건
     let memberQuery = supabase
       .from("Users")
       .select(
