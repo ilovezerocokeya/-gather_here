@@ -10,7 +10,8 @@ import { useUserStore } from "@/stores/useUserStore";
 import { useLikeStore } from "@/stores/useLikeStore";
 import { useToastStore } from "@/stores/useToastStore"; 
 import { secureImageUrl } from "@/utils/Image/imageUtils";
-import { useCallback } from "react";
+import { FALLBACK_PROFILE_IMAGE } from "@/utils/Image/imageUtils";
+import { useState, useEffect, useCallback } from "react";
 
 const CardUIClient: React.FC<CardUIProps> = ({
   user_id,
@@ -35,6 +36,10 @@ const CardUIClient: React.FC<CardUIProps> = ({
   const isMyCard = currentUserId === user_id;
   const { showToast } = useToastStore();
   const liked = likedMembers[user_id] ?? false;
+
+const [isImageBroken, setIsImageBroken] = useState(false);
+
+
   
   // 좋아요 버튼 클릭 핸들러
       const handleLikeClick = useCallback(async () => {
@@ -65,6 +70,11 @@ const CardUIClient: React.FC<CardUIProps> = ({
   }`;
 
   const isFallbackImage = stripQuery(versionedBackgroundImage).includes("welcomeImage.svg");
+
+    // imageUrl이 바뀌면 깨짐 상태 초기화
+useEffect(() => {
+  setIsImageBroken(false);
+}, [versionedProfileImage]);
 
   return (
     <>
@@ -145,16 +155,14 @@ const CardUIClient: React.FC<CardUIProps> = ({
           className="w-30 h-30 rounded-2xl flex items-center justify-center ml-1 bg-black absolute bottom-[190px] left-4 overflow-hidden transition-transform"
         >
           <div className="relative w-[60px] h-[60px]">
-            <Image
-              src={versionedProfileImage}
-              alt={`${nickname}님의 프로필 사진`}
-              width={120}
-              height={120}
-              quality={90}
-              loading="lazy"
-              sizes="(max-width: 768px) 20vw, 60px"
-              className="object-cover w-full h-full rounded-2xl shadow-lg bg-black"
-            />
+             <img
+  src={isImageBroken ? FALLBACK_PROFILE_IMAGE : versionedProfileImage}
+  alt={`${nickname}님의 프로필 사진`}
+  onError={() => setIsImageBroken(true)}
+  width={120}
+  height={120}
+  className="object-cover w-full h-full rounded-2xl shadow-lg bg-black"
+/>
           </div>
         </div>
 

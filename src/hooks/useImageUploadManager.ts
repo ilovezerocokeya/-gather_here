@@ -40,12 +40,13 @@ export function useImageUploadManager(userId: string | null, type: UploadType) {
         if (removeError) {
           console.warn("[Upload] 기존 이미지 삭제 실패 (계속 진행):", removeError.message);
         }
-
-        await delay(700); // 캐시 무효화를 위한 딜레이
-
+        
         // WebP 변환
         const webpFile = await convertToWebp(file, type);
         console.log("[Upload] WebP 변환 완료:", webpFile.size, "bytes");
+        
+        // 업로드 직전 캐시 무효화를 위한 delay
+        await delay(700); 
 
         // 업로드 (덮어쓰기 허용)
         const { error: uploadError } = await supabase.storage

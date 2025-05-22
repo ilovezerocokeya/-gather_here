@@ -10,7 +10,7 @@ export const useSessionManager = (resetAuthUser: () => Promise<void>, rememberMe
   const activityCheckIntervalRef = useRef<NodeJS.Timeout | null>(null); // 비활성 탭 체크 타이머를 관리하는 변수
   const isCheckingRef = useRef(false);
   const activityTimerRef = useRef<NodeJS.Timeout | null>(null);
-  const inactivatedAtRef = useRef<number | null>(null); // ⬅️ 비활성화 시점 저장용
+  const inactivatedAtRef = useRef<number | null>(null); // 비활성화 시점 저장용
 
   // 일정 시간 동안의 활동을 기반으로 스로틀링 주기를 결정하는 함수
   const calculateThrottleDelay = (elapsed: number) => {
@@ -37,16 +37,44 @@ export const useSessionManager = (resetAuthUser: () => Promise<void>, rememberMe
       return () => clearInterval(interval);
   }, [rememberMe]);
 
+  useEffect(() => {
+  if (!user || rememberMe) return;
+
+  const key = `lastActivityAt:${user.id}`;
+  const last = Number(localStorage.getItem(key));
+  const now = Date.now();
+
+  if (!last) return;
+
+  const elapsed = now - last;
+  if (elapsed >= 3 * 60 * 60 * 1000) {
+    console.log("로컬 스토리지 기준 세션 만료 감지 → 로그아웃");
+    void (async () => {
+      await resetAuthUser();
+      const { data } = await supabase.auth.getSession();
+      if (!data.session) {
+        router.push("/");
+      }
+    })();
+  }
+}, [user, rememberMe, resetAuthUser, router]);
+
+  const lastTriggerTimeRef = useRef<number>(0);
+
   // 사용자의 활동이 감지될 때마다 세션 타이머를 리셋하여 1시간 동안 활동이 없을 때만 로그아웃되도록 설정
   const resetSessionTimer = () => {
     if (!user) return; // 유저 없으면 아예 감지 무시
 
     const now = Date.now();
-    // 마지막 활동 이후 10분 미만이면 무시
-    if (now - lastActivityTimeRef.current < 10 * 60 * 1000) return;
+    // 마지막 활동 이후 30초 미만이면 무시
+     if (now - lastTriggerTimeRef.current < 30 * 1000) return;
 
     console.log("사용자 활동 감지됨: 세션 연장");
-    lastActivityTimeRef.current = Date.now(); // 마지막 활동 시간 업데이트
+    lastActivityTimeRef.current = now;
+    lastTriggerTimeRef.current = now;
+
+    // localStorage 기록 추가
+    localStorage.setItem(`lastActivityAt:${user.id}`, String(now));
 
     // 기존 세션 타이머 제거
     if (sessionTimeoutRef.current) {
@@ -62,6 +90,7 @@ export const useSessionManager = (resetAuthUser: () => Promise<void>, rememberMe
         if (timeSinceLastActivity >= 3 * 60 * 60 * 1000) {
           console.log("3시간 동안 활동 없음: 자동 로그아웃");
           await resetAuthUser();
+          localStorage.removeItem(`lastActivityAt:${user.id}`);
 
           // 로그아웃 후 세션 만료 여부를 최종 확인 후 페이지 이동
           const { data } = await supabase.auth.getSession();

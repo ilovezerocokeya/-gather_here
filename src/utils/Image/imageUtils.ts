@@ -1,6 +1,7 @@
 
 export const DEFAULT_PROFILE_IMAGE = "/assets/header/user.svg";
 export const DEFAULT_BACKGROUND_IMAGE = "/logos/welcomeImage.svg";
+export const FALLBACK_PROFILE_IMAGE = "https://yrmjrxuealdugqizqtjg.supabase.co/storage/v1/object/public/images/profileImages/profile_ZDc4YjA1YWQtMTIxZC00NGFhLWJmMzgtYTcwNzA5YjUxNjRk.png"; // 엑박 이미지 대체 기본이미지 
 
  // 안전한 이미지 URL 생성: http → https 변환 + 쿼리스트링 제거
 export const secureImageUrl = (url: string | null): string => {
@@ -30,3 +31,5 @@ export const getImageSize = (type: "profile" | "background") =>
   type === "profile"
     ? { width: 240, height: 240 }
     : { width: 600, height: 320 };
+
+
