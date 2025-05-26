@@ -125,8 +125,8 @@ const EventDetailPage = () => {
                 <p className="mb-4 flex items-start">
                   <strong className="text-labelNeutral w-24 s:w-[83px] flex-shrink-0 font-baseBold">입장 정보</strong>
                   <span className="ml-5 s:ml-0 flex flex-col">
-                    <span>일반 구매자 - {event.price?.toString() || 'N/A'}원</span>
-                    <span>사전 구매자 - {event.price?.toString() || 'N/A'}원</span>
+                    <span>일반 구매자 - 가격 정보 없음</span>
+                    <span>사전 구매자 - 가격 정보 없음</span>
                   </span>
                 </p>
               </div>

@@ -41,7 +41,11 @@ const FilterBar: React.FC<FilterBarProps> = ({
   return (
     <div className="flex justify-between items-center mt-1 mb-5">
       <div className="grid grid-cols-1 gap-2 w-full s:grid-cols-2 md:grid-cols-4 md:gap-3">
+        <label htmlFor="position-select" className="sr-only">
+          직군 선택
+        </label>
         <select
+          id="position-select"
           className={`shared-select-gray-2 ${
             selectedPosition ? "shared-select" : "shared-select-gray-2"
           } cursor-pointer`}

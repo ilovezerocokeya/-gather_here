@@ -113,7 +113,7 @@ const CardModalClient: React.FC<CardModalProps> = ({
       style={{ userSelect: "none" }}
     >
       <div
-        className="bg-[#141415] rounded-3xl shadow-lg s:w-[380px] s:h-[580px] w-[744px] h-[800px] overflow-y-auto transform transition-transform duration-300 ease-in-out scale-95 opacity-0"
+        className="bg-[#141415] rounded-3xl shadow-lg s:w-[380px] s:h-[450px] w-[744px] h-[700px] overflow-y-auto transform transition-transform duration-300 ease-in-out scale-95 opacity-0"
         style={{
           opacity: isModalOpen ? 1 : 0,
           transform: isModalOpen ? "scale(1)" : "scale(0.95)",

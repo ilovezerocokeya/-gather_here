@@ -26,7 +26,6 @@ interface Props {
 const MainDetailLayout: React.FC<Props> = ({
   post,
   user,
-  userData,
   showOptions,
   optionsRef,
   handleMoreOptions,
@@ -78,7 +77,6 @@ const MainDetailLayout: React.FC<Props> = ({
             <ShareButton />
             <LikeButton
               postId={post.post_id}
-              currentUser={userData ?? null}
               category={post.category}
             />
             {showOptionsButton && ( // 조건문 변경: 작성자인 경우에만 옵션 버튼 보이게 처리

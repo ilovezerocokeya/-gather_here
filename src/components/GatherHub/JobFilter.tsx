@@ -69,7 +69,7 @@ return (
     </ul>
 
     {/* 작은 화면용 드롭다운 */}
-    <div className="block lg:hidden relative left-0 w-full z-[20] bg-fillStrong p-2 shadow-md rounded-lg">
+    <div className="block lg:hidden relative left-0 w-[280] z-[20] bg-fillStrong p-2 shadow-md rounded-lg">
       <select
         className="p-2 text-xl bg-black text-white rounded-lg w-full border border-gray-500 
                    transition-all duration-300 ease-in-out focus:border-blue-500 focus:bg-gray-800 hover:bg-gray-900"

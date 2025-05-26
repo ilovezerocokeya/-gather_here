@@ -36,9 +36,8 @@ const CardUIClient: React.FC<CardUIProps> = ({
   const isMyCard = currentUserId === user_id;
   const { showToast } = useToastStore();
   const liked = likedMembers[user_id] ?? false;
-
-const [isImageBroken, setIsImageBroken] = useState(false);
-
+  const [isImageBroken, setIsImageBroken] = useState(false);
+  
 
   
   // 좋아요 버튼 클릭 핸들러
@@ -71,16 +70,20 @@ const [isImageBroken, setIsImageBroken] = useState(false);
 
   const isFallbackImage = stripQuery(versionedBackgroundImage).includes("welcomeImage.svg");
 
-    // imageUrl이 바뀌면 깨짐 상태 초기화
-useEffect(() => {
-  setIsImageBroken(false);
-}, [versionedProfileImage]);
+  // imageUrl이 바뀌면 깨짐 상태 초기화
+  useEffect(() => {
+    setIsImageBroken(false);
+  }, [versionedProfileImage]);
 
   return (
     <>
       {priority && !isFallbackImage && (
         <Head>
-          <link rel="preload" as="image" href={versionedBackgroundImage} />
+          <link
+            rel="preload"
+            as="image"
+            href={versionedBackgroundImage}
+          />
         </Head>
       )}
 
@@ -127,27 +130,21 @@ useEffect(() => {
           </button>
         </div>
 
-        {/* 포트폴리오 이미지 */}
-        <div className="relative mb-4">
-          <Link
-            href={blog || "#"}
-            target="_blank"
-            onClick={(e) => e.stopPropagation()} 
-            className="w-full h-40 bg-gray-300 rounded-t-[20px] overflow-hidden block"
-          >
-            <Image
-              src={versionedBackgroundImage}
-              alt={`${nickname}님의 대표 포트폴리오 이미지`}
-              width={300}
-              height={160}
-              quality={80}
-              priority={background_image_url && !background_image_url.includes("welcomeImage.svg") ? priority : false}
-              fetchPriority="high"
-              sizes="(max-width: 768px) 90vw, 300px"
-              className="object-cover"
-            />
-          </Link>
+       <div className="relative mb-4 w-full h-40 bg-gray-300 rounded-t-[20px] overflow-hidden block cursor-pointer object-cover transition-opacity duration-200 hover:opacity-90">
+        <div className="relative mb-4 rounded-t-[20px] overflow-hidden cursor-pointer transition-opacity duration-200 hover:opacity-90 w-[300px] h-[160px]">
+          <Image
+            src={versionedBackgroundImage}
+            alt={`${nickname}님의 대표 포트폴리오 이미지`}
+            fill
+            sizes="(max-width: 768px) 90vw, 300px"
+            quality={85}
+            priority
+            loading="eager"
+            fetchPriority="high"
+            style={{ objectFit: "cover", borderTopLeftRadius: 20, borderTopRightRadius: 20 }}
+          />
         </div>
+      </div>
 
         {/* 프로필 이미지 */}
         <div
@@ -155,14 +152,14 @@ useEffect(() => {
           className="w-30 h-30 rounded-2xl flex items-center justify-center ml-1 bg-black absolute bottom-[190px] left-4 overflow-hidden transition-transform"
         >
           <div className="relative w-[60px] h-[60px]">
-             <img
-  src={isImageBroken ? FALLBACK_PROFILE_IMAGE : versionedProfileImage}
-  alt={`${nickname}님의 프로필 사진`}
-  onError={() => setIsImageBroken(true)}
-  width={120}
-  height={120}
-  className="object-cover w-full h-full rounded-2xl shadow-lg bg-black"
-/>
+             <Image
+                src={isImageBroken ? FALLBACK_PROFILE_IMAGE : versionedProfileImage}
+                alt={`${nickname}님의 프로필 사진`}
+                onError={() => setIsImageBroken(true)}
+                width={60}
+                height={60}
+                className="object-cover w-full h-full rounded-2xl shadow-lg bg-black"
+              />
           </div>
         </div>
 

@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useMemo, useState } from "react";
+import React, { useMemo, useState, useEffect } from "react";
 import Slider from "react-slick";
 import "slick-carousel/slick/slick.css";
 import "slick-carousel/slick/slick-theme.css";
@@ -43,22 +43,63 @@ const PrCard: React.FC = () => {
   const { userData } = useUserStore(); 
   const [selectedMember, setSelectedMember] = useState<MemberType | null>(null);
   const { showToast } = useToastStore();
+  const [isToggling, setIsToggling] = useState(false);
+
+  useEffect(() => {
+  let observer: MutationObserver | null = null;
+
+  const timeoutId = setTimeout(() => {
+    const fixClonedSlideFocus = () => {
+      const clonedSlides = document.querySelectorAll(".slick-slide[aria-hidden='true']");
+      clonedSlides.forEach((slide) => {
+        const focusables = slide.querySelectorAll("a, button, input, select, textarea");
+        focusables.forEach((el) => {
+          const htmlEl = el as HTMLElement;
+          if (htmlEl.tabIndex !== -1) {
+            htmlEl.setAttribute("tabIndex", "-1");
+          }
+        });
+      });
+    };
+
+    fixClonedSlideFocus();
+
+    observer = new MutationObserver(() => fixClonedSlideFocus());
+    const slickList = document.querySelector(".slick-list");
+
+    if (slickList) {
+      observer.observe(slickList, { childList: true });
+    }
+  }, 1500);
+
+  return () => {
+    clearTimeout(timeoutId);
+    if (observer) {
+      observer.disconnect();
+    }
+  };
+}, []);
 
 
   // 좋아요 토글 함수
   const handleToggleLike = async (userId: string) => {
-    if (!userData?.user_id) {
-      showToast("로그인이 필요합니다.", "error");
-      return;
-    }
+  if (isToggling) return;
 
-    try {
-      await toggleLike(userId, userData.user_id);
-    } catch (error) {
-      showToast("좋아요 처리 중 오류가 발생했어요." , "error" );
-      console.error("좋아요 오류:", error);
-    }
-  };
+  if (!userData?.user_id) {
+    showToast("로그인이 필요합니다.", "error");
+    return;
+  }
+
+  try {
+    setIsToggling(true); // 클릭 방지 시작
+    await toggleLike(userId, userData.user_id);
+  } catch (error) {
+    showToast("좋아요 처리 중 오류가 발생했어요.", "error");
+    console.error("좋아요 오류:", error);
+  } finally {
+    setIsToggling(false); // 클릭 방지 해제
+  }
+};
 
   // React Query를 사용하여 데이터 가져오기
   const { data, isLoading, isError } = useInfiniteQuery({
@@ -143,7 +184,6 @@ const PrCard: React.FC = () => {
           width={20} 
           height={20} 
           className="mr-1" 
-          fetchPriority="high"
         />
         자랑스러운 게더_멤버들을 소개할게요
       </h2>
@@ -152,17 +192,30 @@ const PrCard: React.FC = () => {
       <div className="flex justify-center">
         <Slider {...settings} className="w-full max-w-[680px] flex justify-center">
           {slides.map((member, index) => {
-            const liked = likedMembers?.[member.user_id] || false; // 현재 멤버의 좋아요 상태 확인
-            const isFirstCard = index === 0;
+            const liked = likedMembers?.[member.user_id] || false;
           
-            return (
+            return index === 0 ? (
+              <div
+                key={member.user_id}
+                className="flex justify-center px-4"
+                suppressHydrationWarning // SSR에서 우선 렌더되는 이미지에 중요
+              >
+                <CardUIServer
+                  {...member}
+                  liked={liked}
+                  handleToggleLike={() => void handleToggleLike(member.user_id)}
+                  onOpenModal={() => setSelectedMember(member)}
+                  priority={true}
+                />
+              </div>
+            ) : (
               <div key={member.user_id} className="flex justify-center px-4">
                 <CardUIServer
                   {...member}
                   liked={liked}
                   handleToggleLike={() => void handleToggleLike(member.user_id)}
                   onOpenModal={() => setSelectedMember(member)}
-                  priority={isFirstCard}
+                  priority={false}
                 />
               </div>
             );
