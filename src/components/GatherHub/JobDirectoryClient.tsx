@@ -6,7 +6,7 @@ import { useAuth } from "@/provider/user/UserAuthProvider";
 import { useUserStore } from "@/stores/useUserStore";
 import JobFilter from "./JobFilter";
 import HubRegister from "./HubRegister";
-import LoginModal from "./LoginModal";
+import { useLoginModalStore } from "@/stores/useLoginModalStore";
 import { jobCategories } from "@/lib/gatherHub";
 
 interface JobDirectoryClientProps {
@@ -21,7 +21,7 @@ const JobDirectoryClient = ({ initialJob = "all" }: JobDirectoryClientProps) => 
     const { userData } = useUserStore();
     const isHubRegistered = useMemo(() => userData?.hubCard ?? false, [userData]);
 
-    const [isModalOpen, setIsModalOpen] = useState(false);
+    const { openModal } = useLoginModalStore();
     const [selectedJob, setSelectedJob] = useState(initialJob);
 
     useEffect(() => {
@@ -45,11 +45,7 @@ const JobDirectoryClient = ({ initialJob = "all" }: JobDirectoryClientProps) => 
             <HubRegister
                 isAuthenticated={isAuthenticated}
                 isHubRegistered={isHubRegistered}
-                openLoginModal={() => setIsModalOpen(true)}
-            />
-            <LoginModal
-                isModalOpen={isModalOpen}
-                closeModal={() => setIsModalOpen(false)}
+                openLoginModal={openModal}
             />
         </aside>
     );

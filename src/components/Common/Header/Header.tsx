@@ -9,6 +9,8 @@ import { supabase } from '@/utils/supabase/client';
 import SearchBar from '@/components/Search/SearchBar';
 import { SearchModalRef } from '@/types/refs/SearchModal';
 import { useRouter } from 'next/navigation';
+import { useLoginModalStore } from '@/stores/useLoginModalStore';
+import { useToastStore } from '@/stores/useToastStore';
 
 const Header: React.FC = () => {
   const { user, resetAuthUser } = useAuth();
@@ -16,6 +18,8 @@ const Header: React.FC = () => {
   const [isMypageModalOpen, setIsMypageModalOpen] = useState(false);
   const modalRef = useRef<SearchModalRef>(null);
   const router = useRouter();
+  const { showToast } = useToastStore();
+  const { openModal } = useLoginModalStore();
 
 
   // 로그아웃 함수
@@ -32,27 +36,17 @@ const Header: React.FC = () => {
     } finally {
       void resetAuthUser(); // 사용자 상태 초기화
       router.push('/');
-  
-      // 0.3초 후 새로고침
-      setTimeout(() => {
-        location.reload();
-      }, 300);
-    }
+      showToast("로그아웃 되었습니다.", "success");
   };
+}
 
-  // 마이페이지 모달 열기/닫기
-  const mypageModalRef = useRef(false);
-
-  const toggleMypageModal = () => {
-    mypageModalRef.current = !mypageModalRef.current;
-    setIsMypageModalOpen(mypageModalRef.current);
-  };
+  const toggleMypageModal = () => setIsMypageModalOpen(prev => !prev);
 
   // 모달 창 크기에 따라 닫기
   const closeModalOnRouteChange = () => {
-    if (window.innerWidth <= 768 && isMypageModalOpen) {
+    if (typeof window !== 'undefined' && window.innerWidth <= 768 && isMypageModalOpen) {
       setIsMypageModalOpen(false);
-    }
+}
   };
 
   return (
@@ -105,10 +99,23 @@ const Header: React.FC = () => {
               {/* 검색 모달 */}
               <SearchBar ref={modalRef} />
             </button>
+
             {/* 게시글 작성 버튼 */}
+            {user ? (
+            // 로그인 상태면 글쓰기 페이지로 이동
             <Link className="square-header-button-gray" href="/post" passHref>
               <Image src="/assets/header/write.svg" width={16} height={16} alt="글쓰기 버튼 아이콘" />
             </Link>
+          ) : (
+            // 비로그인 상태면 로그인 모달 오픈
+            <button
+              onClick={openModal}
+              className="square-header-button-gray"
+              type="button"
+            >
+              <Image src="/assets/header/write.svg" width={16} height={16} alt="글쓰기 버튼 아이콘" />
+            </button>
+          )}
 
             {/* 로그인 / 마이페이지 버튼 */}
             {user ? (
@@ -135,9 +142,12 @@ const Header: React.FC = () => {
                 </button>
               </div>
             ) : (
-              <Link className="shared-button-small-green" href="/login">
+              <button
+                onClick={openModal}
+                className="shared-button-small-green"
+              >
                 시작하기
-              </Link>
+              </button>
             )}
           </div>
         </nav>
