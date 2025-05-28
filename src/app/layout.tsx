@@ -6,6 +6,7 @@ import 'react-toastify/dist/ReactToastify.css';
 import Toast from '@/components/Common/Toast/Toast'; 
 import type { Metadata } from 'next';
 import React from 'react';
+import LoginModal from '@/components/Common/Modal/modal';
 
 const pretendard = localFont({
   src: [
@@ -67,10 +68,8 @@ export const metadata: Metadata = {
 
 export default function RootLayout({
   children,
-  login,
 }: Readonly<{
   children: React.ReactNode;
-  login: React.ReactNode;
 }>) {
   return (
     <html lang="ko" className={pretendard.className}>
@@ -78,8 +77,8 @@ export default function RootLayout({
         <CombinedProviders>
           <Header />
           {children}
-          {login}
-           <Toast />
+          <LoginModal />
+          <Toast />
         </CombinedProviders>
       </body>
     </html>

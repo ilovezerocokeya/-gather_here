@@ -1,80 +1,76 @@
 import { createServerSupabaseClient } from '@/utils/supabase/server';
 import SearchResultCard from '../components/SearchResultCard';
 import { Tables } from '@/types/supabase';
+import Pagination from '@/components/GatherHub/Pagination';
+import { getHighlightedData } from '@/utils/Search/highlight';
 
-interface HighlightedPost extends Tables<'Posts'> {
-  _highlight?: {
-    title?: string;
-    content?: string;
-    target_position?: string[];
-    location?: string;
-    place?: string;
-  };
+interface SearchPageProps {
+  params: { keyword?: string };
+  searchParams: { page?: string };
 }
 
-const highlightKeyword = (text: string, keyword: string): string => {
-  if (!text || !keyword) return text;
-  const safeKeyword = keyword.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
-  const regex = new RegExp(`(${safeKeyword})`, 'gi');
-  return text.replace(regex, '<mark class="bg-yellow-300 text-black">$1</mark>');
-};
-
-const SearchPage = async ({ params }: { params: { keyword?: string } }) => {
+const SearchPage = async ({ params, searchParams }: SearchPageProps) => {
   const supabase = createServerSupabaseClient();
+
+  // 키워드 파싱 및 페이지네이션 범위 설정
   const rawKeyword = decodeURIComponent(params.keyword ?? '').trim();
   const keyword = rawKeyword.toLowerCase();
+  const currentPage = Number(searchParams.page ?? '1');
+  const pageSize = 9;
+  const from = (currentPage - 1) * pageSize;
+  const to = from + pageSize;
 
-  if (!keyword) {
+  // Supabase에서 title, content, location, place에 대해 or 조건으로 검색
+  const filters = [
+    `title.ilike.%${keyword}%`,
+    `content.ilike.%${keyword}%`,
+    `location.ilike.%${keyword}%`,
+    `place.ilike.%${keyword}%`
+  ].join(',');
+
+  const { data: supabaseData, error } = await supabase
+    .from('Posts')
+    .select('*', { count: 'exact' })
+    .or(filters);
+
+  if (error) {
+    console.error('[Supabase 오류]', error);
     return (
-      <div className="w-full text-center text-white mt-40 text-lg">
-        검색어가 비어 있습니다.
+      <div className="text-center text-red-400 mt-20">
+        서버에서 데이터를 가져오는 중 오류가 발생했습니다.
       </div>
     );
   }
 
-  const { data, error } = await supabase.from('Posts').select('*');
-  if (error) console.log('[DEBUG] Supabase 오류:', error);
+  // 전체 게시글 조회 후 target_position 필드에서 키워드 포함 여부 검사 
+  const needsPositionMatch = keyword.length > 0;
+  const { data: allPosts } = needsPositionMatch
+    ? await supabase.from('Posts').select('*')
+    : { data: [] };
 
-  const filtered: HighlightedPost[] = (data ?? []).reduce<HighlightedPost[]>((acc, post) => {
-    const title = post.title ?? '';
-    const content = post.content ?? '';
-    const location = post.location ?? '';
-    const place = post.place ?? '';
-    const positions = Array.isArray(post.target_position) ? post.target_position : [];
-
-    const titleMatch = title.toLowerCase().includes(keyword);
-    const contentMatch = content.toLowerCase().includes(keyword);
-    const locationMatch = location.toLowerCase().includes(keyword);
-    const placeMatch = place.toLowerCase().includes(keyword);
-    const positionMatch = positions.some((pos) =>
-      typeof pos === 'string' && pos.toLowerCase().includes(keyword)
+  const matchedByPosition = (allPosts ?? []).filter((post) => {
+    const positions = post.target_position ?? [];
+    return positions.some(
+      (pos) => typeof pos === 'string' && pos.toLowerCase().includes(keyword)
     );
+  });
 
-    const highlightTitle = titleMatch ? highlightKeyword(title, rawKeyword) : undefined;
-    const highlightContent = contentMatch ? highlightKeyword(content, rawKeyword) : undefined;
-    const highlightLocation = locationMatch ? highlightKeyword(location, rawKeyword) : undefined;
-    const highlightPlace = placeMatch ? highlightKeyword(place, rawKeyword) : undefined;
-    const highlightPositions = positions.map((pos) =>
-      typeof pos === 'string' && pos.toLowerCase().includes(keyword)
-        ? highlightKeyword(pos, rawKeyword)
-        : pos
-    );
+  // supabaseData + matchedByPosition를 post_id 기준으로 중복 제거하며 병합
+  const merged = [
+    ...(supabaseData ?? []),
+    ...matchedByPosition.filter(
+      (post) => !(supabaseData ?? []).some((d) => d.post_id === post.post_id)
+    ),
+  ];
 
-    if (titleMatch || contentMatch || positionMatch || locationMatch || placeMatch) {
-      acc.push({
-        ...post,
-        _highlight: {
-          title: highlightTitle,
-          content: highlightContent,
-          location: highlightLocation,
-          place: highlightPlace,
-          target_position: highlightPositions,
-        },
-      });
-    }
+  // 총 페이지 계산
+  const totalPages = Math.ceil(merged.length / pageSize);
 
-    return acc;
-  }, []);
+  // 현재 페이지에 해당하는 게시글 추출 + 하이라이트 처리
+  const highlightedData = merged.slice(from, to).map((post) => {
+    const result = getHighlightedData({ post, keyword, rawKeyword });
+    return result?.highlightedPost ?? post;
+  });
 
   return (
     <div className="w-full max-w-screen-xl mx-auto px-4 pt-24">
@@ -82,15 +78,20 @@ const SearchPage = async ({ params }: { params: { keyword?: string } }) => {
         🔍 “{rawKeyword}” 검색 결과
       </h2>
 
-      {filtered.length > 0 ? (
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 s:gap-4 md:gap-10 lg:gap-6 md:ml-20 place-items-center">
-          {filtered.map((post) => (
-            <SearchResultCard key={post.post_id} post={post} />
-          ))}
-        </div>
+      {highlightedData.length > 0 ? (
+        <>
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 s:gap-4 md:gap-10 lg:gap-6 md:ml-20 place-items-center">
+            {highlightedData.map((post) => (
+              <SearchResultCard key={post.post_id} post={post as Tables<'Posts'>} />
+            ))}
+          </div>
+          <Pagination currentPage={currentPage} totalPages={totalPages} />
+        </>
       ) : (
-        <div className="text-center text-[#999] mt-10 text-lg">
-          검색 결과가 없습니다.
+        <div className="text-center text-white text-xl font-semibold mt-20 flex flex-col items-center gap-3">
+          <span className="text-4xl">😢</span>
+          <p>“{rawKeyword}”에 대한 검색 결과가 없습니다.</p>
+          <p className="text-sm text-gray-400">다른 키워드로 다시 검색해보세요.</p>
         </div>
       )}
     </div>
