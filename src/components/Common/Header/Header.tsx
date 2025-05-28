@@ -6,17 +6,20 @@ import Image from 'next/image';
 import { useAuth } from '@/provider/user/UserAuthProvider';
 import { useUserStore } from '@/stores/useUserStore';
 import { supabase } from '@/utils/supabase/client';
-import SearchBar from '@/components/Search/SearchBar';
+import { useMediaQuery } from "@/hooks/useMediaQuery";
 import { SearchModalRef } from '@/types/refs/SearchModal';
 import { useRouter } from 'next/navigation';
 import { useLoginModalStore } from '@/stores/useLoginModalStore';
 import { useToastStore } from '@/stores/useToastStore';
+import SearchModal from '@/components/Search/SearchModal';
+import SearchBar from '@/components/Search/SearchBar';
 
 const Header: React.FC = () => {
   const { user, resetAuthUser } = useAuth();
   const { userData } = useUserStore();
   const [isMypageModalOpen, setIsMypageModalOpen] = useState(false);
   const modalRef = useRef<SearchModalRef>(null);
+  const isMobile = useMediaQuery("(max-width: 1024px)");
   const router = useRouter();
   const { showToast } = useToastStore();
   const { openModal } = useLoginModalStore();
@@ -89,16 +92,22 @@ const Header: React.FC = () => {
 
         <nav className="flex items-center gap-2">
           <div className="flex items-center gap-2">
-            {/* 검색 버튼 */}
-            <button
-              onClick={() => modalRef.current?.open()}
-              type="submit"
-              className="flex items-center justify-center w-[36px] h-[36px] rounded-lg bg-fillNeutral hover:bg-fillAssistive pt-1"
-            >
-              <Image src="/assets/header/search.svg" width={22} height={22} alt="검색 버튼 아이콘" />
-              {/* 검색 모달 */}
-              <SearchBar ref={modalRef} />
-            </button>
+            {/* 검색 버튼 (모바일)*/}
+            {isMobile && (
+              <>
+                <button
+                  onClick={() => modalRef.current?.open()}
+                  className="flex items-center justify-center w-[36px] h-[36px] rounded-lg bg-fillNeutral hover:bg-fillAssistive pt-1"
+                >
+                  <Image src="/assets/header/search.svg" width={22} height={22} alt="검색 아이콘" />
+                </button>
+                <SearchModal ref={modalRef} />
+              </>
+            )}
+            {/* 검색창 (데스크탑) */}
+            {!isMobile && 
+              <SearchBar />
+            }
 
             {/* 게시글 작성 버튼 */}
             {user ? (

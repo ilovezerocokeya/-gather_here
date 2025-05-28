@@ -1,6 +1,9 @@
+'use client';
+
 import { Tables } from '@/types/supabase';
 import dayjs from 'dayjs';
 import Link from 'next/link';
+import DOMPurify from 'dompurify';
 
 type PostWithUser = Tables<'Posts'> & {
   _highlight?: {
@@ -21,13 +24,15 @@ const SearchResultCard = ({ post }: SearchResultCardProps) => {
   const deadline = dayjs(post.deadline);
   const daysLeft = deadline.diff(today, 'day');
 
-  if (daysLeft < 0) return null;
+  const sanitize = (html: string) => DOMPurify.sanitize(html);
 
-  const titleHTML = post._highlight?.title ?? post.title ?? '';
-  const contentHTML = post._highlight?.content ?? post.content ?? '';
-  const positions = post._highlight?.target_position ?? post.target_position ?? [];
-  const locationHTML = post._highlight?.location ?? post.location ?? '';
-  const placeHTML = post._highlight?.place ?? post.place ?? '';
+  const titleHTML = sanitize(post._highlight?.title ?? post.title ?? '');
+  const contentHTML = sanitize(post._highlight?.content ?? post.content ?? '');
+  const positions = (post._highlight?.target_position ?? post.target_position ?? []).map(
+    (pos) => (typeof pos === 'string' ? sanitize(pos) : '')
+  );
+  const locationHTML = sanitize(post._highlight?.location ?? post.location ?? '');
+  const placeHTML = sanitize(post._highlight?.place ?? post.place ?? '');
 
   return (
     <Link href={`/maindetail/${post.post_id}`}>
@@ -35,8 +40,13 @@ const SearchResultCard = ({ post }: SearchResultCardProps) => {
         
         {/* 마감일 */}
         <div className="flex justify-between items-center text-xs">
-          <span className="bg-[#3b3d3f] text-[#c3e88d] px-2 py-1 rounded-full font-semibold">
-            D-{daysLeft}
+          <span 
+            className={`px-2 py-1 rounded-full font-semibold ${
+              daysLeft < 0 ? 'bg-[#4c4c4c] text-[#999]' 
+            : 'bg-[#3b3d3f] text-[#c3e88d]'
+          }`}
+          >
+            {daysLeft < 0 ? `마감` : `D-${daysLeft}`}
           </span>
           <span className="text-[#c4c4c4]">~{deadline.format('MM.DD')}</span>
         </div>
