@@ -26,7 +26,7 @@ export async function fetchUserData(
   }
 }
 
-// 새 사용자 데이터 삽입 함수 (hydration mismatch 방지)
+// 새 사용자 데이터 삽입 함수
 export async function insertNewUser(
     supabase: SupabaseClient<Database>,
     user: SupabaseUser

@@ -1,12 +1,8 @@
 "use client";
 
 import { useSearchParams, useRouter } from "next/navigation";
-import { useEffect, useState, useMemo } from "react";
-import { useAuth } from "@/provider/user/UserAuthProvider";
-import { useUserStore } from "@/stores/useUserStore";
+import { useEffect, useState } from "react";
 import JobFilter from "./JobFilter";
-import HubRegister from "./HubRegister";
-import { useLoginModalStore } from "@/stores/useLoginModalStore";
 import { jobCategories } from "@/lib/gatherHub";
 
 interface JobDirectoryClientProps {
@@ -16,12 +12,6 @@ interface JobDirectoryClientProps {
 const JobDirectoryClient = ({ initialJob = "all" }: JobDirectoryClientProps) => {
     const router = useRouter();
     const searchParams = useSearchParams();
-
-    const { isAuthenticated } = useAuth();
-    const { userData } = useUserStore();
-    const isHubRegistered = useMemo(() => userData?.hubCard ?? false, [userData]);
-
-    const { openModal } = useLoginModalStore();
     const [selectedJob, setSelectedJob] = useState(initialJob);
 
     useEffect(() => {
@@ -41,11 +31,6 @@ const JobDirectoryClient = ({ initialJob = "all" }: JobDirectoryClientProps) => 
                 selectedJob={selectedJob}
                 handleSelectJob={handleSelectJob}
                 jobCategories={jobCategories}
-            />
-            <HubRegister
-                isAuthenticated={isAuthenticated}
-                isHubRegistered={isHubRegistered}
-                openLoginModal={openModal}
             />
         </aside>
     );

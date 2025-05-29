@@ -1,4 +1,7 @@
+"use client";
+
 import Link from "next/link";
+import { useSearchParams } from "next/navigation";
 
 interface PaginationProps {
   currentPage: number;
@@ -6,6 +9,8 @@ interface PaginationProps {
 }
 
 const Pagination: React.FC<PaginationProps> = ({ currentPage, totalPages }) => {
+  const searchParams = useSearchParams();
+
   const getPageNumbers = (): (number | string)[] => {
     const pages: (number | string)[] = [];
 
@@ -28,10 +33,16 @@ const Pagination: React.FC<PaginationProps> = ({ currentPage, totalPages }) => {
     return pages;
   };
 
+  const generateLink = (page: number) => {
+    const params = new URLSearchParams(Array.from(searchParams.entries()));
+    params.set("page", page.toString());
+    return `?${params.toString()}`;
+  };
+
   const renderPageButton = (page: number, label?: string) => (
     <Link
       key={label ?? page}
-      href={`?page=${page}`}
+      href={generateLink(page)}
       scroll={false}
       className={`px-4 py-2 rounded-lg text-sm border transition-colors ${
         currentPage === page
