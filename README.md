@@ -1,3 +1,5 @@
+<!-- 🟩 GitHub 잔디 반영 테스트 커밋입니다. -->
+
 ## 💻 @gather_here
 
 <img src="https://github.com/user-attachments/assets/4d63e8b7-789a-4512-8b70-78a2ad71565f" alt="gather_here 대표이미지" width="800px" />
