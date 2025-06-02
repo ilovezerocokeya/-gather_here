@@ -6,11 +6,13 @@ import Image from "next/image";
 import Link from "next/link";
 import { CardModalProps } from "@/lib/gatherHub";
 import { stripQuery } from "@/utils/Image/imageUtils";
-import { supabase } from "@/utils/supabase/client"; 
+import { supabase } from "@/utils/supabase/client";
 import { techStacks } from "@/lib/generalOptionStacks";
 import { useToastStore } from "@/stores/useToastStore";
 import { useLikeStore } from "@/stores/useLikeStore";
+import { FALLBACK_PROFILE_IMAGE } from "@/utils/Image/imageUtils";
 import { secureImageUrl } from "@/utils/Image/imageUtils";
+import { useUserStore } from "@/stores/useUserStore";
 
 const CardModalClient: React.FC<CardModalProps> = ({
   user_id,
@@ -20,8 +22,8 @@ const CardModalClient: React.FC<CardModalProps> = ({
   job_title,
   experience,
   description,
-  profile_image_url,
   background_image_url,
+  profile_image_url,
   blog,
   answer1,
   answer2,
@@ -37,6 +39,10 @@ const CardModalClient: React.FC<CardModalProps> = ({
   const { toggleLike, likedMembers } = useLikeStore();
   const liked = likedMembers[user_id] ?? false;
   const { showToast } = useToastStore();
+  const { userData } = useUserStore();
+  const currentUserId = userData?.user_id;
+  const isMyCard = currentUserId === user_id;
+  const [isImageBroken, setIsImageBroken] = useState(false);
 
   const selectedTechStacks = useMemo(() => {
     if (!tech_stacks || !Array.isArray(tech_stacks)) return [];
@@ -44,31 +50,31 @@ const CardModalClient: React.FC<CardModalProps> = ({
   }, [tech_stacks]);
 
   // hydration mismatch 방지를 위한 마운트 체크
-   useEffect(() => {
-     setHasMounted(true);
-   }, []);
+  useEffect(() => {
+    setHasMounted(true);
+  }, []);
 
   useEffect(() => {
     const preventScroll = (e: TouchEvent) => {
       e.preventDefault();
     };
-  
+
     const preventKeys = (e: KeyboardEvent) => {
       if (e.key === "Escape") closeModal?.();
     };
-  
+
     if (isModalOpen) {
       // 데스크탑 스크롤 방지
       document.body.style.overflow = "hidden";
       document.body.style.position = "fixed";
       document.body.style.top = `-${window.scrollY}px`;
       document.body.style.width = "100%";
-  
+
       // 모바일 스크롤 방지
       document.addEventListener("touchmove", preventScroll, { passive: false });
       window.addEventListener("keydown", preventKeys);
     }
-  
+
     return () => {
       // 스크롤 복원
       const scrollY = document.body.style.top;
@@ -77,17 +83,17 @@ const CardModalClient: React.FC<CardModalProps> = ({
       document.body.style.top = "";
       document.body.style.width = "";
       window.scrollTo(0, parseInt(scrollY || "0") * -1);
-  
+
       // 모바일 스크롤 복원
       document.removeEventListener("touchmove", preventScroll);
       window.removeEventListener("keydown", preventKeys);
     };
   }, [isModalOpen, closeModal]);
 
-   // 좋아요 버튼 클릭 핸들러
-    const handleLikeClick = useCallback(async () => {
-    const { data: { session } 
-      } = await supabase.auth.getSession();
+  // 좋아요 버튼 클릭 핸들러
+  const handleLikeClick = useCallback(async () => {
+    const { data: { session }
+    } = await supabase.auth.getSession();
     const currentUserId = session?.user?.id;
 
     if (!currentUserId) {
@@ -103,6 +109,21 @@ const CardModalClient: React.FC<CardModalProps> = ({
     }
   }, [toggleLike, user_id, showToast]);
 
+  // 프로필 이미지 URL 생성
+  const versionedProfileImage = `${stripQuery(secureImageUrl(profile_image_url))}${
+    isMyCard ? `?v=${imageVersion ?? 0}` : ''
+  }`;
+
+  // 배경 이미지 URL 생성
+  const versionedBackgroundImage = `${stripQuery(secureImageUrl(background_image_url))}${
+    isMyCard ? `?v=${imageVersion ?? 0}` : ''
+  }`;
+
+  // imageUrl이 바뀌면 깨짐 상태 초기화
+  useEffect(() => {
+    setIsImageBroken(false);
+  }, [versionedProfileImage]);
+
   // 모달이 닫혀 있을 경우 렌더링하지 않음
   if (!isModalOpen || !hasMounted) return null;
 
@@ -113,7 +134,7 @@ const CardModalClient: React.FC<CardModalProps> = ({
       style={{ userSelect: "none" }}
     >
       <div
-        className="bg-[#141415] rounded-3xl shadow-lg s:w-[380px] s:h-[450px] w-[744px] h-[700px] overflow-y-auto transform transition-transform duration-300 ease-in-out scale-95 opacity-0"
+        className="bg-[#141415] rounded-3xl shadow-lg s:w-[390px] s:h-[600px] w-[744px] h-[700px] overflow-y-auto transform transition-transform duration-300 ease-in-out scale-95 opacity-0"
         style={{
           opacity: isModalOpen ? 1 : 0,
           transform: isModalOpen ? "scale(1)" : "scale(0.95)",
@@ -132,16 +153,20 @@ const CardModalClient: React.FC<CardModalProps> = ({
 
         {/* 대표 포트폴리오 이미지 */}
         <div
-          className="relative h-[300px] bg-gray-200 rounded-t-[20px] overflow-hidden cursor-pointer"
+          className="relative h-[200px] md:h-[300px] bg-gray-200 rounded-t-[20px] overflow-hidden cursor-pointer"
           onClick={() => window.open(blog, "_blank")}
           style={{ userSelect: "none" }}
         >
           <Image
-            src={`${stripQuery(secureImageUrl(background_image_url))}?v=${imageVersion}`}
-            alt="배경 이미지"
+            src={versionedBackgroundImage}
+            alt={`${nickname}님의 대표 포트폴리오 이미지`}
             fill
-            quality={80}
-            className="absolute inset-0 w-full h-full object-cover object-center"
+            sizes="(max-width: 768px) 90vw, 300px"
+            quality={85}
+            priority
+            loading="eager"
+            fetchPriority="high"
+            style={{ objectFit: "cover", borderTopLeftRadius: 20, borderTopRightRadius: 20 }}
           />
         </div>
 
@@ -150,17 +175,17 @@ const CardModalClient: React.FC<CardModalProps> = ({
           <div className="absolute -top-20 flex flex-col items-start p-6">
             <div className="w-[120px] h-[120px] rounded-2xl bg-black border-1 border-background overflow-hidden">
               <Image
-                src={`${stripQuery(secureImageUrl(profile_image_url))}?v=${imageVersion}`}
-                alt={nickname}
-                width={120}
-                height={120}
-                quality={90}
+                src={isImageBroken ? FALLBACK_PROFILE_IMAGE : versionedProfileImage}
+                alt={`${nickname}님의 프로필 사진`}
+                onError={() => setIsImageBroken(true)}
+                width={60}
+                height={60}
                 className="object-cover w-full h-full rounded-2xl shadow-lg bg-black"
               />
             </div>
-            <div className="mt-5">
+            <div className="mt-5 ml-2">
               <h2 className="text-xl font-medium text-f7f7f7 font-['Pretendard'] leading-7">{nickname}</h2>
-              <p className="text-primary mt-1 text-sm font-normal font-['Pretendard'] leading-[21px]">
+              <p className="text-primary mt-1 ml-4 text-ml font-normal font-['Pretendard'] leading-[21px]">
                 {job_title}
                 <span className="text-[#5e5e5e] text-sm font-normal font-['Pretendard'] leading-[21px]">
                   &nbsp; |&nbsp; {experience}
@@ -168,18 +193,17 @@ const CardModalClient: React.FC<CardModalProps> = ({
               </p>
             </div>
           </div>
-        
+
 
           {/* 버튼 영역 */}
           <div className="absolute top-[-25px] right-[20px] flex items-center space-x-4 p-2">
             <button
               onClick={(e) => {
-              e.stopPropagation();
-              void handleLikeClick();
+                e.stopPropagation();
+                void handleLikeClick();
               }}
-              className={`p-3 rounded-xl transition flex items-center space-x-2 ${
-                liked ? "bg-gray-800 text-white" : "bg-[#28282a] text-white"
-              } md:hover:bg-gray-900 md:hover:-rotate-3 md:hover:scale-102.5`}
+              className={`p-3 rounded-xl transition flex items-center space-x-2 ${liked ? "bg-gray-800 text-white" : "bg-[#28282a] text-white"
+                } md:hover:bg-gray-900 md:hover:-rotate-3 md:hover:scale-102.5`}
             >
               <Image
                 src={liked ? "/assets/bookmark2.svg" : "/assets/bookmark1.svg"}
@@ -192,20 +216,20 @@ const CardModalClient: React.FC<CardModalProps> = ({
 
             <div className="relative group">
               <button
-                  className="bg-[#28282a] text-white px-4 py-3 rounded-xl md:hover:bg-gray-900 transition flex items-center space-x-2"
-                  style={{ userSelect: "none", cursor: "not-allowed" }}
-                  disabled
+                className="bg-[#28282a] text-white px-4 py-3 rounded-xl md:hover:bg-gray-900 transition flex items-center space-x-2"
+                style={{ userSelect: "none", cursor: "not-allowed" }}
+                disabled
               >
-                <Image 
-                  src="/assets/chat.svg" 
-                  alt="메시지 아이콘" 
-                  width={20} 
-                  height={20} 
+                <Image
+                  src="/assets/chat.svg"
+                  alt="메시지 아이콘"
+                  width={20}
+                  height={20}
                 />
                 <span className="hidden md:block" suppressHydrationWarning>
                   대화 신청하기
                 </span>
-              
+
                 {/* 말풍선 */}
                 <div className="absolute s:top-[50px] top-[100%] s:left-[-5px] left-[65%] transform -translate-x-1/2 min-w-[120px] px-3 py-2 bg-[orange] text-black text-sm rounded-lg opacity-0 group-hover:opacity-100 transition-opacity duration-300 shadow-lg">
                   현재 개발 중인 <br /> 기능 입니다.
@@ -215,160 +239,146 @@ const CardModalClient: React.FC<CardModalProps> = ({
             </div>
           </div>
         </div>
-        
-            <div className="s:w-[340px] w-[680px] border-t border-gray-500 border-opacity-40 mt-40 mx-5"></div>
-        
+
+        <div className="s:w-[340px] w-[680px] border-t border-gray-500 border-opacity-40 mt-40 mx-5"></div>
+
         {/* 자기소개 섹션 */}
-        <div className="h-[92px] justify-start p-6 items-start gap-5 inline-flex space-x-8 md:space-x-20">
-          <div className="h-[29px] p-1 justify-start items-center gap-1 flex">
-            <div className="text-[#c4c4c4] text-sm font-medium font-['Pretendard'] leading-[21px]">자기소개</div>
+        <div className="flex flex-col md:flex-row justify-start md:justify-start items-center md:items-start gap-4 md:gap-2 p-6 md:ml-8 md:h-[92px] md:space-x-8 md:space-x-19">
+          <div className="h-[29px] p-2 flex justify-center md:justify-start items-center text-center">
+            <div className="text-[#c4c4c4] text-sm font-medium font-['Pretendard'] leading-[21px] whitespace-nowrap">
+              자기소개
+            </div>
           </div>
-          <div className="s:w-[240px] md:w-[524px] flex-col justify-start  items-start inline-flex">
-            <div className="self-stretch h-[92px] py-1 flex-col justify-center items-center flex">
-              <div className="self-stretch h-[84px] p-3 bg-[#19191a] rounded-xl overflow-y-auto shadow border border-[#212121] justify-between items-start inline-flex">
-                <div className="text-xs md:text-sm text-gray-300 md:h-auto h-[60px] leading-relaxed md:leading-normal">
+
+          <div className="w-full s:w-[320px] md:w-[480px] flex flex-col items-center md:items-start">
+            <div className="w-full py-1 flex flex-col items-center md:items-start">
+              <div className="w-full max-h-[120px] p-3 bg-[#19191a] rounded-xl overflow-y-auto shadow border border-[#212121]">
+                <p className="text-[13px] text-gray-200 leading-relaxed font-sans font-light text-center md:text-left whitespace-pre-wrap">
                   {description}
-                </div>
-                <div className="w-6 h-6 p-1 justify-center items-center flex">
-                  <div className="h-4 p-2.5"></div>
-                </div>
+                </p>
               </div>
             </div>
           </div>
         </div>
 
-            <div className="s:w-[340px] w-[680px] border-t border-gray-500 border-opacity-40 mx-5" style={{ marginTop: "50px" }}></div>
 
-        <div className="h-[411px] justify-start p-6 items-start gap-5 inline-flex space-x-6 md:space-x-16">
-          {/* 공통질문 */}
-          <div className="h-[29px] p-2 justify-start items-center gap-1 flex">
+        <div className="s:w-[340px] w-[680px] border-t border-gray-500 border-opacity-40 s:mt-[20px] mt-[54px] mx-5" />
+
+        {/* 공통질문 섹션 */}
+        <div className="flex flex-col md:flex-row justify-start items-center md:items-start gap-4 md:gap-2 p-6 md:ml-8 md:space-x-8">
+          {/* 왼쪽 타이틀 */}
+          <div className="h-[29px] p-2 flex justify-center md:justify-start items-center text-center">
             <div className="text-[#c4c4c4] text-sm font-medium font-['Pretendard'] leading-[21px] whitespace-nowrap">
               공통 질문
             </div>
           </div>
 
-          <div className="s:w-[240px] md:w-[524px] flex-col justify-start items-start gap-6 inline-flex">
-            {/* 질문1 */}
-            <div className="self-stretch h-[121px] flex-col justify-start items-start flex">
-              <div className="self-stretch p-1 justify-start items-center gap-2 inline-flex">
-                <div className="text-[#c4c4c4] s:text-xs text-sm font-medium font-['Pretendard'] leading-[21px]">
-                  1. 팀으로 일할 때 나는 어떤 팀원인지 설명해 주세요.
-                </div>
-              </div>
-              <div className="self-stretch h-[92px] py-1 flex-col justify-center  items-center flex">
-                <div className="self-stretch h-[84px] p-3 bg-[#19191a] rounded-xl overflow-y-auto  shadow border border-[#212121] justify-between items-start inline-flex">
-                  <div className="text-xs md:text-sm text-gray-300 md:h-auto h-[60px] leading-relaxed md:leading-normal">
-                    {answer1}
-                  </div>
-                  <div className="w-6 h-6 p-1 justify-center items-center flex">
-                    <div className="h-4 p-2.5"></div>
-                  </div>
-                </div>
-              </div>
-            </div>
+          {/* 질문 목록 */}
+          <div className="w-full s:w-[320px] md:w-[480px] flex flex-col items-center md:items-start gap-12">
+            {[
+              {
+                id: 1,
+                question: "1. 팀으로 일할 때 나는 어떤 팀원인지 설명해 주세요.",
+                answer: answer1,
+              },
+              {
+                id: 2,
+                question: "2. 팀과 함께 목표를 이루기 위해 무엇이 가장 중요하다고 생각하는지 알려 주세요.",
+                answer: answer2,
+              },
+              {
+                id: 3,
+                question: "3. 자신이 부족하다고 느낀 부분을 어떻게 보완하거나 학습해왔는지 이야기해 주세요.",
+                answer: answer3,
+              },
+            ].map(({ id, question, answer }) => (
+              <div key={id} className="w-full flex flex-col">
+                <p className="text-neutral-300 text-sm s:text-xs font-normal font-sans leading-snug text-center md:text-left">
+                  {question}
+                </p>
             
-            {/* 질문2 */}
-            <div className="self-stretch h-[121px] flex-col justify-start items-start flex">
-              <div className="self-stretch p-1 justify-start items-center gap-2 inline-flex">
-                <div className="text-[#c4c4c4] s:text-xs text-sm font-medium font-['Pretendard'] leading-[21px]">
-                  2. 팀과 함께 목표를 이루기 위해 무엇이 가장 중요하다고 생각하는지 알려 주세요.
-                </div>
-              </div>
-              <div className="self-stretch h-[92px] py-1 flex-col justify-center items-center flex">
-                <div className="self-stretch h-[84px] p-3 bg-[#19191a] rounded-xl overflow-y-auto shadow border border-[#212121] justify-between items-start inline-flex">
-                  <div className="text-xs md:text-sm text-gray-300 md:h-auto h-[60px] leading-relaxed md:leading-normal">
-                    {answer2}
-                  </div>
-                  <div className="w-6 h-6 p-1 justify-center items-center flex">
-                    <div className="h-4 p-2.5"></div>
+                <div className="w-full h-auto py-1">
+                  <div className="w-full max-h-[120px] p-3 bg-[#19191a] rounded-xl mt-2 overflow-y-auto shadow border border-[#212121]">
+                    <p className="text-[13px] text-gray-200 leading-relaxed font-sans font-light text-center md:text-left whitespace-pre-wrap">
+                      {answer && answer.trim() !== ""
+                        ? answer
+                        : "😅 아직 답변이 준비되지 않았어요."}
+                    </p>
                   </div>
                 </div>
-              </div>
-            </div>  
-
-            {/* 질문3 */}
-            <div className="self-stretch h-[121px] flex-col justify-start overflow-y-auto items-start flex">
-              <div className="self-stretch p-1 justify-start items-center gap-2 inline-flex">
-                <div className="text-[#c4c4c4] s:text-xs text-sm font-medium font-['Pretendard'] leading-[21px]">
-                  3. 자신이 부족하다고 느낀 부분을 어떻게 보완하거나 학습해왔는지 이야기해 주세요.
-                </div>
-              </div>
-              <div className="self-stretch h-[92px] py-1 flex-col justify-center items-center flex">
-                <div className="self-stretch h-[84px] p-3 bg-[#19191a] rounded-xl overflow-y-auto shadow border border-[#212121] justify-between items-start inline-flex">
-                  <div className="text-xs md:text-sm text-gray-300 md:h-auto h-[60px]  leading-relaxed md:leading-normal">
-                    {answer3}
-                  </div>
-                  <div className="w-6 h-6 p-1 justify-center items-center flex">
-                    <div className="h-4 p-2.5"></div>
-                  </div>
-                </div>
-              </div>
-            </div>
-          </div>
-        </div>
-
-            <div className="s:w-[340px] w-[680px] border-t border-gray-500 border-opacity-40 s:mt-[90px] mt-[54px] mx-5"></div>
-
-        {/* 기술 스택 */}
-        <div className="justify-start items-start p-6 gap-5 flex flex-col space-y-4">
-          <div className="h-[29px] p-1 flex items-center gap-1">
-            <div className="text-[#c4c4c4] text-sm font-medium font-['Pretendard'] leading-[21px]">기술 스택</div>
-          </div>
-
-          <div className="grid grid-cols-3 gap-3 w-full">
-            {selectedTechStacks.map((stack) => (
-              <div key={stack.id} className="px-3 py-2 bg-[#28282a] rounded-full border border-[#2d2d2f] flex items-center gap-2">
-                <Image src={stack.image} alt={stack.name} width={12} height={12} />
-                <span className="text-white text-xs font-medium">{stack.name}</span>
               </div>
             ))}
           </div>
         </div>
 
-            <div className="w-240px border-t border-gray-500 border-opacity-40 mx-5" style={{ marginTop: "50px" }}></div>
+        <div className="s:w-[340px] w-[680px] border-t border-gray-500 border-opacity-40 s:mt-[20px] mt-[54px] mx-5"></div>
 
-        {/* URL 링크 */}
-        <div className="h-9 justify-start items-start gap-5 inline-flex p-6 space-x-20">
-          <div className="h-[29px] p-1 justify-start items-center gap-1 flex">
-            <div className="w-[52px] text-[#c4c4c4] text-sm font-medium font-['Pretendard'] leading-[21px]">
+        {/* 기술 스택 섹션 */}
+        <div className="flex flex-col md:flex-row justify-start items-center md:items-start gap-4 md:gap-2 p-6 md:ml-8 md:space-x-8">
+          {/* 타이틀 */}
+          <div className="h-[29px] p-2 flex justify-center md:justify-start items-center text-center">
+            <div className="text-neutral-300 text-sm font-medium font-['Pretendard'] leading-[21px] whitespace-nowrap">
+              기술 스택
+            </div>
+          </div>
+
+          {/* 스택 목록 */}
+          <div className="w-full s:w-[320px] md:w-[480px] flex flex-col items-center md:items-start">
+            <div className="grid grid-cols-3 gap-3 w-full">
+              {selectedTechStacks.map((stack) => (
+                <div
+                  key={stack.id}
+                  className="px-3 py-2 bg-[#28282a] rounded-full border border-[#2d2d2f] flex items-center gap-2"
+                >
+                  <Image src={stack.image} alt={stack.name} width={12} height={12} />
+                  <span className="text-neutral-200 text-xs font-normal font-sans">{stack.name}</span>
+                </div>
+              ))}
+            </div>
+          </div>
+        </div>
+
+        <div className="w-240px border-t border-gray-500 border-opacity-40 mx-5" style={{ marginTop: "20px" }}></div>
+
+        {/* URL 링크 섹션 */}
+        <div className="flex flex-col md:flex-row justify-start items-center md:items-start gap-4 md:gap-2 p-6 md:ml-8 md:space-x-8">
+          {/* 타이틀 */}
+          <div className="h-[29px] p-2 flex justify-center md:justify-start items-center text-center">
+            <div className="text-[#c4c4c4] text-sm font-medium font-['Pretendard'] leading-[21px] whitespace-nowrap">
               URL
             </div>
           </div>
 
-          <div className="grow shrink basis-0 h-9 justify-start items-center gap-2 flex">
-            {/* Blog 링크 */}
-            <div className="p-1 bg-[#28282a] rounded-[10px] border border-[#2d2d2f] justify-center items-center gap-2.5 flex">
+          {/* 링크 아이콘들 */}
+          <div className="flex justify-center md:justify-start items-center gap-2 w-full s:w-[320px] md:w-[480px]">
+            {/* 블로그 링크 */}
+            <div className="p-1 bg-[#28282a] rounded-[10px] border border-[#2d2d2f] flex justify-center items-center">
               <Link href={blog || "#"} target="_blank" className="flex justify-center items-center">
-                <Image
-                  src="/Link/link.svg"
-                  alt="링크"
-                  width={24}
-                  height={24}
-                />
+                <Image src="/Link/link.svg" alt="블로그 링크" width={24} height={24} />
               </Link>
             </div>
 
             {/* 첫 번째 링크 */}
             {first_link && (
-              <div className="p-1 bg-[#28282a] rounded-[10px] border border-[#2d2d2f] justify-center items-center gap-2.5 flex">
+              <div className="p-1 bg-[#28282a] rounded-[10px] border border-[#2d2d2f] flex justify-center items-center">
                 <Link href={first_link || "#"} target="_blank" className="flex justify-center items-center">
-                <Image
-                  src={first_link_type ? `/Link/${first_link_type}.svg` : "/Link/link.svg"}
-                  alt={`${first_link_type} Link`}
-                  width={24}
-                  height={24}
-                />
+                  <Image
+                    src={first_link_type ? `/Link/${first_link_type}.svg` : "/Link/link.svg"}
+                    alt={`${first_link_type} 링크`}
+                    width={24}
+                    height={24}
+                  />
                 </Link>
               </div>
             )}
 
             {/* 두 번째 링크 */}
             {second_link && (
-              <div className="p-1 bg-[#28282a] rounded-[10px] border border-[#2d2d2f] justify-center items-center gap-2.5 flex">
+              <div className="p-1 bg-[#28282a] rounded-[10px] border border-[#2d2d2f] flex justify-center items-center">
                 <Link href={second_link || "#"} target="_blank" className="flex justify-center items-center">
                   <Image
                     src={second_link_type ? `/Link/${second_link_type}.svg` : "/Link/link.svg"}
-                    alt={`${second_link_type} Link`}
+                    alt={`${second_link_type} 링크`}
                     width={24}
                     height={24}
                   />
@@ -378,8 +388,8 @@ const CardModalClient: React.FC<CardModalProps> = ({
           </div>
         </div>
 
-            <div className="w-240px border-t border-gray-500 border-opacity-10 mx-5" style={{ marginTop: "50px" }}></div>
-      
+        <div className="s:w-[340px] w-[680px] border-t border-gray-500 border-opacity-40 s:mt-[20px] mt-[54px] mx-5" />
+
       </div>
     </div>,
     document.body
