@@ -17,7 +17,7 @@ const HubProfile = async () => {
   const { data, error } = await supabase
     .from("Users")
     .select(
-      "hubCard, description, blog, first_link_type, first_link, second_link_type, second_link, answer1, answer2, answer3, tech_stacks"
+      "hubCard, description, blog, first_link_type, first_link, second_link_type, second_link, answer1, answer2, answer3, tech_stacks, contact"
     )
     .eq("user_id", session.user.id)
     .single();
@@ -43,6 +43,7 @@ const HubProfile = async () => {
           answer2: data.answer2 ?? "",
           answer3: data.answer3 ?? "",
           techStacks: data.tech_stacks ?? [],
+          contact: data.contact ?? "",
         }}
       />
     </section>

@@ -8,6 +8,7 @@ export interface HubProfileState {
     answer1: string;
     answer2: string;
     answer3: string;
+    contact: string;
     techStacks: string[];
   }
   
@@ -22,7 +23,8 @@ export type HubProfileAction =
 | { type: "SET_ANSWER1"; payload: string }
 | { type: "SET_ANSWER2"; payload: string }
 | { type: "SET_ANSWER3"; payload: string }
-| { type: "SET_TECH_STACKS"; payload: string[] };
+| { type: "SET_TECH_STACKS"; payload: string[] }
+| { type: "SET_CONTACT"; payload: string }
 
 // 액션에 따라 상태를 업데이트하는 리듀서 함수
 export const hubProfileReducer = ( state: HubProfileState, action: HubProfileAction): HubProfileState => {
@@ -47,6 +49,8 @@ export const hubProfileReducer = ( state: HubProfileState, action: HubProfileAct
       return { ...state, answer3: action.payload };
     case "SET_TECH_STACKS":
       return { ...state, techStacks: action.payload };
+    case "SET_CONTACT":
+      return { ...state, contact: action.payload };
     default:
       return state;
   }

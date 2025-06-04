@@ -33,6 +33,7 @@ const CardModalClient: React.FC<CardModalProps> = ({
   second_link_type,
   second_link,
   imageVersion,
+  contact,
   tech_stacks,
 }) => {
   const [hasMounted, setHasMounted] = useState(false);
@@ -185,11 +186,23 @@ const CardModalClient: React.FC<CardModalProps> = ({
             </div>
             <div className="mt-5 ml-2">
               <h2 className="text-xl font-medium text-f7f7f7 font-['Pretendard'] leading-7">{nickname}</h2>
-              <p className="text-primary mt-1 ml-4 text-ml font-normal font-['Pretendard'] leading-[21px]">
-                {job_title}
-                <span className="text-[#5e5e5e] text-sm font-normal font-['Pretendard'] leading-[21px]">
-                  &nbsp; |&nbsp; {experience}
+              <p className="mt-1 text-ml font-normal font-['Pretendard'] leading-[21px]">
+                <span
+                  className={`
+                    ${job_title === "프론트엔드" ? "text-primary" : ""}
+                    ${job_title === "백엔드" ? "text-accentOrange" : ""}
+                    ${job_title === "IOS" ? "text-accentMaya" : ""}
+                    ${job_title === "안드로이드" ? "text-accentPurple" : ""}
+                    ${job_title === "데브옵스" ? "text-accentRed" : ""}
+                    ${job_title === "디자이너" ? "text-accentMint" : ""}
+                    ${job_title === "PM" ? "text-accentColumbia" : ""}
+                    ${job_title === "기획자" ? "text-accentPink" : ""}
+                    ${job_title === "마케터" ? "text-accentYellow" : ""}
+                  `}
+                >
+                  {job_title}
                 </span>
+                <span className="text-[#5e5e5e] text-sm">&nbsp; | &nbsp;{experience}</span>
               </p>
             </div>
           </div>
@@ -389,6 +402,28 @@ const CardModalClient: React.FC<CardModalProps> = ({
         </div>
 
         <div className="s:w-[340px] w-[680px] border-t border-gray-500 border-opacity-40 s:mt-[20px] mt-[54px] mx-5" />
+
+        {contact && (
+        <>
+          <div className="flex flex-col md:flex-row justify-start items-center md:items-start gap-4 md:gap-2 p-6 md:ml-8 md:space-x-8">
+            {/* 타이틀 */}
+            <div className="h-[29px] p-2 flex justify-center md:justify-start items-center text-center">
+              <div className="text-[#c4c4c4] text-sm font-medium font-['Pretendard'] leading-[21px] whitespace-nowrap">
+                연락처
+              </div>
+            </div>
+              
+            {/* 입력된 연락처 값 */}
+            <div className="flex justify-start items-center w-full s:w-[320px] md:w-[480px]">
+              <p className="text-[13px] text-gray-200 font-sans font-light text-center md:text-left whitespace-pre-wrap break-all">
+                {contact}
+              </p>
+            </div>
+          </div>
+              
+          <div className="s:w-[340px] w-[680px] border-t border-gray-500 border-opacity-40 s:mt-[20px] mt-[20px] mx-5" />
+        </>
+      )}
 
       </div>
     </div>,

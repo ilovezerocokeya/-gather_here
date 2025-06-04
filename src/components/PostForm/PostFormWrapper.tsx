@@ -159,7 +159,7 @@ const PostFormWrapper = ({ mode, defaultValues, postId }: PostFormWrapperProps) 
       />
 
       {/* 본문 영역 */}
-      <div className="w-full max-w-[744px] mx-auto px-4 s:pt-6 pb-12">
+      <div className="w-full max-w-[744px] mx-auto px-4 s:pt-2 md:pt-8 pb-12">
         <form onSubmit={(e) => { e.preventDefault(); void handleSubmit(); }} className="space-y-4">
           <PostFormInputs state={state} handleInputChange={handleInputChange} />
           <PostFormRecruit

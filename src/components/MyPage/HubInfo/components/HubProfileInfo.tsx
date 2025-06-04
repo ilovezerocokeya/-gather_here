@@ -76,6 +76,8 @@ const HubProfileForm: React.FC<{
   setSecondLinkType: (value: string) => void;
   secondLink: string;
   setSecondLink: (value: string) => void;
+  contact: string;
+  setContact: (value: string) => void; 
 }> = ({
   blog,
   setBlog,
@@ -87,6 +89,8 @@ const HubProfileForm: React.FC<{
   setSecondLinkType,
   secondLink,
   setSecondLink,
+  contact,
+  setContact,
 }) => {
   const [errors, setErrors] = useState({
     blog: "",
@@ -173,6 +177,22 @@ const HubProfileForm: React.FC<{
         )}
 
         <p className="text-labelAssistive text-xs mt-2">URL은 최대 3개까지 등록 가능합니다.</p>
+
+        {/* 연락처 입력 */}
+        <label htmlFor="contact" className="block text-sm font-medium text-labelNormal mb-1 mt-6">
+          연락 가능한 정보 (선택)
+        </label>
+        <input
+          type="text"
+          id="contact"
+          value={contact}
+          onChange={(e) => setContact(e.target.value)}
+          placeholder="연락 가능한 주소나 링크를 작성해주세요"
+          className="w-full shared-input-gray-2 border-[1px] border-fillLight"
+        />
+        <p className="text-labelAssistive text-xs mt-2">
+          연락 받을 수 있는 링크나 이메일을 입력하세요
+        </p>
       </fieldset>
     </form>
   );

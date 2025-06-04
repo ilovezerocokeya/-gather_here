@@ -12,6 +12,7 @@ export interface UserData {
     answer1?: string;
     answer2?: string;
     answer3?: string;
+    contact?: string;
     first_link_type?: string;
     first_link?: string;
     second_link_type?: string;
@@ -38,5 +39,6 @@ export interface UserData {
     first_link: "",
     second_link_type: "",
     second_link: "",
+    contact:"",
     tech_stacks: [],
   };

@@ -21,6 +21,7 @@ const MemberCardServer = ({
   answer3,
   first_link_type,
   first_link,
+  contact,
   second_link_type,
   second_link,
   tech_stacks,
@@ -45,6 +46,7 @@ const MemberCardServer = ({
       answer3={answer3}
       first_link_type={first_link_type}
       first_link={first_link}
+      contact={contact}
       second_link_type={second_link_type}
       second_link={second_link}
       tech_stacks={tech_stacks}

@@ -40,6 +40,7 @@ const HubProfileClientForm: React.FC<HubProfileClientFormProps> = ({ initialIsAc
       state.answer1 !== initialData.answer1 ||
       state.answer2 !== initialData.answer2 ||
       state.answer3 !== initialData.answer3 ||
+      state.contact !== initialData.contact ||
       JSON.stringify(state.techStacks) !== JSON.stringify(initialData.techStacks)
     );
   }, [state, initialData]);
@@ -62,6 +63,7 @@ const HubProfileClientForm: React.FC<HubProfileClientFormProps> = ({ initialIsAc
         answer2: state.answer2,
         answer3: state.answer3,
         tech_stacks: state.techStacks,
+        contact: state.contact,
       })
       .eq("user_id", userData.user_id);
 
@@ -152,6 +154,8 @@ const HubProfileClientForm: React.FC<HubProfileClientFormProps> = ({ initialIsAc
         setSecondLinkType={(value) => dispatch({ type: "SET_SECOND_LINK_TYPE", payload: value })}
         secondLink={state.secondLink}
         setSecondLink={(value) => dispatch({ type: "SET_SECOND_LINK", payload: value })}
+        contact={state.contact}
+        setContact={(value) => dispatch({ type: "SET_CONTACT", payload: value })}
       />
 
       <div className="border-b-[1px] border-fillNormal my-6" />

@@ -18,6 +18,7 @@ export interface MemberType {
   answer2: string;
   answer3: string;
   liked: boolean;
+  contact?: string;
   tech_stacks: string[];
   imageVersion?: number;
 }
@@ -64,6 +65,7 @@ export interface CardModalProps {
   second_link_type?: string;
   second_link?: string;
   tech_stacks: string[];
+  contact?: string;
   selectedTechStacks?: TechStackOption[];
   closeModal?: () => void;
   handleToggleLike?: () => void;
@@ -145,8 +147,8 @@ export const jobCategories: JobCategoryOption[] = [
   { name: "IOS", value: "IOS", hoverClass: "hover:bg-accentMaya hover:text-black" },
   { name: "안드로이드", value: "안드로이드", hoverClass: "hover:bg-accentPurple hover:text-black" },
   { name: "데브옵스", value: "데브옵스", hoverClass: "hover:bg-accentRed hover:text-black" },
-  { name: "디자인", value: "디자인", hoverClass: "hover:bg-accentMint hover:text-black" },
+  { name: "디자이너", value: "디자이너", hoverClass: "hover:bg-accentMint hover:text-black" },
   { name: "PM", value: "PM", hoverClass: "hover:bg-accentColumbia hover:text-black" },
-  { name: "기획", value: "기획", hoverClass: "hover:bg-accentPink hover:text-black" },
-  { name: "마케팅", value: "마케팅", hoverClass: "hover:bg-accentYellow hover:text-black" },
+  { name: "기획자", value: "기획자", hoverClass: "hover:bg-accentPink hover:text-black" },
+  { name: "마케터", value: "마케터", hoverClass: "hover:bg-accentYellow hover:text-black" },
 ];

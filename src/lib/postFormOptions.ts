@@ -113,15 +113,15 @@ export const categoryOptions = [
 
 // 직업군 색상표시
   export const jobTitleClassMap: Record<string, string> = {
-    프론트엔드: 'text-primary',
-    IOS: 'text-accentPurple',
-    안드로이드: 'text-accentRed',
+    프론트엔드: 'text-primaryStrong',
+    백엔드: 'text-accentOrange',
+    IOS: 'text-accentMaya',
+    안드로이드: 'text-accentPurple',
     PM: 'text-accentColumbia',
     기획자: 'text-accentPink',
     마케터: 'text-accentYellow',
-    백엔드: 'text-accentOrange',
-    디자이너: 'text-accentMaya',
-    데브옵스: 'text-accentMint',
+    디자이너: 'text-accentMint',
+    데브옵스: 'text-accentRed',
   };
 
 

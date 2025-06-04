@@ -176,12 +176,24 @@ const CardUIClient: React.FC<CardUIProps> = ({
               </div>        
 
               {/* 직군 | 경력 */}
-              <div
-                className="text-primary text-sm transition-all duration-300 ease-in-out
-                md:hover:scale-[1.02] md:hover:rotate-[0.6deg]"
-              >
-                {job_title} <span className="text-sm">&nbsp;|&nbsp; {experience}</span>
-              </div>        
+              <p className="text-sm transition-all duration-300 ease-in-out md:hover:scale-[1.02] md:hover:rotate-[0.6deg]">
+                <span
+                  className={`
+                    ${job_title === "프론트엔드" ? "text-primary" : ""}
+                    ${job_title === "백엔드" ? "text-accentOrange" : ""}
+                    ${job_title === "IOS" ? "text-accentMaya" : ""}
+                    ${job_title === "안드로이드" ? "text-accentPurple" : ""}
+                    ${job_title === "데브옵스" ? "text-accentRed" : ""}
+                    ${job_title === "디자이너" ? "text-accentMint" : ""}
+                    ${job_title === "PM" ? "text-accentColumbia" : ""}
+                    ${job_title === "기획자" ? "text-accentPink" : ""}
+                    ${job_title === "마케터" ? "text-accentYellow" : ""}
+                  `}
+                >
+                  {job_title}
+                </span>
+                <span className="text-[#5e5e5e] text-sm">&nbsp;|&nbsp; {experience}</span>
+              </p>     
 
               {/* 소개글 */}
               <div

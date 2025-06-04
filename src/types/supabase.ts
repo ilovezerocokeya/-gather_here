@@ -308,6 +308,7 @@ export interface Database {
           hubCard: boolean | null;
           job_title: string | null;
           nickname: string | null;
+          contact: string | null;
           profile_image_url: string | null;
           second_link: string | null;
           second_link_type: string | null;
@@ -329,6 +330,7 @@ export interface Database {
           hubCard?: boolean | null;
           job_title?: string | null;
           nickname?: string | null;
+          contact?: string | null;
           profile_image_url?: string | null;
           second_link?: string | null;
           second_link_type?: string | null;
@@ -350,6 +352,7 @@ export interface Database {
           hubCard?: boolean | null;
           job_title?: string | null;
           nickname?: string | null;
+          contact?: string | null;
           profile_image_url?: string | null;
           second_link?: string | null;
           second_link_type?: string | null;

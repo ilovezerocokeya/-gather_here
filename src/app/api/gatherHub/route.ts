@@ -21,7 +21,7 @@ export const GET = async (req: NextRequest) => {
     let memberQuery = supabase
       .from("Users")
       .select(
-        "user_id, nickname, job_title, experience, blog, description, background_image_url, profile_image_url, answer1, answer2, answer3, first_link_type, first_link, second_link_type, second_link, tech_stacks"
+        "user_id, nickname, job_title, experience, blog, description, background_image_url, profile_image_url, answer1, answer2, answer3, first_link_type, first_link, second_link_type, second_link, tech_stacks, contact"
       )
       .eq("hubCard", true)
       .order("created_at", { ascending: false });

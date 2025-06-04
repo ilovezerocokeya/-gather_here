@@ -9,7 +9,7 @@ import { useModal } from "@/provider/ContextProvider";
 import AlertModal from "./components/AlertModal";
 
 
-const job_titles = ["프론트엔드", "백엔드", "IOS", "안드로이드", "데브옵스", "기획", "디자인", "마케팅", "PM"]; // 선택 가능한 직무 리스트
+const job_titles = ["프론트엔드", "백엔드", "IOS", "안드로이드", "데브옵스", "기획자", "디자이너", "마케터", "PM"]; // 선택 가능한 직무 리스트
 
 // 직무에 따라 버튼 스타일 클래스 지정
 const jobClasses: Record<string, string> = {
@@ -19,8 +19,8 @@ const jobClasses: Record<string, string> = {
   안드로이드: "button-android",
   데브옵스: "button-devops",
   기획: "button-planner",
-  디자인: "button-designer",
-  마케팅: "button-marketer",
+  디자이너: "button-designer",
+  마케터: "button-marketer",
   PM: "button-pm",
 };
 

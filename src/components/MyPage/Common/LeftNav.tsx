@@ -8,17 +8,8 @@ import { useAuth } from "@/provider/user/UserAuthProvider";
 import { useUserStore } from '@/stores/useUserStore';
 import { secureImageUrl } from "@/utils/Image/imageUtils";
 import LeftNavLoader from "@/components/Common/Skeleton/LeftNavLoader";
-import { jobTitleClassMap } from "@/lib/postFormOptions";
 
 const defaultImage = "/assets/header/user.svg";
-
-// 직군에 따른 텍스트 색상 클래스 반환
-const getJobTitleClass = (job_title: string) => {
-  const lower = job_title?.toLowerCase() ?? "";
-  return (
-    Object.entries(jobTitleClassMap).find(([key]) => lower.includes(key.toLowerCase()))?.[1] || ""
-  );
-};
 
 const LeftNav = () => {
   const { user } = useAuth(); 
@@ -33,10 +24,8 @@ const LeftNav = () => {
     }
   }, [user, fetchUserData]);
 
-  const jobTitleClass = userData?.job_title ? getJobTitleClass(userData.job_title) : "";
-
   return (
-    <aside className="sticky top-0 p-6 s:p-0 w-[250px] max-h-[540px] flex flex-col items-start gap-3 rounded-[20px] bg-fillStrong text-fontWhite shadow-sm s:hidden">
+    <aside className="sticky top-0 p-6 s:p-0 w-[250px] max-h-[600px] flex flex-col items-start gap-3 rounded-[20px] bg-fillStrong text-fontWhite shadow-sm s:hidden">
       {/* 유저 정보 로딩 중이면 스켈레톤 표시 */}
       {loading ? (
         <LeftNavLoader />
@@ -54,15 +43,30 @@ const LeftNav = () => {
                 className="rounded-[12px] object-cover"
               />
             </div>
-            <ol className="flex text-xs leading-tight text-center text-labelStrong">
-              <li className="font-baseBold">{userData.nickname}</li>
-              <li className="px-2 text-labelAssistive">|</li>
-              <li className={`${jobTitleClass}`}>
-                <span className="pr-1">{userData.job_title}</span>
-                <span className="text-labelAssistive px-1">|</span>
+            <div className="text-center mt-2">
+              {/* 닉네임 강조 */}
+              <p className="text-primary text-base font-semibold">{userData.nickname}</p> 
+              {/* 직군 색상 강조 + 연차는 보조 정보 */}
+              <p className="text-sm text-labelAssistive mt-1">
+                <span
+                  className={`
+                    ${userData.job_title === "프론트엔드" ? "text-primary" : ""}
+                    ${userData.job_title === "백엔드" ? "text-accentOrange" : ""}
+                    ${userData.job_title === "IOS" ? "text-accentMaya" : ""}
+                    ${userData.job_title === "안드로이드" ? "text-accentPurple" : ""}
+                    ${userData.job_title === "데브옵스" ? "text-accentRed" : ""}
+                    ${userData.job_title === "디자이너" ? "text-accentMint" : ""}
+                    ${userData.job_title === "PM" ? "text-accentColumbia" : ""}
+                    ${userData.job_title === "기획자" ? "text-accentPink" : ""}
+                    ${userData.job_title === "마케터" ? "text-accentYellow" : ""}
+                  `}
+                >
+                  {userData.job_title}
+                </span>
+                <span className="px-1 text-labelAssistive">|</span>
                 <span>{userData.experience}</span>
-              </li>
-            </ol>
+              </p>
+            </div>
           </div>
         </>
       ) : (
@@ -71,9 +75,9 @@ const LeftNav = () => {
       <nav>
         <ul className="w-full">
           {/* 프로필 관리 */}
-          <li className="mb-3">
+          <li className="mb-3 ml-8">
             <span className="block w-full text-lg text-labelNeutral font-baseBold">프로필 관리</span>
-            <ul className="ml-4 mt-2">
+            <ul className="ml-8 mt-2">
               <li className="mb-2">
                 <Link
                   href="/mypage"
@@ -98,9 +102,9 @@ const LeftNav = () => {
           </li>
 
           {/* 북마크 관리 */}
-          <li className="mb-3">
+          <li className="mb-3 ml-8">
             <span className="block w-full text-lg text-labelNeutral font-baseBold">북마크 관리</span>
-            <ul className="ml-4 mt-2">
+            <ul className="ml-8 mt-2">
               <li className="mb-2">
                 <Link
                   href="/mypage/myinterests"
@@ -125,7 +129,7 @@ const LeftNav = () => {
           </li>
 
           {/* 작성 글 */}
-          <li className="mb-3">
+          <li className="mb-3 ml-8">
             <Link
               href="/mypage/myposts"
               className={`block w-full text-lg md:hover:text-primary ${
