@@ -3,6 +3,7 @@ import { supabase } from "@/utils/supabase/client";
 import { User } from "@supabase/supabase-js";
 import { useSessionManager } from "@/hooks/useSessionManager";
 import { useLikeStore } from "@/stores/useLikeStore";
+import { safeSyncLikesWithServer } from "@/utils/sync/safeSyncLikesWithServer";
 
 // 사용자 인증 상태를 정의하는 인터페이스
 interface AuthState {
@@ -50,7 +51,7 @@ export const UserAuthProvider: React.FC<{ children: ReactNode }> = ({ children }
 
     // 로그인 성공 시, 좋아요 상태를 서버와 동기화
     if (user) {
-      await useLikeStore.getState().syncLikesWithServer(user.id);
+      await safeSyncLikesWithServer(user.id);
     }
   }, []);
 

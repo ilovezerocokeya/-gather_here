@@ -1,16 +1,13 @@
 "use client";
 
-import React from "react";
 import { useRouter } from "next/navigation";
 import { useModal } from "@/provider/ContextProvider";
-import { useUserStore } from "@/stores/useUserStore";
 import Image from "next/image";
 
 const Signup04: React.FC = () => {
   const router = useRouter();
-  const { userData } = useUserStore(); // 전역 상태에서 유저 정보 조회
-  const nickname = userData?.nickname ?? "";
   const { closeModal } = useModal();
+
 
   // "둘러보기" 버튼 클릭 시 홈으로 이동
   const handleExplore = () => {
@@ -34,10 +31,11 @@ const Signup04: React.FC = () => {
 
         {/* 환영 메시지 */}
         <div className="text-center s:mt-6 mt-10">
-          <div className="text-2xl font-medium text-white">환영해요!</div>
+          <div className="text-2xl font-medium text-white">함께할 준비 되셨나요?</div>
           <div className="text-[#9a9a9a] mt-5 text-m">
-            <span className="text-[#c3e88d]">{nickname}</span>님이 @gather_here에서
-            <br /> 더 많은 경험을 할 수 있도록 도울게요
+            나를 알리고, 팀을 만나보는 여정
+            <br />
+            지금부터 <span className="text-primary">@gather_here</span>에서 시작해요.
           </div>
         </div>
 
@@ -45,7 +43,15 @@ const Signup04: React.FC = () => {
         <div className="s:bottom-8 bottom-9 w-full px-4 mt-10 flex justify-center">
           <button
             onClick={handleExplore}
-            className="s:w-[300px] w-[350px] h-[45px] bg-[#343437] text-primary py-2 rounded-md transition-transform md:hover:scale-105 md:hover:text-white active:scale-95"
+            className={`
+              s:w-[300px] w-[350px] h-[45px]
+              bg-[#343437] text-primary
+              py-2 rounded-xl
+              transition duration-300 ease-in-out transform
+              hover:bg-[#4a4a4e] hover:text-white hover:scale-105
+              active:scale-95 active:bg-[#2d2d2f]
+              shadow-md hover:shadow-lg
+            `}
           >
             둘러보기
           </button>

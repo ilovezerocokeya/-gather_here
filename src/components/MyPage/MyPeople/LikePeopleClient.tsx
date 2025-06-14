@@ -5,6 +5,8 @@ import { useLikeStore } from "@/stores/useLikeStore";
 import { useState, useEffect, useMemo } from "react";
 import type { UserData } from "@/types/userData";
 import Pagination from "@/components/MyPage/Common/Pagination";
+import { safeSyncLikesWithServer } from "@/utils/sync/safeSyncLikesWithServer";
+
 
 type LikedMember = Omit<UserData, "hubCard">;
 
@@ -14,7 +16,7 @@ interface Props {
 }
 
 const LikePeopleClient = ({ userId, likedMembers }: Props) => {
-  const { likedMembers: likedMap, syncLikesWithServer } = useLikeStore();
+  const { likedMembers: likedMap } = useLikeStore();
 
   const [currentPage, setCurrentPage] = useState(1);
   const membersPerPage = 6;
@@ -60,8 +62,8 @@ const LikePeopleClient = ({ userId, likedMembers }: Props) => {
   }, [visibleMembers, currentPage]);
 
   useEffect(() => {
-    void syncLikesWithServer(userId);
-  }, [userId]);
+    void safeSyncLikesWithServer(userId);
+  }, [userId]);;
 
   return (
     <div className="my-people-page">

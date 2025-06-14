@@ -1,7 +1,8 @@
 "use client";
 import { useForm, SubmitHandler } from "react-hook-form";
 import useCheckNickname from "@/hooks/useCheckNickname";
-import useSubmitProfile from "@/hooks/useSubmitProfile"; 
+import useSubmitProfile from "@/hooks/useSubmitProfile";
+import { useUserStore } from "@/stores/useUserStore"; 
 import { useSignup } from "@/provider/user/UserSignupProvider";
 
 export interface FormValues {
@@ -21,23 +22,31 @@ const Signup03: React.FC = () => {
     setError,
   } = useForm<FormValues>(); // react-hook-form 설정
 
+  const { setUserData } = useUserStore.getState();
   const watchNickname = watch("nickname"); // 입력 중인 닉네임 감시
   const { result: nicknameAvailable, isEmpty } = useCheckNickname(watchNickname); // 닉네임 중복 여부 확인
   const { onSubmit } = useSubmitProfile(); // 실제 Supabase로 제출 처리 함수
 
   // 제출 핸들러
   const onSubmitForm: SubmitHandler<FormValues> = async (data: FormValues) => {
-    const isValid = nicknameAvailable?.valid ?? false;
+    const isValid = nicknameAvailable?.valid ?? false;  
 
     if (!isValid) {
       setError("nickname", {
         message: nicknameAvailable?.message ?? "닉네임 확인이 필요합니다.",
       });
       return;
-    }
+    } 
 
-    // Supabase 업데이트 처리
-    await onSubmit(data, isValid, setError);
+    await onSubmit(data, isValid, setError);  
+
+    const current = useUserStore.getState().userData;
+    if (current) {
+      setUserData({
+        ...current,
+        nickname: data.nickname,
+      });
+    }
   };
 
   // "등록하기" 버튼 누르면 실행되는 함수
